@@ -1,0 +1,20 @@
+\documentclass[12pt]{article}
+\input{RnwOpts.tex}
+
+\begin{document}
+\title{Predator Preferences Model}
+\author{S. Bonner and E. A. Roualdes}
+\maketitle 
+<<setup, include=FALSE>>=
+options(replace.assign=TRUE, width = 55)
+opts_knit$set(progress = FALSE)
+opts_chunk$set(comment=NA, cache.extra = rand_seed)
+@
+
+\input{model.tex}
+\input{simulation.Rnw}
+
+
+\bibliographystyle{amsalpha}
+\bibliography{refs}
+\end{document}

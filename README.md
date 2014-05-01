@@ -1,4 +1,4 @@
 spiders
 =======
 
-predator preferences model
+Fits predator preferences model

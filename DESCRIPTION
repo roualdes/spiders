@@ -1,0 +1,9 @@
+Package: spiders
+Type: Package
+Title: Fits predator preferences model
+Version: 1.0
+Date: 2014-04-30
+Author: Edward A. Roualdes and Simon Bonner
+Maintainer: Edward A. Roualdes <edward.roualdes@uky.edu>
+Description: Fits and simulates data from the predator eating preferences model
+License: GPL3.0

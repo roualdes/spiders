@@ -1,0 +1,10 @@
+\section*{Simulations}
+
+In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.  In order to do that, please ensure you have the package \texttt{devtools}.  Then run,
+
+We first simulate some data by using the function \texttt{simulate} from the package .  
+
+<<echo=FALSE, results='hide'>>=
+library(devtools)
+install_github('spiders', 'roualdes')
+@ 
