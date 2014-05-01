@@ -8,7 +8,7 @@
 <<setup, include=FALSE>>=
 options(replace.assign=TRUE, width = 55)
 ## opts_knit$set(progress = FALSE)
-opts_chunk$set(comment=NA, cache.extra = rand_seed)
+## opts_chunk$set(comment=NA, cache.extra = rand_seed)
 @
 
 \input{model.tex}
