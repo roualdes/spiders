@@ -1,0 +1,64 @@
+\section*{Simulations}
+
+In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(spiders)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: there is no package called 'spiders'}}\end{kframe}
+\end{knitrout}
+
+
+We can then simulate some data by using the function \texttt{spiders::simulate}.  Input to this function includes the number of predator species observed at each time point, the number of traps used at each time point, the number of prey species of interest, the number of time points for which measurements were taken, and rate parameters $\lambda_{st}, \gamma_{st}$ for which the predator ate and observed, respectively, prey species $s$ at time $t$.  For now, we assume that the number of predators and traps is fixed across time points.  Below we specify rate parameters that will be proportional across time; we expect to fail to reject null hypothesis (\ref{eq:null}) here. 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{Predators} \hlkwb{<-} \hlnum{4}
+\hlstd{Traps} \hlkwb{<-} \hlnum{5}
+\hlstd{PreySpecies} \hlkwb{<-} \hlnum{3}
+\hlstd{Times} \hlkwb{<-} \hlnum{10}
+\hlstd{l} \hlkwb{<-} \hlnum{20}
+\hlstd{g} \hlkwb{<-} \hlnum{15}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+Simulate some data as follows.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{data} \hlkwb{<-} \hlkwd{simulate}\hlstd{(PreySpecies, Times, Predators, Traps, l, g)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: no applicable method for 'simulate' applied to an object of class "{}c('double', 'numeric')"{}}}\end{kframe}
+\end{knitrout}
+
+
+Then we can fit the model and calculate a p-value from these data.  The output of the model fit is below.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{(fit} \hlkwb{<-} \hlkwd{predpref}\hlstd{(data, Predators, Traps))}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: could not find function "{}predpref"{}}}\end{kframe}
+\end{knitrout}
+
+
+
+
+
+
+
+
+
