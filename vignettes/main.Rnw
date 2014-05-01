@@ -1,4 +1,6 @@
 \documentclass[12pt]{article}
+%\VignetteDepends{devtools,knitr} 
+%\VignetteEngine{knitr::knitr}
 \input{RnwOpts.tex}
 
 \begin{document}
@@ -7,12 +9,74 @@
 \maketitle 
 <<setup, include=FALSE>>=
 options(replace.assign=TRUE, width = 55)
-## opts_knit$set(progress = FALSE)
-## opts_chunk$set(comment=NA, cache.extra = rand_seed)
+opts_knit$set(progress = FALSE)
+opts_chunk$set(comment=NA, cache.extra = rand_seed)
 @
 
-\input{model.tex}
-\input{simulation.tex}
+\section*{Model}
+Strauss' statistic $L_{st}$ \cite{Strauss:1979} is the difference between $r_{st}$ the proportion of prey species $s$ found in the gut of a predator during occurrence $t$ and $p_{st}$ the proportion of prey species $s$ found in the habitat of said predator during occurrence $t$.  When the statistic $L_{st} := r_{st} - p_{st}$ is equal to zero we say the predator ate prey species $s$ randomly during time $t$.  A positive difference, $L_{st} > 0$, indicates preferential eating of prey species $s$, and negative values indicate aversion to prey species $s$ at time $t$.  We can replicate and add to the modeling considered by Strauss with the following set up.
+
+Let $X_{jst} \sim \mathcal{P}(\lambda_{st})$ denote the number of prey species $s$ found in the gut of predator $j$ during occurrence $t$; $j \in \{1, \ldots, J\}, s \in \{1, \ldots, S\}, t \in \{1, \ldots, T\}$.  For now we ignore the fact that we only observe a $1$ if predator $j$ ate prey species $s$ during occurrence $t$ or a zero if the predator did not.  Further, $Y_{ist} \sim \mathcal{P}(\gamma_{st})$ will denote the number of prey species $s$ found in trap $i$, $i \in \{1, \ldots, I \}$, hypothesized to represent the habitat of predator $j$, during time occurrence $t$.  Interest lies in the null hypothesis
+
+\begin{equation}
+  \label{eq:null}
+  H_0: \boldsymbol{\lambda}_t = c \boldsymbol{\gamma}_t, \forall t
+\end{equation}
+
+where $c \in \mathbb{R}$.  This hypothesis suggests that the predator's eating preferences are independent of time, i.e.\ the ratio of the rate at which the predator eats prey species $s$ to the rate at which prey species $s$ is found in the habitat is constant across time.  Strauss' $L$ is a special case of this framework where only a particular combination of prey species $s$ and time $t$ is considered, and $c$ is equal to the ratio of total number of prey found in the gut of the predator to the total number of prey found in the habitat.  
+
+We first consider the parameters of this model under the null hypothesis.  Here, $S\cdot T + 1$ parameters will be estimated, $\gamma_{st}$ for $(s,t) \in \{S \times T\}$ and $c$. 
+
+\begin{equation*}
+  \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{I\left(\frac{\sum_{st} X_{\cdot st}}{\sum_{st}Y_{\cdot st}} +1 \right)} \text{ and } \hat{c} = \frac{I\sum_{s,t} X_{\cdot st}}{J\sum_{s,t} Y_{\cdot st}}.
+\end{equation*}
+
+The parameters under the alternative hypothesis are simply the maximum likelihood estimates.
+
+\begin{equation*}
+  \hat{\lambda}_{st} = \frac{X_{\cdot st}}{J} \text{ and } \hat{\gamma}_{st} = \frac{Y_{\cdot st}}{I}
+\end{equation*}
+
+
+Null hypothesis (\ref{eq:null}) above is tested with the standard likelihood ratio statistic
+
+\begin{equation}
+  \label{eq:lrt}
+  \Lambda(X,Y) := -2 \log{ \frac{ \sup L(\theta_0|X,Y)}{ \sup L(\theta_1|X,Y)} }
+\end{equation}
+
+where $\theta_0 = \{ \boldsymbol{\lambda}_t = c \boldsymbol{\gamma}_t, \forall t : (\gamma_{st}, c) \in \mathbb{R}^{ST+1} \}$ represents the likelihood under the null hypothesis, and $\theta_1 = \{ \boldsymbol{\lambda}_{st} \ne c \boldsymbol{\gamma}_{st} : (\lambda_{st}, \gamma_{st}) \in \mathbb{R}^{2ST} \}$ represents the likelihood under the alternative hypothesis.  Then $\Lambda \dot{\sim} \chi^2_{ST-1}$ and null hypothesis (\ref{eq:null}) is rejected when $P(\chi^2_{ST-1} > \Lambda) < \alpha$. 
+
+\section*{Simulations}
+
+In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.
+
+<<>>=
+library(spiders)
+@ 
+
+We can then simulate some data by using the function \texttt{spiders::simulate}.  Input to this function includes the number of predator species observed at each time point, the number of traps used at each time point, the number of prey species of interest, the number of time points for which measurements were taken, and rate parameters $\lambda_{st}, \gamma_{st}$ for which the predator ate and observed, respectively, prey species $s$ at time $t$.  For now, we assume that the number of predators and traps is fixed across time points.  Below we specify rate parameters that will be proportional across time; we expect to fail to reject null hypothesis (\ref{eq:null}) here. 
+
+<<>>=
+Predators <- 4                          
+Traps <- 5                              
+PreySpecies <- 3                        
+Times <- 10                             
+l <- 20                                 
+g <- 15                                 
+@ 
+
+Simulate some data as follows.
+
+<<>>=
+data <- simulate(PreySpecies, Times, Predators, Traps, l, g)
+@ 
+
+Then we can fit the model and calculate a p-value from these data.  The output of the model fit is below.
+
+<<>>=
+(fit <- predpref(data, Predators, Traps))
+@ 
 
 
 \bibliographystyle{amsalpha}
