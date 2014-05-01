@@ -1,8 +1,8 @@
-\name{simulate}
-\alias{simulate}
+\name{simData}
+\alias{simData}
 \title{simulate data for predator preferences model}
 \usage{
-simulate(S, T, J, I, lambda, gamma)
+simData(S, T, J, I, lambda, gamma)
 }
 \arguments{
   \item{S}{number of prey species}

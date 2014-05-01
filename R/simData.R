@@ -7,7 +7,7 @@
 ##' @param lambda vector of rates at which predator eats prey species, indexed by s and t
 ##' @param gamma vector of rates at which prey species is seen in habitat, indexed by s and t
 ##' @export
-simulate <- function(S, T, J, I, lambda, gamma) {
+simData <- function(S, T, J, I, lambda, gamma) {
     ## some quick numbers
     ST <- S*T                           # rows of data frame
     ns <- seq_len(S)                    # index prey species

@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-%\VignetteDepends{devtools,knitr} 
+%\VignetteDepends{devtools,knitr,spiders} 
 %\VignetteEngine{knitr::knitr}
 \input{RnwOpts.tex}
 
@@ -10,7 +10,8 @@
 <<setup, include=FALSE>>=
 options(replace.assign=TRUE, width = 55)
 opts_knit$set(progress = FALSE)
-opts_chunk$set(comment=NA, cache.extra = rand_seed)
+opts_chunk$set(comment=NA, cache.extra = rand_seed, cache=TRUE,
+               dev='png',dpi=150,fig.align="center", autodep=TRUE)
 @
 
 \section*{Model}
@@ -37,7 +38,6 @@ The parameters under the alternative hypothesis are simply the maximum likelihoo
   \hat{\lambda}_{st} = \frac{X_{\cdot st}}{J} \text{ and } \hat{\gamma}_{st} = \frac{Y_{\cdot st}}{I}
 \end{equation*}
 
-
 Null hypothesis (\ref{eq:null}) above is tested with the standard likelihood ratio statistic
 
 \begin{equation}
@@ -49,13 +49,15 @@ where $\theta_0 = \{ \boldsymbol{\lambda}_t = c \boldsymbol{\gamma}_t, \forall t
 
 \section*{Simulations}
 
-In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.
+In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.  To install the package \texttt{spiders}, you can use \texttt{devtools}, or download the files from the \href{https://github.com/roualdes/spiders}{\texttt{GitHub}} webpage.
 
 <<>>=
+## library(devtools)
+## install_github('spiders', 'roualdes')
 library(spiders)
 @ 
 
-We can then simulate some data by using the function \texttt{spiders::simulate}.  Input to this function includes the number of predator species observed at each time point, the number of traps used at each time point, the number of prey species of interest, the number of time points for which measurements were taken, and rate parameters $\lambda_{st}, \gamma_{st}$ for which the predator ate and observed, respectively, prey species $s$ at time $t$.  For now, we assume that the number of predators and traps is fixed across time points.  Below we specify rate parameters that will be proportional across time; we expect to fail to reject null hypothesis (\ref{eq:null}) here. 
+We can then simulate some data by using the function \texttt{spiders::simData}.  Input to this function includes the number of predator species observed at each time point, the number of traps used at each time point, the number of prey species of interest, the number of time points for which measurements were taken, and rate parameters $\lambda_{st}, \gamma_{st}$ for which the predator ate and observed, respectively, prey species $s$ at time $t$.  For now, we assume that the number of predators and traps is fixed across time points.  Below we specify rate parameters that will be proportional across time; we expect to fail to reject null hypothesis (\ref{eq:null}) here. 
 
 <<>>=
 Predators <- 4                          
@@ -69,7 +71,7 @@ g <- 15
 Simulate some data as follows.
 
 <<>>=
-data <- simulate(PreySpecies, Times, Predators, Traps, l, g)
+data <- simData(PreySpecies, Times, Predators, Traps, l, g)
 @ 
 
 Then we can fit the model and calculate a p-value from these data.  The output of the model fit is below.
@@ -78,6 +80,31 @@ Then we can fit the model and calculate a p-value from these data.  The output o
 (fit <- predpref(data, Predators, Traps))
 @ 
 
+An example where we reject the null hypothesis would have rate parameters that are differently proportional across time.  Consider the following.
+
+<<pvalue>>=
+Times <- 12
+l <- 10*(1:Times)/Times
+g <- 3*exp(seq_len(Times)/Times)
+data <- simData(PreySpecies, Times, Predators, Traps, l, g)
+@ 
+
+Consider the plot of the two rate parameters, before fitting the model.  
+<<fig.height=4>>=
+x <- seq_len(Times)
+plot(x, l, ylim = c(0, max(pmax(l,g))),
+     xlab = 'time', ylab = 'rate',
+     type='l', col=cols['blue2'], lwd=2)
+lines(x, g, col=cols['orange2'], lwd=2)
+legend("topleft", c(expression(lambda), expression(gamma)),
+       col=c(cols['blue2'],cols['orange2']),
+       lty=1, box.col='white')
+@ 
+
+Then we find,
+<<>>=
+(p <- predpref(data, Predators, Traps)$p.value)
+@ 
 
 \bibliographystyle{amsalpha}
 \bibliography{refs}

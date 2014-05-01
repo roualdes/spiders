@@ -48,7 +48,7 @@
 \newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
 
 \usepackage{alltt}
-%\VignetteDepends{devtools,knitr} 
+%\VignetteDepends{devtools,knitr,spiders} 
 %\VignetteEngine{knitr::knitr}
 \input{RnwOpts.tex}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -84,7 +84,6 @@ The parameters under the alternative hypothesis are simply the maximum likelihoo
   \hat{\lambda}_{st} = \frac{X_{\cdot st}}{J} \text{ and } \hat{\gamma}_{st} = \frac{Y_{\cdot st}}{I}
 \end{equation*}
 
-
 Null hypothesis (\ref{eq:null}) above is tested with the standard likelihood ratio statistic
 
 \begin{equation}
@@ -96,20 +95,20 @@ where $\theta_0 = \{ \boldsymbol{\lambda}_t = c \boldsymbol{\gamma}_t, \forall t
 
 \section*{Simulations}
 
-In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.
+In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.  To install the package \texttt{spiders}, you can use \texttt{devtools}, or download the files from the \href{https://github.com/roualdes/spiders}{\texttt{GitHub}} webpage.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlcom{## library(devtools) install_github('spiders',}
+\hlcom{## 'roualdes')}
 \hlkwd{library}\hlstd{(spiders)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{Error: there is no package called 'spiders'}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 
 
-We can then simulate some data by using the function \texttt{spiders::simulate}.  Input to this function includes the number of predator species observed at each time point, the number of traps used at each time point, the number of prey species of interest, the number of time points for which measurements were taken, and rate parameters $\lambda_{st}, \gamma_{st}$ for which the predator ate and observed, respectively, prey species $s$ at time $t$.  For now, we assume that the number of predators and traps is fixed across time points.  Below we specify rate parameters that will be proportional across time; we expect to fail to reject null hypothesis (\ref{eq:null}) here. 
+We can then simulate some data by using the function \texttt{spiders::simData}.  Input to this function includes the number of predator species observed at each time point, the number of traps used at each time point, the number of prey species of interest, the number of time points for which measurements were taken, and rate parameters $\lambda_{st}, \gamma_{st}$ for which the predator ate and observed, respectively, prey species $s$ at time $t$.  For now, we assume that the number of predators and traps is fixed across time points.  Below we specify rate parameters that will be proportional across time; we expect to fail to reject null hypothesis (\ref{eq:null}) here. 
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -130,12 +129,12 @@ Simulate some data as follows.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{data} \hlkwb{<-} \hlkwd{simulate}\hlstd{(PreySpecies, Times, Predators, Traps, l,}
+\hlstd{data} \hlkwb{<-} \hlkwd{simData}\hlstd{(PreySpecies, Times, Predators, Traps, l,}
     \hlstd{g)}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{Error: no applicable method for 'simulate' applied to an object of class "{}c('double', 'numeric')"{}}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error: could not find function "{}simData"{}}}\end{kframe}
 \end{knitrout}
 
 
@@ -148,9 +147,69 @@ Then we can fit the model and calculate a p-value from these data.  The output o
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{Error: could not find function "{}predpref"{}}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error: object of type 'closure' is not subsettable}}\end{kframe}
 \end{knitrout}
 
+
+An example where we reject the null hypothesis would have rate parameters that are differently proportional across time.  Consider the following.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{Times} \hlkwb{<-} \hlnum{12}
+\hlstd{l} \hlkwb{<-} \hlnum{10} \hlopt{*} \hlstd{(}\hlnum{1}\hlopt{:}\hlstd{Times)}\hlopt{/}\hlstd{Times}
+\hlstd{g} \hlkwb{<-} \hlnum{3} \hlopt{*} \hlkwd{exp}\hlstd{(}\hlkwd{seq_len}\hlstd{(Times)}\hlopt{/}\hlstd{Times)}
+\hlstd{data} \hlkwb{<-} \hlkwd{simData}\hlstd{(PreySpecies, Times, Predators, Traps, l,}
+    \hlstd{g)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error: could not find function "{}simData"{}}}\end{kframe}
+\end{knitrout}
+
+
+Consider the plot of the two rate parameters, before fitting the model.  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{x} \hlkwb{<-} \hlkwd{seq_len}\hlstd{(Times)}
+\hlkwd{plot}\hlstd{(x, l,} \hlkwc{ylim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{max}\hlstd{(}\hlkwd{pmax}\hlstd{(l, g))),} \hlkwc{xlab} \hlstd{=} \hlstr{"time"}\hlstd{,}
+    \hlkwc{ylab} \hlstd{=} \hlstr{"rate"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"l"}\hlstd{,} \hlkwc{col} \hlstd{= cols[}\hlstr{"blue2"}\hlstd{],} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error: object 'cols' not found}}\begin{alltt}
+\hlkwd{lines}\hlstd{(x, g,} \hlkwc{col} \hlstd{= cols[}\hlstr{"orange2"}\hlstd{],} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error: object 'cols' not found}}\begin{alltt}
+\hlkwd{legend}\hlstd{(}\hlstr{"topleft"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(lambda),} \hlkwd{expression}\hlstd{(gamma)),}
+    \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(cols[}\hlstr{"blue2"}\hlstd{], cols[}\hlstr{"orange2"}\hlstd{]),} \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{box.col} \hlstd{=} \hlstr{"white"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error: object 'cols' not found}}\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/unnamed-chunk-5} 
+
+}
+
+
+
+\end{knitrout}
+
+
+Then we find,
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{(p} \hlkwb{<-} \hlkwd{predpref}\hlstd{(data, Predators, Traps)}\hlopt{$}\hlstd{p.value)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error: object of type 'closure' is not subsettable}}\end{kframe}
+\end{knitrout}
 
 
 \bibliographystyle{amsalpha}

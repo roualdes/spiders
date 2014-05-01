@@ -27,5 +27,5 @@ predpref <- function(dataframe, J, I, alpha=0.05) {
     list('lambdaH1' = lambdaH1, 'gammaH1' = gammaH1,
          'gammaH0' = gammaH0, 'cH0' = cH0,
          'loglikH1' = llH1, 'loglikH0' = llH0,
-         '-2log(LRT)' = LRT, 'df' = df, 'p-value' = pchisq(LRT, df=df, lower.tail=F))
+         '-2log(LRT)' = LRT, 'df' = df, 'p.value' = pchisq(LRT, df=df, lower.tail=F))
 }

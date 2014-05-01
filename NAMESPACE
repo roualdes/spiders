@@ -1,2 +1,2 @@
 export(predpref)
-export(simulate)
+export(simData)
