@@ -96,7 +96,8 @@ plot(x, l, ylim = c(0, max(pmax(l,g))),
      xlab = 'time', ylab = 'rate',
      type='l', col=cols['blue2'], lwd=2)
 lines(x, g, col=cols['orange2'], lwd=2)
-legend("topleft", c(expression(lambda), expression(gamma)),
+legend("topleft", c(expression(lambda), 
+                    expression(gamma)),
        col=c(cols['blue2'],cols['orange2']),
        lty=1, box.col='white')
 @ 
