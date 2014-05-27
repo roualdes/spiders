@@ -14,7 +14,7 @@ opts_chunk$set(comment=NA, cache.extra = rand_seed, cache=TRUE,
                dev='png',dpi=150,fig.align="center", autodep=TRUE)
 @
 
-\section*{Model}
+\section{Generic Model}
 Strauss' statistic $L_{st}$ \cite{Strauss:1979} is the difference between $r_{st}$ the proportion of prey species $s$ found in the gut of a predator during occurrence $t$ and $p_{st}$ the proportion of prey species $s$ found in the habitat of said predator during occurrence $t$.  When the statistic $L_{st} := r_{st} - p_{st}$ is equal to zero we say the predator ate prey species $s$ randomly during time $t$.  A positive difference, $L_{st} > 0$, indicates preferential eating of prey species $s$, and negative values indicate aversion to prey species $s$ at time $t$.  We can replicate and add to the modeling considered by Strauss with the following set up.
 
 Let $X_{jst} \sim \mathcal{P}(\lambda_{st})$ denote the number of prey species $s$ found in the gut of predator $j$ during occurrence $t$; $j \in \{1, \ldots, J\}, s \in \{1, \ldots, S\}, t \in \{1, \ldots, T\}$.  For now we ignore the fact that we only observe a $1$ if predator $j$ ate prey species $s$ during occurrence $t$ or a zero if the predator did not.  Further, $Y_{ist} \sim \mathcal{P}(\gamma_{st})$ will denote the number of prey species $s$ found in trap $i$, $i \in \{1, \ldots, I \}$, hypothesized to represent the habitat of predator $j$, during time occurrence $t$.  Interest lies in the null hypothesis
@@ -32,7 +32,7 @@ We first consider the parameters of this model under the null hypothesis.  Here,
   \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{I\left(\frac{\sum_{st} X_{\cdot st}}{\sum_{st}Y_{\cdot st}} +1 \right)} \text{ and } \hat{c} = \frac{I\sum_{s,t} X_{\cdot st}}{J\sum_{s,t} Y_{\cdot st}}.
 \end{equation*}
 
-The parameters under the alternative hypothesis are simply the maximum likelihood estimates.
+The parameters under the general alternative hypothesis,  $H_1:   \boldsymbol{\lambda}_t \ne c \boldsymbol{\gamma}_t, \forall t$, are simply the maximum likelihood estimates.
 
 \begin{equation*}
   \hat{\lambda}_{st} = \frac{X_{\cdot st}}{J} \text{ and } \hat{\gamma}_{st} = \frac{Y_{\cdot st}}{I}
@@ -47,7 +47,57 @@ Null hypothesis (\ref{eq:null}) above is tested with the standard likelihood rat
 
 where $\theta_0 = \{ \boldsymbol{\lambda}_t = c \boldsymbol{\gamma}_t, \forall t : (\gamma_{st}, c) \in \mathbb{R}^{ST+1} \}$ represents the likelihood under the null hypothesis, and $\theta_1 = \{ \boldsymbol{\lambda}_{st} \ne c \boldsymbol{\gamma}_{st} : (\lambda_{st}, \gamma_{st}) \in \mathbb{R}^{2ST} \}$ represents the likelihood under the alternative hypothesis.  Then $\Lambda \dot{\sim} \chi^2_{ST-1}$ and null hypothesis (\ref{eq:null}) is rejected when $P(\chi^2_{ST-1} > \Lambda) < \alpha$. 
 
-\section*{Simulations}
+\subsection{Non-Count Gut Data}
+
+With smaller animals it is not always possible to determine a count of prey species in the gut of the predator species.  In this case, we can treat the observations as missing and maximize the likelihood via the EM algorithm.  Here however, the alternative hypothesis mentioned above, $H_1:   \boldsymbol{\lambda}_t \ne c \boldsymbol{\gamma}_t, \forall t$ is too general.  We simplify it to 
+
+\begin{equation}
+  \label{eq:emAlt}
+  H_1: \boldsymbol{\lambda}_t = c_t \boldsymbol{\gamma}_t, \forall t
+\end{equation}
+
+\noindent so that $\boldsymbol{\gamma}_t$ can then provide some information about the unobserved counts produced by $\boldsymbol{\lambda}_t$.  
+
+Hence, we can still calculate $\Lambda(X,Y)$, but we do so using the EM algorithm as follows.  Write out the complete log-likelihood.
+
+\begin{equation}
+  \label{eq:llComp}
+  l_{comp} = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st} \log{\lambda_{st}} - I\sum_{st}\gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + constant
+\end{equation}
+
+\noindent Take the expectation with respect to the distribution of the missing data given the observed data and parameters, $f_{X|Y,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x)$,
+
+\begin{equation*}
+  \E_{X|Y,\boldsymbol{\lambda},\boldsymbol{\gamma}} l_{comp} = -J\sum_{st}\lambda_{st} + \sum_{st}(\E X_{\cdot st}) \log{\lambda_{st}} - I\sum_{st}\gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + const
+\end{equation*}
+
+which is then maximized with respect to the parameters $\gamma_{st}, \lambda_{st}, c$, just as above since here $X_{\cdot st}$ is simply replaced by its expectation.
+
+\subsection{Unequal Trap Schedules}
+Consider a situtation where the traps (catching prey species) were left out for a differing length of time within each occurrence, e.g.\ trap $i$ in month $t$ was left out for $6$ days, but trap $i'$ in month $t$ was left out for $3$ days.  We expect to catch an unequal number of prey in each trap simply because one trap was left out for a longer time within month $t$.  
+
+Put $ND_t := \sum_{i} numDays_{it}$ to be the total number of days all traps were left out during month $t$.  Then the complete data log-likelihood under this scenario is as follows.
+
+\begin{equation*}
+  l = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st} \log{\lambda_{st}} - \sum_{t} ND_t \sum_{s} \gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + constant
+\end{equation*}
+
+\noindent Under null hypothesis (\ref{eq:null}) we maximize the following function over its agruments $(c,\gamma_{st}), \forall s,t$
+
+\begin{equation*}
+  l_0(c, \gamma_{st}) = -Jc\sum_{st}\gamma_{st} + \log{c}\sum_{st}X_{\cdot st} + \sum_{st}X_{\cdot st} \log{\gamma_{st}} - \sum_{st}ND_t \gamma_{st} + \sum_{st} Y_{\cdot st} \log{\gamma_{st}} + const.
+\end{equation*}
+
+And under alternative hypothesis (\ref{eq:emAlt}) where $c$ now depends on time, maximize
+
+\begin{equation*}
+  l_1(c_t, \gamma_{st}) = -J\sum_{st}c_t \gamma_{st} + \sum_{st}X_{\cdot st}\log{c_t} + \sum_{st}X_{\cdot st} \log{\gamma_{st}} - \sum_{st}ND_t \gamma_{st} + \sum_{st} Y_{\cdot st} \log{\gamma_{st}} + const,
+\end{equation*}
+
+\noindent for $(c_t, \gamma_{st}), \forall s,t$.  The EM algorithm from above can be incorporated into this scenario exactly as before, keeping in mind the M-step involves maximizing these functions, which I can't seem to do analytically. 
+
+
+\section{Simulations}
 
 In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.  To install the package \texttt{spiders}, you can use \texttt{devtools}, or download the files from the \href{https://github.com/roualdes/spiders}{\texttt{GitHub}} webpage.
 
@@ -60,52 +110,36 @@ library(spiders)
 We can then simulate some data by using the function \texttt{spiders::simData}.  Input to this function includes the number of predator species observed at each time point, the number of traps used at each time point, the number of prey species of interest, the number of time points for which measurements were taken, and rate parameters $\lambda_{st}, \gamma_{st}$ for which the predator ate and observed, respectively, prey species $s$ at time $t$.  For now, we assume that the number of predators and traps is fixed across time points.  Below we specify rate parameters that will be proportional across time; we expect to fail to reject null hypothesis (\ref{eq:null}) here. 
 
 <<>>=
-Predators <- 4                          
-Traps <- 5                              
-PreySpecies <- 3                        
-Times <- 10                             
-l <- 20                                 
-g <- 15                                 
+Predators <- 20
+Traps <- 20                              
+PreySpecies <- 3
+Times <- 12
+ST <- Times*PreySpecies
+l <- matrix(1:ST, nrow=Times, ncol=PreySpecies)
+g <- matrix(2*(1:ST), nrow=Times, ncol=PreySpecies)
 @ 
 
 Simulate some data as follows.
 
 <<>>=
-data <- simData(PreySpecies, Times, Predators, Traps, l, g)
+fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g)
 @ 
 
 Then we can fit the model and calculate a p-value from these data.  The output of the model fit is below.
 
 <<>>=
-(fit <- predpref(data, Predators, Traps))
+(prefs <- predPref(fdata$eaten, fdata$caught))
 @ 
 
 An example where we reject the null hypothesis would have rate parameters that are differently proportional across time.  Consider the following.
 
 <<pvalue>>=
-Times <- 12
-l <- 10*(1:Times)/Times
-g <- 3*exp(seq_len(Times)/Times)
-data <- simData(PreySpecies, Times, Predators, Traps, l, g)
+l <- matrix(1:ST, nrow=Times, ncol=PreySpecies)
+g <- matrix(2*(ST:1), nrow=Times, ncol=PreySpecies)
+fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g)
+predPref(fdata$eaten, fdata$caught)$p.value
 @ 
 
-Consider the plot of the two rate parameters, before fitting the model.  
-<<fig.height=4>>=
-x <- seq_len(Times)
-plot(x, l, ylim = c(0, max(pmax(l,g))),
-     xlab = 'time', ylab = 'rate',
-     type='l', col=cols['blue2'], lwd=2)
-lines(x, g, col=cols['orange2'], lwd=2)
-legend("topleft", c(expression(lambda), 
-                    expression(gamma)),
-       col=c(cols['blue2'],cols['orange2']),
-       lty=1, box.col='white')
-@ 
-
-Then we find,
-<<>>=
-(p <- predpref(data, Predators, Traps)$p.value)
-@ 
 
 \bibliographystyle{amsalpha}
 \bibliography{refs}

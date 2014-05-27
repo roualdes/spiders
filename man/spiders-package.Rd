@@ -2,13 +2,9 @@
 \alias{spiders-package}
 \alias{spiders}
 \docType{package}
-\title{
-What the package does (short line)
-~~ package title ~~
-}
+\title{ Fits predator preferences model. }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+Models predator preferences over an array of time and prey species.
 }
 \details{
 \tabular{ll}{
@@ -16,27 +12,37 @@ Package: \tab spiders\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
 Date: \tab 2014-04-30\cr
-License: \tab What license is it under?\cr
+License: \tab GPL \cr
 }
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
+
 }
 \author{
-Who wrote it
-
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+Edward A. Roualdes <edward.roualdes@uky.edu>
 }
 \references{
-~~ Literature or other references for background information ~~
+Reliability Estimates for Ivlev's Electivity Index, the Forage Ratio, and a Proposed Linear Index of Food Selection
+Richard E. Strauss 
+Transactions of the American Fisheries Society 
+Vol. 108, Iss. 4, 1979
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
-~~ the R documentation directory ~~
-\keyword{ package }
+
+\keyword{ spiders }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
 \examples{
-~~ simple examples of the most important functions ~~
+## make up some numbers
+Predators <- 20
+Traps <- 20                              
+PreySpecies <- 3
+Times <- 12
+ST <- Times*PreySpecies
+l <- matrix(1:ST, nrow=Times, ncol=PreySpecies)
+g <- matrix(2*(1:ST), nrow=Times, ncol=PreySpecies)
+
+##  simulate data
+fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g)
+
+## calculate model
+(prefs <- predPref(fdata$eaten, fdata$caught))
+
 }

@@ -15,6 +15,11 @@ vignettes/*.snm
 vignettes/*.toc
 vignettes/*.vrb
 vignettes/figure
+vignettes/spider.xlsx
+vignettes/trap.csv
+vignettes/spider.csv
+play.R
+notes.org
 
 .Rhistory
 *-Ex.R

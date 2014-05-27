@@ -60,7 +60,7 @@
 
 
 
-\section*{Model}
+\section{Generic Model}
 Strauss' statistic $L_{st}$ \cite{Strauss:1979} is the difference between $r_{st}$ the proportion of prey species $s$ found in the gut of a predator during occurrence $t$ and $p_{st}$ the proportion of prey species $s$ found in the habitat of said predator during occurrence $t$.  When the statistic $L_{st} := r_{st} - p_{st}$ is equal to zero we say the predator ate prey species $s$ randomly during time $t$.  A positive difference, $L_{st} > 0$, indicates preferential eating of prey species $s$, and negative values indicate aversion to prey species $s$ at time $t$.  We can replicate and add to the modeling considered by Strauss with the following set up.
 
 Let $X_{jst} \sim \mathcal{P}(\lambda_{st})$ denote the number of prey species $s$ found in the gut of predator $j$ during occurrence $t$; $j \in \{1, \ldots, J\}, s \in \{1, \ldots, S\}, t \in \{1, \ldots, T\}$.  For now we ignore the fact that we only observe a $1$ if predator $j$ ate prey species $s$ during occurrence $t$ or a zero if the predator did not.  Further, $Y_{ist} \sim \mathcal{P}(\gamma_{st})$ will denote the number of prey species $s$ found in trap $i$, $i \in \{1, \ldots, I \}$, hypothesized to represent the habitat of predator $j$, during time occurrence $t$.  Interest lies in the null hypothesis
@@ -78,7 +78,7 @@ We first consider the parameters of this model under the null hypothesis.  Here,
   \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{I\left(\frac{\sum_{st} X_{\cdot st}}{\sum_{st}Y_{\cdot st}} +1 \right)} \text{ and } \hat{c} = \frac{I\sum_{s,t} X_{\cdot st}}{J\sum_{s,t} Y_{\cdot st}}.
 \end{equation*}
 
-The parameters under the alternative hypothesis are simply the maximum likelihood estimates.
+The parameters under the general alternative hypothesis,  $H_1:   \boldsymbol{\lambda}_t \ne c \boldsymbol{\gamma}_t, \forall t$, are simply the maximum likelihood estimates.
 
 \begin{equation*}
   \hat{\lambda}_{st} = \frac{X_{\cdot st}}{J} \text{ and } \hat{\gamma}_{st} = \frac{Y_{\cdot st}}{I}
@@ -93,7 +93,57 @@ Null hypothesis (\ref{eq:null}) above is tested with the standard likelihood rat
 
 where $\theta_0 = \{ \boldsymbol{\lambda}_t = c \boldsymbol{\gamma}_t, \forall t : (\gamma_{st}, c) \in \mathbb{R}^{ST+1} \}$ represents the likelihood under the null hypothesis, and $\theta_1 = \{ \boldsymbol{\lambda}_{st} \ne c \boldsymbol{\gamma}_{st} : (\lambda_{st}, \gamma_{st}) \in \mathbb{R}^{2ST} \}$ represents the likelihood under the alternative hypothesis.  Then $\Lambda \dot{\sim} \chi^2_{ST-1}$ and null hypothesis (\ref{eq:null}) is rejected when $P(\chi^2_{ST-1} > \Lambda) < \alpha$. 
 
-\section*{Simulations}
+\subsection{Non-Count Gut Data}
+
+With smaller animals it is not always possible to determine a count of prey species in the gut of the predator species.  In this case, we can treat the observations as missing and maximize the likelihood via the EM algorithm.  Here however, the alternative hypothesis mentioned above, $H_1:   \boldsymbol{\lambda}_t \ne c \boldsymbol{\gamma}_t, \forall t$ is too general.  We simplify it to 
+
+\begin{equation}
+  \label{eq:emAlt}
+  H_1: \boldsymbol{\lambda}_t = c_t \boldsymbol{\gamma}_t, \forall t
+\end{equation}
+
+\noindent so that $\boldsymbol{\gamma}_t$ can then provide some information about the unobserved counts produced by $\boldsymbol{\lambda}_t$.  
+
+Hence, we can still calculate $\Lambda(X,Y)$, but we do so using the EM algorithm as follows.  Write out the complete log-likelihood.
+
+\begin{equation}
+  \label{eq:llComp}
+  l_{comp} = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st} \log{\lambda_{st}} - I\sum_{st}\gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + constant
+\end{equation}
+
+\noindent Take the expectation with respect to the distribution of the missing data given the observed data and parameters, $f_{X|Y,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x)$,
+
+\begin{equation*}
+  \E_{X|Y,\boldsymbol{\lambda},\boldsymbol{\gamma}} l_{comp} = -J\sum_{st}\lambda_{st} + \sum_{st}(\E X_{\cdot st}) \log{\lambda_{st}} - I\sum_{st}\gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + const
+\end{equation*}
+
+which is then maximized with respect to the parameters $\gamma_{st}, \lambda_{st}, c$, just as above since here $X_{\cdot st}$ is simply replaced by its expectation.
+
+\subsection{Unequal Trap Schedules}
+Consider a situtation where the traps (catching prey species) were left out for a differing length of time within each occurrence, e.g.\ trap $i$ in month $t$ was left out for $6$ days, but trap $i'$ in month $t$ was left out for $3$ days.  We expect to catch an unequal number of prey in each trap simply because one trap was left out for a longer time within month $t$.  
+
+Put $ND_t := \sum_{i} numDays_{it}$ to be the total number of days all traps were left out during month $t$.  Then the complete data log-likelihood under this scenario is as follows.
+
+\begin{equation*}
+  l = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st} \log{\lambda_{st}} - \sum_{t} ND_t \sum_{s} \gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + constant
+\end{equation*}
+
+\noindent Under null hypothesis (\ref{eq:null}) we maximize the following function over its agruments $(c,\gamma_{st}), \forall s,t$
+
+\begin{equation*}
+  l_0(c, \gamma_{st}) = -Jc\sum_{st}\gamma_{st} + \log{c}\sum_{st}X_{\cdot st} + \sum_{st}X_{\cdot st} \log{\gamma_{st}} - \sum_{st}ND_t \gamma_{st} + \sum_{st} Y_{\cdot st} \log{\gamma_{st}} + const.
+\end{equation*}
+
+And under alternative hypothesis (\ref{eq:emAlt}) where $c$ now depends on time, maximize
+
+\begin{equation*}
+  l_1(c_t, \gamma_{st}) = -J\sum_{st}c_t \gamma_{st} + \sum_{st}X_{\cdot st}\log{c_t} + \sum_{st}X_{\cdot st} \log{\gamma_{st}} - \sum_{st}ND_t \gamma_{st} + \sum_{st} Y_{\cdot st} \log{\gamma_{st}} + const,
+\end{equation*}
+
+\noindent for $(c_t, \gamma_{st}), \forall s,t$.  The EM algorithm from above can be incorporated into this scenario exactly as before, keeping in mind the M-step involves maximizing these functions, which I can't seem to do analytically. 
+
+
+\section{Simulations}
 
 In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.  To install the package \texttt{spiders}, you can use \texttt{devtools}, or download the files from the \href{https://github.com/roualdes/spiders}{\texttt{GitHub}} webpage.
 
@@ -113,12 +163,13 @@ We can then simulate some data by using the function \texttt{spiders::simData}. 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{Predators} \hlkwb{<-} \hlnum{4}
-\hlstd{Traps} \hlkwb{<-} \hlnum{5}
+\hlstd{Predators} \hlkwb{<-} \hlnum{20}
+\hlstd{Traps} \hlkwb{<-} \hlnum{20}
 \hlstd{PreySpecies} \hlkwb{<-} \hlnum{3}
-\hlstd{Times} \hlkwb{<-} \hlnum{10}
-\hlstd{l} \hlkwb{<-} \hlnum{20}
-\hlstd{g} \hlkwb{<-} \hlnum{15}
+\hlstd{Times} \hlkwb{<-} \hlnum{12}
+\hlstd{ST} \hlkwb{<-} \hlstd{Times} \hlopt{*} \hlstd{PreySpecies}
+\hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{ST,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{g} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{2} \hlopt{*} \hlstd{(}\hlnum{1}\hlopt{:}\hlstd{ST),} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -129,7 +180,7 @@ Simulate some data as follows.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{data} \hlkwb{<-} \hlkwd{simData}\hlstd{(PreySpecies, Times, Predators, Traps, l,}
+\hlstd{fdata} \hlkwb{<-} \hlkwd{simPref}\hlstd{(PreySpecies, Times, Predators, Traps, l,}
     \hlstd{g)}
 \end{alltt}
 \end{kframe}
@@ -141,43 +192,23 @@ Then we can fit the model and calculate a p-value from these data.  The output o
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{(fit} \hlkwb{<-} \hlkwd{predpref}\hlstd{(data, Predators, Traps))}
+\hlstd{(prefs} \hlkwb{<-} \hlkwd{predPref}\hlstd{(fdata}\hlopt{$}\hlstd{eaten, fdata}\hlopt{$}\hlstd{caught))}
 \end{alltt}
 \begin{verbatim}
-$lambdaH1
- [1] 20.00 19.25 18.50 19.50 22.00 20.50 23.25 22.00
- [9] 18.25 19.75 20.75 17.75 22.00 24.00 20.25 20.00
-[17] 15.75 19.50 22.50 17.00 17.25 19.00 21.75 17.75
-[25] 24.25 22.00 16.25 19.00 19.25 20.50
-
-$gammaH1
- [1] 15.6 15.0 16.0 12.2 14.4 14.4 16.0 13.6 13.6 17.2
-[11] 18.4 12.8 14.2 16.2 17.6 16.0 13.6 14.6 13.4 15.8
-[21] 14.2 16.2 16.2 16.4 16.4 15.4 15.4 13.2 15.8 12.8
-
-$gammaH0
- [1] 15.34 14.76 14.95 13.50 15.54 14.95 16.80 15.15
- [9] 13.69 16.02 16.99 13.11 15.44 17.19 16.41 15.54
-[17] 12.72 14.66 15.25 14.27 13.59 15.25 16.31 14.86
-[25] 17.38 16.02 13.79 13.79 15.15 14.18
-
-$cH0
-[1] 1.325
-
 $loglikH1
-[1] 8687
+[1] 218220
 
 $loglikH0
-[1] 8677
+[1] 218202
 
 $`-2log(LRT)`
-[1] 20.66
+[1] 36.21
 
 $df
-[1] 29
+[1] 35
 
 $p.value
-[1] 0.8711
+[1] 0.4121
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -188,49 +219,18 @@ An example where we reject the null hypothesis would have rate parameters that a
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{Times} \hlkwb{<-} \hlnum{12}
-\hlstd{l} \hlkwb{<-} \hlnum{10} \hlopt{*} \hlstd{(}\hlnum{1}\hlopt{:}\hlstd{Times)}\hlopt{/}\hlstd{Times}
-\hlstd{g} \hlkwb{<-} \hlnum{3} \hlopt{*} \hlkwd{exp}\hlstd{(}\hlkwd{seq_len}\hlstd{(Times)}\hlopt{/}\hlstd{Times)}
-\hlstd{data} \hlkwb{<-} \hlkwd{simData}\hlstd{(PreySpecies, Times, Predators, Traps, l,}
+\hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{ST,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{g} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{2} \hlopt{*} \hlstd{(ST}\hlopt{:}\hlnum{1}\hlstd{),} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{fdata} \hlkwb{<-} \hlkwd{simPref}\hlstd{(PreySpecies, Times, Predators, Traps, l,}
     \hlstd{g)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-
-Consider the plot of the two rate parameters, before fitting the model.  
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{x} \hlkwb{<-} \hlkwd{seq_len}\hlstd{(Times)}
-\hlkwd{plot}\hlstd{(x, l,} \hlkwc{ylim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{max}\hlstd{(}\hlkwd{pmax}\hlstd{(l, g))),} \hlkwc{xlab} \hlstd{=} \hlstr{"time"}\hlstd{,}
-    \hlkwc{ylab} \hlstd{=} \hlstr{"rate"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"l"}\hlstd{,} \hlkwc{col} \hlstd{= cols[}\hlstr{"blue2"}\hlstd{],} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{)}
-\hlkwd{lines}\hlstd{(x, g,} \hlkwc{col} \hlstd{= cols[}\hlstr{"orange2"}\hlstd{],} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{)}
-\hlkwd{legend}\hlstd{(}\hlstr{"topleft"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(lambda),} \hlkwd{expression}\hlstd{(gamma)),}
-    \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(cols[}\hlstr{"blue2"}\hlstd{], cols[}\hlstr{"orange2"}\hlstd{]),} \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{box.col} \hlstd{=} \hlstr{"white"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-
-{\centering \includegraphics[width=\maxwidth]{figure/unnamed-chunk-5} 
-
-}
-
-
-
-\end{knitrout}
-
-
-Then we find,
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{(p} \hlkwb{<-} \hlkwd{predpref}\hlstd{(data, Predators, Traps)}\hlopt{$}\hlstd{p.value)}
+\hlkwd{predPref}\hlstd{(fdata}\hlopt{$}\hlstd{eaten, fdata}\hlopt{$}\hlstd{caught)}\hlopt{$}\hlstd{p.value}
 \end{alltt}
 \begin{verbatim}
-[1] 1.181e-12
+[1] 0
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
+
 
 
 \bibliographystyle{amsalpha}
