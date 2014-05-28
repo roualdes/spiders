@@ -95,52 +95,34 @@ where $\theta_0 = \{ \boldsymbol{\lambda}_t = c \boldsymbol{\gamma}_t, \forall t
 
 \subsection{Non-Count Gut Data}
 
-With smaller animals it is not always possible to determine a count of prey species in the gut of the predator species.  In this case, we can treat the observations as missing and maximize the likelihood via the EM algorithm.  Here however, the alternative hypothesis mentioned above, $H_1:   \boldsymbol{\lambda}_t \ne c \boldsymbol{\gamma}_t, \forall t$ is too general.  We simplify it to 
+With smaller animals it is not always possible to observe a count of prey species eaten by a predator species.  Instead, a binary response of weather or not DNA of said prey species exists in the gut of the predator is observed.  In this case, we can treat the count of eaten prey species as missing and maximize the likelihood via the EM algorithm.  
 
-\begin{equation}
-  \label{eq:emAlt}
-  H_1: \boldsymbol{\lambda}_t = c_t \boldsymbol{\gamma}_t, \forall t
-\end{equation}
-
-\noindent so that $\boldsymbol{\gamma}_t$ can then provide some information about the unobserved counts produced by $\boldsymbol{\lambda}_t$.  
-
-Hence, we can still calculate $\Lambda(X,Y)$, but we do so using the EM algorithm as follows.  Write out the complete log-likelihood.
+We model what information we do observe.  Denote this binary response by $Z_{jst}$, which takes on the value $1$ if the $j^{th}$ predator ate prey species $s$ in time $t$ and $0$ otherwise.  Hence, $\Lambda(X,Y)$ is still calculable via the EM algorithm as follows.  Write out the complete data log-likelihood.  
 
 \begin{equation}
   \label{eq:llComp}
-  l_{comp} = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st} \log{\lambda_{st}} - I\sum_{st}\gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + constant
+  l_{comp} = \prod_{t}^T \prod_{s}^S f_{X}(x|\boldsymbol{\lambda})  f_{Y}(y|\boldsymbol{\gamma}) f_{Z}(z|\boldsymbol{\lambda})
 \end{equation}
 
-\noindent Take the expectation with respect to the distribution of the missing data given the observed data and parameters, $f_{X|Y,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x)$,
+\noindent Take the expectation of $l_{comp}$ with respect to the distribution of the missing data given the observed data and parameters, 
+
 
 \begin{equation*}
-  \E_{X|Y,\boldsymbol{\lambda},\boldsymbol{\gamma}} l_{comp} = -J\sum_{st}\lambda_{st} + \sum_{st}(\E X_{\cdot st}) \log{\lambda_{st}} - I\sum_{st}\gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + const
+  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x) = \frac{f_{X,Y,Z}(x,y,z|\boldsymbol{\gamma},\boldsymbol{\lambda})}{f_{Y,Z}(y,z|\boldsymbol{\lambda},\boldsymbol{\gamma})}.
 \end{equation*}
 
-which is then maximized with respect to the parameters $\gamma_{st}, \lambda_{st}, c$, just as above since here $X_{\cdot st}$ is simply replaced by its expectation.
+\noindent Then maximize $\E_{X|Y,Z}l_{comp}$ with respect to the parameters $\gamma_{st}, \lambda_{st}, c$, just as above since here $X_{\cdot st}$ is simply replaced by its expectation.
 
 \subsection{Unequal Trap Schedules}
 Consider a situtation where the traps (catching prey species) were left out for a differing length of time within each occurrence, e.g.\ trap $i$ in month $t$ was left out for $6$ days, but trap $i'$ in month $t$ was left out for $3$ days.  We expect to catch an unequal number of prey in each trap simply because one trap was left out for a longer time within month $t$.  
 
-Put $ND_t := \sum_{i} numDays_{it}$ to be the total number of days all traps were left out during month $t$.  Then the complete data log-likelihood under this scenario is as follows.
+Put $I_t := \sum_{i} numDays_{it}$ to be the total number of days all traps were left out during month $t$.  Then the complete data log-likelihood under this scenario is as follows.
 
 \begin{equation*}
-  l = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st} \log{\lambda_{st}} - \sum_{t} ND_t \sum_{s} \gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + constant
+  l = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st} \log{\lambda_{st}} - \sum_{t} I_t \sum_{s} \gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + constant
 \end{equation*}
 
-\noindent Under null hypothesis (\ref{eq:null}) we maximize the following function over its agruments $(c,\gamma_{st}), \forall s,t$
-
-\begin{equation*}
-  l_0(c, \gamma_{st}) = -Jc\sum_{st}\gamma_{st} + \log{c}\sum_{st}X_{\cdot st} + \sum_{st}X_{\cdot st} \log{\gamma_{st}} - \sum_{st}ND_t \gamma_{st} + \sum_{st} Y_{\cdot st} \log{\gamma_{st}} + const.
-\end{equation*}
-
-And under alternative hypothesis (\ref{eq:emAlt}) where $c$ now depends on time, maximize
-
-\begin{equation*}
-  l_1(c_t, \gamma_{st}) = -J\sum_{st}c_t \gamma_{st} + \sum_{st}X_{\cdot st}\log{c_t} + \sum_{st}X_{\cdot st} \log{\gamma_{st}} - \sum_{st}ND_t \gamma_{st} + \sum_{st} Y_{\cdot st} \log{\gamma_{st}} + const,
-\end{equation*}
-
-\noindent for $(c_t, \gamma_{st}), \forall s,t$.  The EM algorithm from above can be incorporated into this scenario exactly as before, keeping in mind the M-step involves maximizing these functions, which I can't seem to do analytically. 
+If there exists a differing number of predators in each time period, we can similarly model this by indexing $J$ by $t$, say $J_t$.  The EM algorithm from above can be incorporated into this scenario exactly as before, keeping in mind the M-step involves maximizing these functions, which I can't seem to do analytically. 
 
 
 \section{Simulations}
@@ -164,12 +146,12 @@ We can then simulate some data by using the function \texttt{spiders::simData}. 
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{Predators} \hlkwb{<-} \hlnum{20}
-\hlstd{Traps} \hlkwb{<-} \hlnum{20}
+\hlstd{Traps} \hlkwb{<-} \hlnum{15}
 \hlstd{PreySpecies} \hlkwb{<-} \hlnum{3}
-\hlstd{Times} \hlkwb{<-} \hlnum{12}
+\hlstd{Times} \hlkwb{<-} \hlnum{5}
 \hlstd{ST} \hlkwb{<-} \hlstd{Times} \hlopt{*} \hlstd{PreySpecies}
-\hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{ST,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
-\hlstd{g} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{2} \hlopt{*} \hlstd{(}\hlnum{1}\hlopt{:}\hlstd{ST),} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{g} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{2}\hlstd{,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -196,19 +178,19 @@ Then we can fit the model and calculate a p-value from these data.  The output o
 \end{alltt}
 \begin{verbatim}
 $loglikH1
-[1] 218220
+[1] 1618
 
 $loglikH0
-[1] 218202
+[1] 1615
 
 $`-2log(LRT)`
-[1] 36.21
+[1] 7.611
 
 $df
-[1] 35
+[1] 14
 
 $p.value
-[1] 0.4121
+[1] 0.9086
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -226,7 +208,7 @@ An example where we reject the null hypothesis would have rate parameters that a
 \hlkwd{predPref}\hlstd{(fdata}\hlopt{$}\hlstd{eaten, fdata}\hlopt{$}\hlstd{caught)}\hlopt{$}\hlstd{p.value}
 \end{alltt}
 \begin{verbatim}
-[1] 0
+[1] 4.101e-322
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
