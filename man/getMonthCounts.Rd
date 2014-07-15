@@ -5,7 +5,7 @@
 getMonthCounts(data, vars, by)
 }
 \arguments{
-  \item{data}{a data.frame}
+  \item{data}{a dataframe}
 
   \item{vars}{column variables in data to sum over}
 

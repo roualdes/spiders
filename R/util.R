@@ -1,6 +1,6 @@
 ##' sum specified columns by time
 ##'
-##' @param data a data.frame
+##' @param data a dataframe
 ##' @param vars column variables in data to sum over
 ##' @param by extra variables to sum by
 getMonthCounts <- function(data, vars, by) {
@@ -10,11 +10,19 @@ getMonthCounts <- function(data, vars, by) {
 
 ##' count number of spiders or traps in each unit of time
 ##'
-##' @param data a data.table
+##' @param data a dataframe
 getUnitCounts <- function(data) {
     ddply(data, .(time), summarize, total=length(time))$total
 }
 
+##' checks convergence of the parameters for the estimation functions
+##'
+##' @param theta an object, convertible to a matrix, of current parameter values
+##' @param theta_old an object, convertible to a matrix, of old parameter values
+##' @param eps tolerance to determine convergence
+converged <- function(theta, theta_old, eps=1e-6) {
+    isTRUE(all.equal(theta, theta_old, tolerance=eps, check.names=F, check.attr=F))
+}
 
 ## sum over species to get a vector of values for each time period
 sumSp <- function(mat) {

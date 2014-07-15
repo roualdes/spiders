@@ -49,23 +49,23 @@ where $\theta_0 = \{ \boldsymbol{\lambda}_t = c \boldsymbol{\gamma}_t, \forall t
 
 \subsection{Non-Count Gut Data}
 
-With smaller animals it is not always possible to observe a count of prey species eaten by a predator species.  Instead, a binary response of weather or not DNA of said prey species exists in the gut of the predator is observed.  In this case, we can treat the count of eaten prey species as missing and maximize the likelihood via the EM algorithm.  
+With smaller animals it is not always possible to observe a count of prey species eaten by a predator species.  Instead, a binary response of whether or not DNA of said prey species exists in the gut of the predator is observed.  In this case, we can treat the count of eaten prey species as missing and maximize the likelihood via the EM algorithm.  
 
-We model what information we do observe.  Denote this binary response by $Z_{jst}$, which takes on the value $1$ if the $j^{th}$ predator ate prey species $s$ in time $t$ and $0$ otherwise.  Hence, $\Lambda(X,Y)$ is still calculable via the EM algorithm as follows.  Write out the complete data log-likelihood.  
+We model what information we do observe.  Denote this binary response by $Z_{jst}$, which takes on the value $1$ if the $j^{th}$ predator ate prey species $s$ in time $t$ and $0$ otherwise.  Hence, $\Lambda(X,Y)$ is still calculable via the EM algorithm as follows.  Write out the complete data likelihood,
 
 \begin{equation}
   \label{eq:llComp}
-  l_{comp} = \prod_{t}^T \prod_{s}^S f_{X}(x|\boldsymbol{\lambda})  f_{Y}(y|\boldsymbol{\gamma}) f_{Z}(z|\boldsymbol{\lambda})
+  L_{comp}(X,Z,Y|\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \prod_{t}^T \prod_{s}^S \prod_{j}^J f_{X,Z}(x,z|\boldsymbol{\lambda})  f_{Y}(y|\boldsymbol{\gamma})
 \end{equation}
 
-\noindent Take the expectation of $l_{comp}$ with respect to the distribution of the missing data given the observed data and parameters, 
+\noindent Take the expectation of $\log{L_{comp}}$ with respect to the distribution of the missing data given the observed data and parameters, 
 
 
 \begin{equation*}
-  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x) = \frac{f_{X,Y,Z}(x,y,z|\boldsymbol{\gamma},\boldsymbol{\lambda})}{f_{Y,Z}(y,z|\boldsymbol{\lambda},\boldsymbol{\gamma})}.
+  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x) = \frac{f_{X,Y,Z}(x,y,z|\boldsymbol{\gamma},\boldsymbol{\lambda})}{f_{Y,Z}(y,z|\boldsymbol{\lambda},\boldsymbol{\gamma})}. %= \frac{f_{X,Z}(x,z|\boldsymbol{\lambda})}{f_{Z}(z|\boldsymbol{\lambda})}.
 \end{equation*}
 
-\noindent Then maximize $\E_{X|Y,Z}l_{comp}$ with respect to the parameters $\gamma_{st}, \lambda_{st}, c$, just as above since here $X_{\cdot st}$ is simply replaced by its expectation.
+\noindent Then maximize $\E_{X|Y,Z}l_{comp}$ with respect to the parameters $\gamma_{st}, \lambda_{st}, c$, just as above since here $X_{jst}$ is simply replaced by its expectation.
 
 \subsection{Unequal Trap Schedules}
 Consider a situtation where the traps (catching prey species) were left out for a differing length of time within each occurrence, e.g.\ trap $i$ in month $t$ was left out for $6$ days, but trap $i'$ in month $t$ was left out for $3$ days.  We expect to catch an unequal number of prey in each trap simply because one trap was left out for a longer time within month $t$.  
@@ -122,6 +122,139 @@ fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g)
 predPref(fdata$eaten, fdata$caught)$p.value
 @ 
 
+\appendix
+\section{Details}
+\subsection{Complete, Balanced Data}
+With balanced, count data the log-likelihood is
+
+\begin{equation*}
+  l = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st}\log{\lambda_{st}} - I \sum_{st}\gamma_{st} + \sum_{st}Y_{\cdot st} + \text{const}.
+\end{equation*}
+
+Under $H_0: \lambda_{st} = c \gamma_{st}$ we find solutions of first derivatives of $l$ with respect to $c, \gamma_{s't'}$ set equal to zero to be
+
+\begin{equation*}
+  c = \frac{\sum_{st} X_{\cdot st}}{J\sum_{st} \gamma_{st}} \quad \text{ and } \quad \gamma_{s't'} = \frac{X_{\cdot s't'} + Y_{\cdot s't'}}{Jc + I}.
+\end{equation*}
+
+\noindent Solving these equations simultaneously gives
+
+\begin{equation*}
+  \hat{c} = \frac{J^{-1} \sum_{st} X_{\cdot st}}{I^{-1} \sum_{st} Y_{\cdot st}} \quad \text{ and } \quad \hat{\gamma}_{s't'} = \frac{X_{\cdot s't'} + Y_{\cdot s't'}}{I\left( \frac{\sum_{st}X_{\cdot st}}{\sum_{st} Y_{\cdot st}} + 1  \right)}.
+\end{equation*}
+
+Under $H_1: \lambda_{st} \ne \gamma_{st}$ we find the maximum likelihood estimates to be
+
+\begin{equation*}
+  \hat{\lambda}_{s't'} = \frac{X_{\cdot s't'}}{J} \quad \text{ and } \quad \hat{\gamma_{s't'}} = \frac{Y_{\cdot s't'}}{I}.
+\end{equation*}
+
+\subsection{Complete, Unbalanced Data}
+
+With unbalanced, count data the log-likelihood is
+
+\begin{equation*}
+  l = -\sum_{t} J_t \sum_{s} \lambda_{st} + \sum_{st} X_{\cdot st} \log{J_t \lambda_{st}} - \sum_{t} I_t \sum_{s} \gamma_{st} + \sum_{st} Y_{\cdot st} \log{I_t \gamma_{st}}.
+\end{equation*}
+
+Under $H_0: \lambda_{st} = c \gamma_{st}$ we find solutions of first derivatives of $l$ with respect to $c, \gamma_{s't'}$ set equal to be
+
+\begin{equation*}
+  c = \frac{\sum_{st} X_{\cdot st}}{\sum_{t} J_t \sum_{s} \gamma_{st}} \quad \text{ and } \quad \gamma_{s't'} = \frac{X_{\cdot s't'} + Y_{\cdot s't'}}{cJ_{t'} + I_{t'}}.
+\end{equation*}
+
+\noindent Since we can't solve these equations simultaneously, we exploit the fact that the log-likelihood is concave; each term is concave and convexity is closed under addition.  Hence, we can iteratively maximize the profile log-likelihood until convergence.  
+
+Under $H_1: \lambda_{st} \ne \gamma_{st}$ we find the maximum likelihood estimates to be
+
+\begin{equation*}
+  \hat{\lambda}_{st} = \frac{X_{\cdot s't'}}{J_{t'}} \quad \text{ and } \quad \hat{\gamma}_{s't'} = \frac{Y_{\cdot s't'}}{I_{t'}}.
+\end{equation*}
+
+\subsection{Non-Count Data}
+
+When the count data are not observed we can fall back on treating the counts as missing, so long as we do observe indicators telling us when the predator species did eat prey species $s$.  
+
+\subsubsection*{E-Step}
+For this we need the conditional distribution of the missing data given the observed data
+
+\begin{equation*}
+  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x) = \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{X_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) X_{jst}!} \quad \text{ where } \quad \E_{[X|Y,Z]}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
+\end{equation*}
+
+Since the joint density of $X_{jst}, Z_{jst}$ is
+
+\begin{equation*}
+  f_{X,Z|\boldsymbol{\lambda}}(x,z) = \left\{
+    \begin{array}{lr}
+      \exp{\{ -\lambda_{st} \}}, & X_{jst}=0 \mbox{ and } Z_{jst} = 0 \\
+      \frac{\exp{\{-\lambda_{st} \}} \lambda_{st}^{X_{jst}}}{X_{jst}!}, & X_{jst} > 0 \mbox{ and } Z_{jst} = 1\\
+      0 & \mbox{otherwise}
+    \end{array}
+  \right.
+\end{equation*}
+
+\noindent it is easy to calculate the complete data log-likelihood
+
+\begin{align*}
+  l_{comp} 
+  & = \log{f_{X,Z|\boldsymbol{\lambda}}(x,z)} + \log{f_{Y|\boldsymbol{\gamma}}(y)} \\
+  & = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \log{f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst})}
+  + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)}.
+\end{align*}
+
+\noindent After we take the expectation of $l_{comp}$ with respect to $f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}$ we get
+
+\begin{equation*}
+  \E l_{comp} = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \E[\log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})}]
+  + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)}
+\end{equation*}
+  
+\noindent where the expectation conditions on all of the remaining parameters. In this case we see
+
+\begin{equation*}
+  \log{f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst})} =
+  \left\{
+    \begin{array}{ll}
+      -\lambda_{st} & X_{jst} = 0 \mbox{ and } z_{jst}=0 \\
+      -\lambda_{st} + X_{jst}\log(\lambda_{st})-\log(X_{st}!) & X_{jst} > 0 \mbox{ and } z_{jst}=1
+    \end{array}
+  \right.,
+\end{equation*}
+
+so that
+
+\begin{equation*}
+  \E[\log{f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst})}] \equiv 
+  - \lambda_{st} + z_{jst} \left[\frac{\lambda_{st}\exp(\lambda_{st})}{\exp(\lambda_{st})-1} \log(\lambda_{st})
+    - \log(X_{st}!)\right].
+\end{equation*}
+
+Substituting this value back into the expected log-likelihood we then get:
+
+\begin{equation*}
+  \E l_{comp} =\sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t}\left( - \lambda_{st} 
+    + z_{jst} \log(\lambda_{st}) \E X_{jst}  
+      - \text{const} \right) - \sum_{t} I_t \sum_{s} \gamma_{st} + \sum_{st} Y_{\cdot st} \log{I_t \gamma_{st}}.
+\end{equation*}
+
+\subsection*{M-Step}
+
+We maximize $\E l_{comp}$ with respect to its parameters $\lambda_{st}, \gamma_{st}, c$, thus completing one step of the EM algorithm. 
+
+\subsection*{Hypotheses Under EM}
+
+Under $H_0: \lambda_{st} = c \gamma_{st}$, we iteratively solve the following equations within on step of the EM algorithm
+
+\begin{equation*}
+  \hat{\gamma}_{st} = \frac{z_{\cdot st} \E X_{jst} + Y_{\cdot st}}{cJ_t + I_t} \quad \text{ and } \quad \hat{c} = \frac{ \sum_{st} z_{\cdot st} \E X_{jst}}{\sum_{t} J_t \sum_{s} \gamma_{st}}.
+\end{equation*}
+
+Under $H_1$ we complete one step of the EM algorithm via
+
+\begin{equation*}
+  \hat{\lambda}_{st} = \frac{z_{\cdot st} \E X_{jst}}{J_t} \quad \text{ and } \quad \hat{\gamma}_{st} = \frac{Y_{\cdot st}}{I_t}.
+\end{equation*}
 
 \bibliographystyle{amsalpha}
 \bibliography{refs}

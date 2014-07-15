@@ -1,8 +1,8 @@
-\name{lcomp}
-\alias{lcomp}
-\title{complete data log-likelihood for null or simple alternative hypotheses}
+\name{ll}
+\alias{ll}
+\title{log-likelihood of predator preferances model with unbalanced data}
 \usage{
-lcomp(Xdst, Ydst, lambda, gamma, J, I, c)
+ll(Xdst, Ydst, lambda, gamma, J, I, c)
 }
 \arguments{
   \item{Xdst}{matrix of sums of number of eaten prey
@@ -24,14 +24,10 @@ lcomp(Xdst, Ydst, lambda, gamma, J, I, c)
   \item{I}{vector of number of days all traps were left out
   in a given time period}
 
-  \item{c}{scalar or vector (indexed by time) in
-  hypotheses}
+  \item{c}{scalar in null hypotheses}
 }
 \description{
-complete data log-likelihood for null or simple alternative
-hypotheses
-}
-\details{
-this one should be used for optimization
+log-likelihood of predator preferances model with
+unbalanced data
 }
 

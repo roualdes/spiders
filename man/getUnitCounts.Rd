@@ -5,7 +5,7 @@
 getUnitCounts(data)
 }
 \arguments{
-  \item{data}{a data.table}
+  \item{data}{a dataframe}
 }
 \description{
 count number of spiders or traps in each unit of time

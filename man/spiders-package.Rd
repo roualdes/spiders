@@ -4,7 +4,7 @@
 \docType{package}
 \title{ Fits predator preferences model. }
 \description{
-Models predator preferences over an array of time and prey species.
+  Models predator preferences over an array of time and prey species
 }
 \details{
 \tabular{ll}{
@@ -27,8 +27,7 @@ Vol. 108, Iss. 4, 1979
 }
 
 \keyword{ spiders }
-\seealso{
-}
+
 \examples{
 ## make up some numbers
 Predators <- 20

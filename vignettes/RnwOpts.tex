@@ -8,3 +8,10 @@ setspace,amsthm,subfig,authblk}
 
 \newcommand{\iid}{\stackrel{\mathrm{iid}}{\sim}}
 \newcommand{\E}{\mathbb{E}}
+
+% Simon comments
+\newcommand{\sjbcomment}[1]{\textcolor{blue}{({\it #1})}}
+\newcommand{\sjbhcomment}[2]{\textcolor{blue}{#1}\textcolor{blue}{({\it #2})}}
+\newcommand{\sjbinsert}[1]{\textcolor{blue}{#1}}
+\newcommand{\sjbstrike}[1]{\sout{\textcolor{blue}{#1}}}
+\newcommand{\sjbreplace}[2]{\sjbstrike{#1} \sjbinsert{#2}}

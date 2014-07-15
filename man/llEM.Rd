@@ -1,17 +1,15 @@
-\name{llb}
-\alias{llb}
-\title{log-likelihood of predator preferances model with balanced data}
+\name{llEM}
+\alias{llEM}
+\title{log-likelihood of predators preferances model with EM}
 \usage{
-llb(Xdst, Ydst, lambda, gamma, J, I, c = NULL)
+llEM(Zdst, Ydst, lambda, gamma, J, I, c)
 }
 \arguments{
-  \item{Xdst}{matrix of sums of number of eaten prey
-  species s during occurrence t; rows indexed by time and
-  cols indexed by prey species, TxS}
+  \item{Zdst}{matrix of sums of indicators whether or not
+  predator ate prey species s during occurrence t; TxS}
 
   \item{Ydst}{matrix sum of number of caught prey species s
-  during occurrence t; rows indexed by time and cols
-  indexed by prey species, TxS}
+  during occurrence t; TxS}
 
   \item{lambda}{matrix of parameters representing rates
   predator ate prey species s in time period t; TxS}
@@ -27,7 +25,6 @@ llb(Xdst, Ydst, lambda, gamma, J, I, c = NULL)
   \item{c}{scalar in null hypotheses}
 }
 \description{
-log-likelihood of predator preferances model with balanced
-data
+log-likelihood of predators preferances model with EM
 }
 

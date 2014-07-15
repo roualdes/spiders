@@ -1,8 +1,8 @@
-\name{est0b}
-\alias{est0b}
-\title{estimates parameters from the null model when data balanced}
+\name{est0}
+\alias{est0}
+\title{estimates parameters from the null model when data unbalanced}
 \usage{
-est0b(Xdst, Ydst, J, I)
+est0(Xdst, Ydst, J, I)
 }
 \arguments{
   \item{Xdst}{matrix of sums of number of eaten prey
@@ -19,6 +19,7 @@ est0b(Xdst, Ydst, J, I)
   in a given time period}
 }
 \description{
-estimates parameters from the null model when data balanced
+estimates parameters from the null model when data
+unbalanced
 }
 
