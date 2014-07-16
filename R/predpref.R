@@ -24,42 +24,44 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
     if ( any(X < 0) || any(Y < 0) ) stop("Count data can not be less than 0.")
 
     ## do we run EM?
-    EM <- FALSE                         # assume no
-    if ( !any(X > 1) ) EM <- TRUE    # double check
+    EM <- ifelse(!any(X > 1), TRUE, FALSE)
 
-    ## predators (J), traps (I), prey species (S), times (T)
-    S <- length(preyNames)
-    J <- getMonthCounts(eaten, 'adj')[,2]
-    I <- getMonthCounts(caught, 'adj')[,2] # total days traps were out each t
+    ## data for calculations
     Xdst <- getMonthCounts(eaten, preyNames)[,preyNames]
     Ydst <- getMonthCounts(caught, preyNames)[,preyNames]
-    T <- nrow(Xdst)                  # assuming same times in both X,Y
 
     ## errors with time points
     if ( nrow(Xdst) != nrow(Ydst) ) stop("Differing number of time points in eaten/caught data.")
-    
-    ## estimate parameters
-    ## balanced data
-    if ( length(unique(J)) == 1 && length(unique(I)) == 1 ) {
 
-        ## balanced data
-        null <- est0b(Xdst, Ydst, J[1], I[1])
-        gAlt <- est1b(Xdst, Ydst, J[1], I[1])
+    ## predators (J), traps (I), prey species (S), times (T)
+    J <- getMonthCounts(eaten, 'adj')[,2]
+    I <- getMonthCounts(caught, 'adj')[,2] # total days traps were out each t
+    S <- length(preyNames)
+    T <- nrow(Xdst)                  # assuming same times in both X,Y
+
+    ## EM?
+    if ( EM ) {
+        ## estimate parameters
+        null <- estEM0(Xdst, Ydst, J, I, em_maxiter)
+        gAlt <- estEM1(Xdst, Ydst, J, I, em_maxiter)
 
         ## calc likelihoods
-        llH0 <- llb(Xdst, Ydst, NA, null$gamma, J[1], I[1], null$c)
-        llH1 <- llb(Xdst, Ydst, gAlt$lambda, gAlt$gamma, J[1], I[1])
-        
-    } else {                            # not balanced
-        if ( EM ) {                     # EM?
-            null <- estEM0(Xdst, Ydst, J, I, em_maxiter)
-            gAlt <- estEM1(Xdst, Ydst, J, I, em_maxiter)
+        llH0 <- llEM(Xdst, Ydst, NA, null$gamma, J, I, null$c)
+        llH1 <- llEM(Xdst, Ydst, gAlt$lambda, gAlt$gamma, J, I)        
+    } else {
+
+        ## balanced data
+        if ( length(unique(J)) == 1 && length(unique(I)) == 1 ) {
+            ## estimate parameters
+            null <- est0b(Xdst, Ydst, J[1], I[1])
+            gAlt <- est1b(Xdst, Ydst, J[1], I[1])
 
             ## calc likelihoods
-            llH0 <- llEM(Xdst, Ydst, NA, null$gamma, J, I, null$c)
-            llH1 <- llEM(Xdst, Ydst, gAlt$lambda, gAlt$gamma, J, I)
+            llH0 <- llb(Xdst, Ydst, NA, null$gamma, J[1], I[1], null$c)
+            llH1 <- llb(Xdst, Ydst, gAlt$lambda, gAlt$gamma, J[1], I[1])
             
-        } else {                        # unbalanced
+        } else {                        # not balanced
+            ## estimate parameters
             null <- est0(Xdst, Ydst, J, I)
             gAlt <- est1(Xdst, Ydst, J, I)
 
@@ -72,9 +74,10 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
     ## LRT stats
     ## calculate degrees of freedom on asymptotic chi-squared
     df <- S*T-1
-    LRT <- -2*(llH0 - llH1)
+    Lambda <- -2*(llH0 - llH1)
     
     list('gAlt' = gAlt, 'null' = null,
         'loglikH1' = llH1, 'loglikH0' = llH0,
-         '-2log(LRT)' = LRT, 'df' = df, 'p.value' = pchisq(LRT, df=df, lower.tail=F))
+         'numPredators' = J, 'numTraps' = I,
+         'Lambda' = Lambda, 'df' = df, 'p.value' = pchisq(Lambda, df=df, lower.tail=F))
 }

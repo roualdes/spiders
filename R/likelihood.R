@@ -33,7 +33,7 @@ ll <- function(Xdst, Ydst, lambda, gamma, J, I, c) {
         out <- -sumT(J*sumSp(lambda)) + sumT(log(J)*sumSp(Xdst)) + sumST(Xdst*log(lambda))
     } else {
         ## null
-        out <- -c*sumT(J*sumSp(gamma)) + sumT(log(c*J)*sumSp(Xdst)) + sumST(Xdst*gamma) 
+        out <- -c*sumT(J*sumSp(gamma)) + sumT(log(c*J)*sumSp(Xdst)) + sumST(Xdst*log(gamma)) 
     }
     out - sumT(I*sumSp(gamma)) + sumT(log(I)*sumSp(Ydst)) + sumST(Ydst*log(gamma))
 }

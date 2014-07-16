@@ -9,8 +9,7 @@
 ##' @export
 simPref <- function(S, T, J, I, lambda, gamma) {
     
-    ## some quick numbers
-    ST <- S*T                           # rows of data frame
+    ## some numbers
     ns <- seq_len(S)                    # index prey species
     nt <- seq_len(T)                    # index times
 

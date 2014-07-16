@@ -93,6 +93,17 @@ Null hypothesis (\ref{eq:null}) above is tested with the standard likelihood rat
 
 where $\theta_0 = \{ \boldsymbol{\lambda}_t = c \boldsymbol{\gamma}_t, \forall t : (\gamma_{st}, c) \in \mathbb{R}^{ST+1} \}$ represents the likelihood under the null hypothesis, and $\theta_1 = \{ \boldsymbol{\lambda}_{st} \ne c \boldsymbol{\gamma}_{st} : (\lambda_{st}, \gamma_{st}) \in \mathbb{R}^{2ST} \}$ represents the likelihood under the alternative hypothesis.  Then $\Lambda \dot{\sim} \chi^2_{ST-1}$ and null hypothesis (\ref{eq:null}) is rejected when $P(\chi^2_{ST-1} > \Lambda) < \alpha$. 
 
+\subsection{Unequal Trap Schedules}
+Consider a situtation where the traps (catching prey species) were left out for a differing length of time within each occurrence, e.g.\ trap $i$ in month $t$ was left out for $6$ days, but trap $i'$ in month $t$ was left out for $3$ days.  We expect to catch an unequal number of prey in each trap simply because one trap was left out for a longer time within month $t$.  
+
+Put $I_t := \sum_{i} numDays_{it}$ to be the total number of days all traps were left out during month $t$.  Then the complete data log-likelihood under this scenario is as follows.
+
+\begin{equation*}
+  l = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st} \log{\lambda_{st}} - \sum_{t} I_t \sum_{s} \gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + constant
+\end{equation*}
+
+If there exists a differing number of predators in each time period, we can similarly model this by indexing $J$ by $t$, say $J_t$.
+
 \subsection{Non-Count Gut Data}
 
 With smaller animals it is not always possible to observe a count of prey species eaten by a predator species.  Instead, a binary response of whether or not DNA of said prey species exists in the gut of the predator is observed.  In this case, we can treat the count of eaten prey species as missing and maximize the likelihood via the EM algorithm.  
@@ -112,18 +123,6 @@ We model what information we do observe.  Denote this binary response by $Z_{jst
 \end{equation*}
 
 \noindent Then maximize $\E_{X|Y,Z}l_{comp}$ with respect to the parameters $\gamma_{st}, \lambda_{st}, c$, just as above since here $X_{jst}$ is simply replaced by its expectation.
-
-\subsection{Unequal Trap Schedules}
-Consider a situtation where the traps (catching prey species) were left out for a differing length of time within each occurrence, e.g.\ trap $i$ in month $t$ was left out for $6$ days, but trap $i'$ in month $t$ was left out for $3$ days.  We expect to catch an unequal number of prey in each trap simply because one trap was left out for a longer time within month $t$.  
-
-Put $I_t := \sum_{i} numDays_{it}$ to be the total number of days all traps were left out during month $t$.  Then the complete data log-likelihood under this scenario is as follows.
-
-\begin{equation*}
-  l = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st} \log{\lambda_{st}} - \sum_{t} I_t \sum_{s} \gamma_{st} + \sum_{st}Y_{\cdot st}\log{\gamma_{st}} + constant
-\end{equation*}
-
-If there exists a differing number of predators in each time period, we can similarly model this by indexing $J$ by $t$, say $J_t$.  The EM algorithm from above can be incorporated into this scenario exactly as before, keeping in mind the M-step involves maximizing these functions, which I can't seem to do analytically. 
-
 
 \section{Simulations}
 
@@ -145,9 +144,9 @@ We can then simulate some data by using the function \texttt{spiders::simData}. 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{Predators} \hlkwb{<-} \hlnum{20}
-\hlstd{Traps} \hlkwb{<-} \hlnum{15}
-\hlstd{PreySpecies} \hlkwb{<-} \hlnum{3}
+\hlstd{Predators} \hlkwb{<-} \hlnum{77}
+\hlstd{Traps} \hlkwb{<-} \hlnum{87}
+\hlstd{PreySpecies} \hlkwb{<-} \hlnum{2}
 \hlstd{Times} \hlkwb{<-} \hlnum{5}
 \hlstd{ST} \hlkwb{<-} \hlstd{Times} \hlopt{*} \hlstd{PreySpecies}
 \hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
@@ -177,20 +176,57 @@ Then we can fit the model and calculate a p-value from these data.  The output o
 \hlstd{(prefs} \hlkwb{<-} \hlkwd{predPref}\hlstd{(fdata}\hlopt{$}\hlstd{eaten, fdata}\hlopt{$}\hlstd{caught))}
 \end{alltt}
 \begin{verbatim}
+$gAlt
+$gAlt$gamma
+  preySpecies1 preySpecies2
+1        2.149        2.057
+2        2.138        1.920
+3        2.092        2.080
+4        1.908        1.989
+5        1.954        2.069
+
+$gAlt$lambda
+  preySpecies1 preySpecies2
+1        1.130       0.9610
+2        1.169       0.8571
+3        1.065       1.0130
+4        1.078       0.9351
+5        1.221       1.0390
+
+
+$null
+$null$gamma
+  preySpecies1 preySpecies2
+1        2.164        1.999
+2        2.180        1.841
+3        2.085        2.046
+4        1.967        1.935
+5        2.085        2.054
+
+$null$c
+[1] 0.5142
+
+
 $loglikH1
-[1] 1733
+[1] 10134
 
 $loglikH0
-[1] 1728
+[1] 10132
 
-$`-2log(LRT)`
-[1] 10.89
+$numPredators
+[1] 77 77 77 77 77
+
+$numTraps
+[1] 87 87 87 87 87
+
+$Lambda
+[1] 5.051
 
 $df
-[1] 14
+[1] 9
 
 $p.value
-[1] 0.6949
+[1] 0.8298
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -214,31 +250,146 @@ An example where we reject the null hypothesis would have rate parameters that a
 \end{knitrout}
 
 
+Unbalanced data isn't actually ready yet.
+
+\subsection*{Tests}
+
+We can test our functions by simulating many datasets with the same underlying parameters, fitting the model, and plotting the distribution of the estimates.  Let's first set the values of the parameters to be constant across time and species.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1.5}\hlstd{,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{g} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{2} \hlopt{*} \hlstd{pi,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+Using the function \texttt{spiders::testPref} we simulate $M=250$ datasets based on the above parameters and fit the model to each. By default, only $4$ of the $S*T = 10$ parameters of each $\boldsymbol{\lambda}$ and $\boldsymbol{\gamma}$ are stored.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{M} \hlkwb{<-} \hlnum{250}
+\hlkwd{system.time}\hlstd{(out} \hlkwb{<-} \hlkwd{testPref}\hlstd{(PreySpecies, Times, Predators,}
+    \hlstd{Traps, l, g,} \hlkwc{M} \hlstd{= M))}
+\end{alltt}
+\begin{verbatim}
+   user  system elapsed 
+  5.677   0.400   6.135 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+Also output from this function is the number of iterations within \texttt{spiders::predPref}, in this case since we are fitting the complete, balanced data so there is only 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{out}\hlopt{$}\hlstd{iters[M, ]}
+\end{alltt}
+\begin{verbatim}
+null gAtl 
+   1    1 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+for every simulated dataset.  
+
+Since we know the value of the underlying parameters, we can plot these data and visually inspect our algorithm's performance using the function \texttt{spiders::plotTestPref}.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/unnamed-chunk-7} 
+
+}
+
+
+
+\end{knitrout}
+
+
+To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.4956$. 
+
+Similarly, we can test the EM algorithm using the same funciton, but declaring the variable \texttt{EM} to be true.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{Predators} \hlkwb{<-} \hlnum{124}
+\hlstd{Traps} \hlkwb{<-} \hlnum{145}
+\hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{sqrt}\hlstd{(}\hlnum{2}\hlstd{),} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{g} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{5}\hlstd{,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlkwd{system.time}\hlstd{(out} \hlkwb{<-} \hlkwd{testPref}\hlstd{(PreySpecies, Times, Predators,}
+    \hlstd{Traps, l, g,} \hlkwc{M} \hlstd{= M,} \hlkwc{EM} \hlstd{=} \hlnum{TRUE}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+   user  system elapsed 
+ 35.986   2.628  38.501 
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/em} 
+
+}
+
+
+
+\end{knitrout}
+
+
+The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.4188$.  Also, we can check how many iterations of the EM algorithm the last simulated dataset required
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{out}\hlopt{$}\hlstd{iters[M, ]}
+\end{alltt}
+\begin{verbatim}
+null gAtl 
+   7   17 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
 \appendix
 \section{Details}
 \subsection{Complete, Balanced Data}
 With balanced, count data the log-likelihood is
 
 \begin{equation*}
-  l = -J\sum_{st}\lambda_{st} + \sum_{st}X_{\cdot st}\log{\lambda_{st}} - I \sum_{st}\gamma_{st} + \sum_{st}Y_{\cdot st} + \text{const}.
+  l = -J\sum_{s,t} \lambda_{st} + \sum_{s,t}X_{\cdot st}\log{\lambda_{st}} - I \sum_{s,t}\gamma_{st} + \sum_{s,t}Y_{\cdot st} + \text{const}.
 \end{equation*}
 
-Under $H_0: \lambda_{st} = c \gamma_{st}$ we find solutions of first derivatives of $l$ with respect to $c, \gamma_{s't'}$ set equal to zero to be
+Under $H_0: \lambda_{st} = c \gamma_{st}$ we find solutions of first derivatives of $l$ with respect to $c, \gamma_{st}$ set equal to zero to be
 
 \begin{equation*}
-  c = \frac{\sum_{st} X_{\cdot st}}{J\sum_{st} \gamma_{st}} \quad \text{ and } \quad \gamma_{s't'} = \frac{X_{\cdot s't'} + Y_{\cdot s't'}}{Jc + I}.
+  c = \frac{\sum_{s,t} X_{\cdot st}}{J\sum_{s,t} \gamma_{st}} \quad \text{ and } \quad \gamma_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{Jc + I}.
 \end{equation*}
 
 \noindent Solving these equations simultaneously gives
 
 \begin{equation*}
-  \hat{c} = \frac{J^{-1} \sum_{st} X_{\cdot st}}{I^{-1} \sum_{st} Y_{\cdot st}} \quad \text{ and } \quad \hat{\gamma}_{s't'} = \frac{X_{\cdot s't'} + Y_{\cdot s't'}}{I\left( \frac{\sum_{st}X_{\cdot st}}{\sum_{st} Y_{\cdot st}} + 1  \right)}.
+  \hat{c} = \frac{J^{-1} \sum_{s,t} X_{\cdot st}}{I^{-1} \sum_{s,t} Y_{\cdot st}} \quad \text{ and } \quad \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{I\left( \frac{\sum_{s,t}X_{\cdot st}}{\sum_{s,t} Y_{\cdot st}} + 1  \right)}.
 \end{equation*}
 
 Under $H_1: \lambda_{st} \ne \gamma_{st}$ we find the maximum likelihood estimates to be
 
 \begin{equation*}
-  \hat{\lambda}_{s't'} = \frac{X_{\cdot s't'}}{J} \quad \text{ and } \quad \hat{\gamma_{s't'}} = \frac{Y_{\cdot s't'}}{I}.
+  \hat{\lambda}_{st} = \frac{X_{\cdot st}}{J} \quad \text{ and } \quad \hat{\gamma_{st}} = \frac{Y_{\cdot st}}{I}.
 \end{equation*}
 
 \subsection{Complete, Unbalanced Data}
@@ -246,13 +397,13 @@ Under $H_1: \lambda_{st} \ne \gamma_{st}$ we find the maximum likelihood estimat
 With unbalanced, count data the log-likelihood is
 
 \begin{equation*}
-  l = -\sum_{t} J_t \sum_{s} \lambda_{st} + \sum_{st} X_{\cdot st} \log{J_t \lambda_{st}} - \sum_{t} I_t \sum_{s} \gamma_{st} + \sum_{st} Y_{\cdot st} \log{I_t \gamma_{st}}.
+  l = -\sum_{t} J_t \sum_{s} \lambda_{st} + \sum_{s,t} X_{\cdot st} \log{J_t \lambda_{st}} - \sum_{t} I_t \sum_{s} \gamma_{st} + \sum_{s,t} Y_{\cdot st} \log{I_t \gamma_{st}}.
 \end{equation*}
 
-Under $H_0: \lambda_{st} = c \gamma_{st}$ we find solutions of first derivatives of $l$ with respect to $c, \gamma_{s't'}$ set equal to be
+Under $H_0: \lambda_{st} = c \gamma_{st}$ we find solutions of first derivatives of $l$ with respect to $c, \gamma_{st}$ set equal to be
 
 \begin{equation*}
-  c = \frac{\sum_{st} X_{\cdot st}}{\sum_{t} J_t \sum_{s} \gamma_{st}} \quad \text{ and } \quad \gamma_{s't'} = \frac{X_{\cdot s't'} + Y_{\cdot s't'}}{cJ_{t'} + I_{t'}}.
+  c = \frac{\sum_{s,t} X_{\cdot st}}{\sum_{t} J_t \sum_{s} \gamma_{st}} \quad \text{ and } \quad \gamma_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{cJ_{t} + I_{t}}.
 \end{equation*}
 
 \noindent Since we can't solve these equations simultaneously, we exploit the fact that the log-likelihood is concave; each term is concave and convexity is closed under addition.  Hence, we can iteratively maximize the profile log-likelihood until convergence.  
@@ -260,7 +411,7 @@ Under $H_0: \lambda_{st} = c \gamma_{st}$ we find solutions of first derivatives
 Under $H_1: \lambda_{st} \ne \gamma_{st}$ we find the maximum likelihood estimates to be
 
 \begin{equation*}
-  \hat{\lambda}_{st} = \frac{X_{\cdot s't'}}{J_{t'}} \quad \text{ and } \quad \hat{\gamma}_{s't'} = \frac{Y_{\cdot s't'}}{I_{t'}}.
+  \hat{\lambda}_{st} = \frac{X_{\cdot st}}{J_{t}} \quad \text{ and } \quad \hat{\gamma}_{st} = \frac{Y_{\cdot st}}{I_{t}}.
 \end{equation*}
 
 \subsection{Non-Count Data}
@@ -286,49 +437,44 @@ Since the joint density of $X_{jst}, Z_{jst}$ is
   \right.
 \end{equation*}
 
-\noindent it is easy to calculate the complete data log-likelihood
+\noindent it is easy to calculate the expected value of the complete data log-likelihood
 
 \begin{align*}
-  l_{comp} 
-  & = \log{f_{X,Z|\boldsymbol{\lambda}}(x,z)} + \log{f_{Y|\boldsymbol{\gamma}}(y)} \\
-  & = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \log{f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst})}
-  + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)}.
+  \E l_{comp} 
+  & = \E \log{f_{X,Z|\boldsymbol{\lambda}}(x,z)} + \log{f_{Y|\boldsymbol{\gamma}}(y)} \\
+  & = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \E \log{f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst})}
+  + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)} \\
+  & = \sum_{s,t,j} \left( - \lambda_{st} 
+    + z_{jst} \log(\lambda_{st}) \E X_{jst}  - \text{const} \right) - \sum_{s,t} \left( I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right).
 \end{align*}
 
-\noindent After we take the expectation of $l_{comp}$ with respect to $f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}$ we get
+with respect to $f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}$, where the expectation conditions on all of the remaining parameters.
 
-\begin{equation*}
-  \E l_{comp} = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \E[\log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})}]
-  + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)}
-\end{equation*}
+%% \begin{equation*}
+%%   \E l_{comp} = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \E[\log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})}]
+%%   + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)}
+%% \end{equation*}
   
-\noindent where the expectation conditions on all of the remaining parameters. In this case we see
+%% In this case we see
+%% \begin{equation*}
+%%   \log{f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst})} =
+%%   \left\{
+%%     \begin{array}{ll}
+%%       -\lambda_{st} & X_{jst} = 0 \mbox{ and } z_{jst}=0 \\
+%%       -\lambda_{st} + X_{jst}\log(\lambda_{st})-\log(X_{st}!) & X_{jst} > 0 \mbox{ and } z_{jst}=1
+%%     \end{array}
+%%   \right.,
+%% \end{equation*}
 
-\begin{equation*}
-  \log{f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst})} =
-  \left\{
-    \begin{array}{ll}
-      -\lambda_{st} & X_{jst} = 0 \mbox{ and } z_{jst}=0 \\
-      -\lambda_{st} + X_{jst}\log(\lambda_{st})-\log(X_{st}!) & X_{jst} > 0 \mbox{ and } z_{jst}=1
-    \end{array}
-  \right.,
-\end{equation*}
+%% so that
 
-so that
+%% \begin{equation*}
+%%   \E[\log{f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst})}] \equiv 
+%%   - \lambda_{st} + z_{jst} \left[\frac{\lambda_{st}\exp(\lambda_{st})}{\exp(\lambda_{st})-1} \log(\lambda_{st})
+%%     - \log(X_{st}!)\right].
+%% \end{equation*}
 
-\begin{equation*}
-  \E[\log{f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst})}] \equiv 
-  - \lambda_{st} + z_{jst} \left[\frac{\lambda_{st}\exp(\lambda_{st})}{\exp(\lambda_{st})-1} \log(\lambda_{st})
-    - \log(X_{st}!)\right].
-\end{equation*}
-
-Substituting this value back into the expected log-likelihood we then get:
-
-\begin{equation*}
-  \E l_{comp} =\sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t}\left( - \lambda_{st} 
-    + z_{jst} \log(\lambda_{st}) \E X_{jst}  
-      - \text{const} \right) - \sum_{t} I_t \sum_{s} \gamma_{st} + \sum_{st} Y_{\cdot st} \log{I_t \gamma_{st}}.
-\end{equation*}
+%% Substituting this value back into the expected log-likelihood we then get:
 
 \subsection*{M-Step}
 
@@ -339,7 +485,7 @@ We maximize $\E l_{comp}$ with respect to its parameters $\lambda_{st}, \gamma_{
 Under $H_0: \lambda_{st} = c \gamma_{st}$, we iteratively solve the following equations within on step of the EM algorithm
 
 \begin{equation*}
-  \hat{\gamma}_{st} = \frac{z_{\cdot st} \E X_{jst} + Y_{\cdot st}}{cJ_t + I_t} \quad \text{ and } \quad \hat{c} = \frac{ \sum_{st} z_{\cdot st} \E X_{jst}}{\sum_{t} J_t \sum_{s} \gamma_{st}}.
+  \hat{\gamma}_{st} = \frac{z_{\cdot st} \E X_{jst} + Y_{\cdot st}}{cJ_t + I_t} \quad \text{ and } \quad \hat{c} = \frac{ \sum_{s,t} z_{\cdot st} \E X_{jst}}{\sum_{t} J_t \sum_{s} \gamma_{st}}.
 \end{equation*}
 
 Under $H_1$ we complete one step of the EM algorithm via

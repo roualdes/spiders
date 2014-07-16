@@ -36,24 +36,24 @@ est1b <- function(Xdst, Ydst, J, I) {
 ##' @param J vector of predators caught in each time period
 ##' @param I vector of number of days all traps were left out in a given time period
 est0 <- function(Xdst, Ydst, J, I) {
-    eps <- 1e-4
     
     ## some numbers
     S <- ncol(Xdst)
     T <- nrow(Xdst)
     XYdst <- Xdst + Ydst
     stXdst <- sumST(Xdst)
-    iter <- 1; maxiter <- 20
+    iter <- 1; maxiter <- 50
 
     ## not sure this is the right spot for these checks
     ## ensure J & I have dimension T or 1
     lJ <- length(J)
     lI <- length(I)
-    if ( lJ != T || lJ != 1 ) stop("J indexed oddly says est0.")
-    if ( lI != T || lI != 1 ) stop("I indexed oddly says est0.")
+    if ( lJ != T ) stop("J indexed oddly says est0.")
+    if ( lI != T ) stop("I indexed oddly says est0.")
 
-    ## initial estimates; only need c
-    cHat <- cHat_old <- 1
+    ## initialize some values
+    cHat <- cHat_old <- runif(1)
+    gammaHat <- gammaHat_old <- XYdst / (J*cHat + I)
 
     ## iteratively update; relies on concavity of log-lik
     while ( TRUE ) {
@@ -69,11 +69,11 @@ est0 <- function(Xdst, Ydst, J, I) {
         ## if not converged, update estimates for next iteration
         gammaHat_old <- gammaHat
         cHat_old <- cHat
+        iter <- iter+1
         
         if ( iter > maxiter ) break
-        iter <- iter+1
     }
-    return( list('gamma' = gammaHat, 'c' = cHat) )
+    return( list('gamma' = gammaHat, 'c' = cHat, 'iters' = iter) )
 }
 
 ##' estimates parameters from the general alternative model when data unbalanced
@@ -85,6 +85,7 @@ est0 <- function(Xdst, Ydst, J, I) {
 est1 <- function(Xdst, Ydst, J, I) {
 
     ## some numbers
+    ## not sure this is the right spot for these checks
     T <- nrow(Xdst)
     if ( length(J) != T ) stop("J indexed oddly says est1")
     if ( length(I) != T ) stop("I indexed oddly says est1")
@@ -105,17 +106,12 @@ est1 <- function(Xdst, Ydst, J, I) {
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 estEM0 <- function(Zdst, Ydst, J, I, em_maxiter){
 
-    ## some numbers
-    S <- ncol(Zdst)
-    T <- nrow(Zdst)
-    em_iter <- inner_iter <- 1;
-    inner_maxiter <- 20
-
     ## initialize some values
+    em_iter <- 1
     cHat <- cHat_old <- runif(1)
     init <- est1(Zdst, Ydst, J, I)
     gammaHat <- gammaHat_old <- init$gamma 
-    lambda <- elambda <- init$lambda       
+    lambda <- elambda <- init$lambda
 
     ## iterate EM
     while ( TRUE ) {
@@ -125,29 +121,12 @@ estEM0 <- function(Zdst, Ydst, J, I, em_maxiter){
         elambda <- exp(lambda)
         EX <- lambda*elambda / (elambda - 1)
 
-        ## iterate system of eqs
-        ## while ( TRUE ) {
+        ## convenience
+        ZEX <- Zdst*EX
 
-            ## previous estimates
-            ## cHat_old2 <- cHat
-            ## gammaHat_old2 <- gammaHat
-            
-            ## convenience
-            ZEX <- Zdst*EX
-
-            ## iterate simultaneous eqs
-            gammaHat <- (ZEX + Ydst) / (cHat*J + I)
-            cHat <- sumST(ZEX) / sumT(J*sumSp(gammaHat))
-
-            ## ## check convergence of system of eqs
-            ## if ( converged(cHat, cHat_old2) &&
-            ##     converged(gammaHat, gammaHat_old2) ) break            
-            ## inner_iter <- inner_iter+1
-            ## #print(sprintf('inner iteration %d', inner_iter))
-            
-        ##     ## limit iterations
-        ##     if ( inner_iter > inner_maxiter ) break
-        ## }
+        ## iterate only once simultaneous eqs
+        gammaHat <- (ZEX + Ydst) / (cHat*J + I)
+        cHat <- sumST(ZEX) / sumT(J*sumSp(gammaHat))
 
         ## check convergence of EM
         if ( converged(cHat, cHat_old) &&
@@ -156,13 +135,12 @@ estEM0 <- function(Zdst, Ydst, J, I, em_maxiter){
         ## if not converged, store updated estimates
         cHat_old <- cHat
         gammaHat_old <- gammaHat
+        ## print(sprintf('EM iteration %d found values: c = %f', em_iter, cHat))
         em_iter <- em_iter+1
-        # print(sprintf('EM iteration %d found values: c = %f', em_iter, cHat))
         
         ## limit iterations
         if ( em_iter > em_maxiter )
-            stop(sprintf('max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
-        inner_iter <- 1
+            stop(sprintf('H0: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
     }
     return( list('c' = cHat, 'gamma' = gammaHat, 'em_iters' = em_iter) )
 }
@@ -176,22 +154,16 @@ estEM0 <- function(Zdst, Ydst, J, I, em_maxiter){
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 estEM1 <- function(Zdst, Ydst, J, I, em_maxiter){
 
-    ## some numbers
-    S <- ncol(Zdst)
-    T <- nrow(Zdst)
-    em_iter <- 1
-    
     ## estimate gamma
     gammaHat <- Ydst/I
 
-    ## initialize lambdaHat
-    init <- est1(Zdst, Ydst, J, I)
-    lambdaHat <- lambdaHat_old <- init$lambda
+    ## initialize some things
+    em_iter <- 1
+    lambdaHat <- lambdaHat_old <- gammaHat
 
     ## iterate EM
     while ( TRUE ) {
-        
-        ## update lambdas that aren't estimated 0
+        ## update lambda
         elambda <- exp(lambdaHat)
         EX <- lambdaHat*elambda/(elambda-1)
         lambdaHat <- Zdst*EX/J
@@ -203,7 +175,7 @@ estEM1 <- function(Zdst, Ydst, J, I, em_maxiter){
         
         ## limit iterations
         if ( em_iter > em_maxiter )
-            stop(sprintf('max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+            stop(sprintf('H1: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
     }
     
     ## since estimated 0s don't follow from calculations above
