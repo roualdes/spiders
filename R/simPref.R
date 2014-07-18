@@ -2,8 +2,8 @@
 ##'
 ##' @param S number of prey species
 ##' @param T number of time periods
-##' @param J number of predators caught at each time
-##' @param I effective number of traps at each time
+##' @param J scalar or vector (of length T) number of predators caught at each time
+##' @param I scalar or vector (of length T) effective number of traps at each time
 ##' @param lambda matrix of rates at which predator eats prey species; TxS
 ##' @param gamma matrix of rates at which prey species is seen in habitat; TxS
 ##' @export
@@ -12,20 +12,37 @@ simPref <- function(S, T, J, I, lambda, gamma) {
     ## some numbers
     ns <- seq_len(S)                    # index prey species
     nt <- seq_len(T)                    # index times
-
+    lJ <- length(J)
+    lI <- length(I)
+    if (lJ != 1 && lJ != T) stop('J not a scalar or vector of appropriate size.')
+    if (lI != 1 && lI != T) stop('J not a scalar or vector of appropriate size.')
+    if (lJ == 1) {
+        J <- rep(J[1], T)
+    }
+    if (lI == 1) {
+        I <- rep(I[1], T)
+    }
+    
     ## initialize data frame
-    eaten <- as.data.frame(matrix(NA, nrow=J*T, ncol=S+1))
-    caught <- as.data.frame(matrix(NA, nrow=I*T, ncol=S+1))
+    eaten <- as.data.frame(matrix(NA, nrow=sum(J), ncol=S+1))
+    caught <- as.data.frame(matrix(NA, nrow=sum(I), ncol=S+1))
 
+    ## fill times
     colnames(eaten) <- colnames(caught) <- c('time', paste('preySpecies', ns, sep=''))
-    eaten[,1] <- rep(paste('time', nt, sep=''), each=J)
-    caught[,1] <- rep(paste('time', nt, sep=''), each=I)
+    eaten[,1] <- unlist(lapply(nt, function(x) rep(paste('time', x, sep=''), J[x])))
+    caught[,1] <- unlist(lapply(nt, function(x) rep(paste('time', x, sep=''), I[x])))
 
     ## fill data frame
+    times <- unique(eaten$time)
     for ( i in ns ) {
-        eaten[,i+1] <- rpois(J*T, lambda[,i])
-        caught[,i+1] <- rpois(I*T, gamma[,i])            
+        for ( j in nt ) {
+            jdx <- which(eaten$time == times[j])
+            idx <- which(caught$time == times[j])
+            eaten[jdx,i+1] <- rpois(J[j], lambda[j,i])
+            caught[idx,i+1] <- rpois(I[j], gamma[j,i])
+        }
     }
+    
     list('eaten' = eaten,
          'caught' = caught)
 }

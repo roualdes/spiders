@@ -10,7 +10,7 @@
 <<setup, include=FALSE>>=
 options(replace.assign=TRUE, width = 55)
 opts_knit$set(progress = FALSE)
-opts_chunk$set(comment=NA, cache.extra = rand_seed, cache=TRUE,
+opts_chunk$set(comment=NA, cache.extra = rand_seed,
                dev='png',dpi=150,fig.align="center", autodep=TRUE)
 @
 
@@ -82,7 +82,7 @@ We model what information we do observe.  Denote this binary response by $Z_{jst
 
 In order to simulate and test data, we need to install an \texttt{R} package named \texttt{spiders}.  To install the package \texttt{spiders}, you can use \texttt{devtools}, or download the files from the \href{https://github.com/roualdes/spiders}{\texttt{GitHub}} webpage.
 
-<<>>=
+<<loadSpiders>>=
 ## library(devtools)
 ## install_github('spiders', 'roualdes')
 library(spiders)
@@ -121,10 +121,8 @@ fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g)
 predPref(fdata$eaten, fdata$caught)$p.value
 @ 
 
-Unbalanced data isn't actually ready yet.
-
 \subsection*{Tests}
-
+\subsubsection*{Complete, Balanced Data}
 We can test our functions by simulating many datasets with the same underlying parameters, fitting the model, and plotting the distribution of the estimates.  Let's first set the values of the parameters to be constant across time and species.
 
 <<>>=
@@ -155,13 +153,32 @@ plotTestPref(out$null, out$alt)
 
 To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = \Sexpr{mean(out$null$c)*mean(out$null$gamma)}$. 
 
+\subsubsection*{Complete, Unbalanced Data}
+
+Here, we simply have to simulate an uneven number of predators and prey species caught in each time period. We do this and also create a more fun set of parameter values.
+
+<<>>=
+Predators <- 4*c(11,22,33,44,77)
+Traps <- 3*Predators/4
+l <- matrix(cbind(1:5, 2:6), nrow=Times, ncol=PreySpecies)
+g <- matrix(pi, nrow=Times, ncol=PreySpecies)
+@ 
+
+Then we can simulate the data and plot it just as before.
+
+<<cu, cache=T>>=
+system.time(out <- testPref(PreySpecies, Times, Predators, Traps, l, g, M=M))
+plotTestPref(out$null, out$alt)
+@ 
+
+\subsubsection*{Non-Count Gut Data}
 Similarly, we can test the EM algorithm using the same funciton, but declaring the variable \texttt{EM} to be true.
 
 <<em, cache=TRUE>>=
 Predators <- 124
 Traps <- 145
-l <- matrix(sqrt(2), nrow=Times, ncol=PreySpecies)
-g <- matrix(5, nrow=Times, ncol=PreySpecies)
+l <- matrix(1.5, nrow=Times, ncol=PreySpecies)
+g <- matrix(2*pi, nrow=Times, ncol=PreySpecies)
 system.time(out <- testPref(PreySpecies, Times, Predators, Traps, l, g, M=M, EM=TRUE))
 plotTestPref(out$null, out$alt)
 @

@@ -27,15 +27,15 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
     EM <- ifelse(!any(X > 1), TRUE, FALSE)
 
     ## data for calculations
-    Xdst <- getMonthCounts(eaten, preyNames)[,preyNames]
-    Ydst <- getMonthCounts(caught, preyNames)[,preyNames]
+    Xdst <- getTimeCounts(eaten, preyNames)[,preyNames]
+    Ydst <- getTimeCounts(caught, preyNames)[,preyNames]
 
     ## errors with time points
     if ( nrow(Xdst) != nrow(Ydst) ) stop("Differing number of time points in eaten/caught data.")
 
     ## predators (J), traps (I), prey species (S), times (T)
-    J <- getMonthCounts(eaten, 'adj')[,2]
-    I <- getMonthCounts(caught, 'adj')[,2] # total days traps were out each t
+    J <- getTimeCounts(eaten, 'adj')[,2]
+    I <- getTimeCounts(caught, 'adj')[,2] # total days traps were out each t
     S <- length(preyNames)
     T <- nrow(Xdst)                  # assuming same times in both X,Y
 

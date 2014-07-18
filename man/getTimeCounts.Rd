@@ -1,8 +1,8 @@
-\name{getMonthCounts}
-\alias{getMonthCounts}
+\name{getTimeCounts}
+\alias{getTimeCounts}
 \title{sum specified columns by time}
 \usage{
-getMonthCounts(data, vars, by)
+getTimeCounts(data, vars, by)
 }
 \arguments{
   \item{data}{a dataframe}

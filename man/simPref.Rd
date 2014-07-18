@@ -9,9 +9,11 @@ simPref(S, T, J, I, lambda, gamma)
 
   \item{T}{number of time periods}
 
-  \item{J}{number of predators caught at each time}
+  \item{J}{scalar or vector (of length T) number of
+  predators caught at each time}
 
-  \item{I}{effective number of traps at each time}
+  \item{I}{scalar or vector (of length T) effective number
+  of traps at each time}
 
   \item{lambda}{matrix of rates at which predator eats prey
   species; TxS}

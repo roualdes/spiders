@@ -179,39 +179,39 @@ Then we can fit the model and calculate a p-value from these data.  The output o
 $gAlt
 $gAlt$gamma
   preySpecies1 preySpecies2
-1        2.149        2.057
-2        2.138        1.920
-3        2.092        2.080
-4        1.908        1.989
-5        1.954        2.069
+1        2.356        2.184
+2        2.218        2.172
+3        1.839        2.000
+4        2.011        1.839
+5        1.954        2.103
 
 $gAlt$lambda
   preySpecies1 preySpecies2
-1        1.130       0.9610
-2        1.169       0.8571
-3        1.065       1.0130
-4        1.078       0.9351
-5        1.221       1.0390
+1       1.0779        1.078
+2       1.0519        1.117
+3       1.0519        1.000
+4       1.0519        1.013
+5       0.8052        0.961
 
 
 $null
 $null$gamma
   preySpecies1 preySpecies2
-1        2.164        1.999
-2        2.180        1.841
-3        2.085        2.046
-4        1.967        1.935
-5        2.085        2.054
+1        2.304        2.184
+2        2.192        2.200
+3        1.928        2.008
+4        2.048        1.904
+5        1.856        2.056
 
 $null$c
-[1] 0.5142
+[1] 0.4937
 
 
 $loglikH1
-[1] 10134
+[1] 10195
 
 $loglikH0
-[1] 10132
+[1] 10192
 
 $numPredators
 [1] 77 77 77 77 77
@@ -220,13 +220,13 @@ $numTraps
 [1] 87 87 87 87 87
 
 $Lambda
-[1] 5.051
+[1] 4.339
 
 $df
 [1] 9
 
 $p.value
-[1] 0.8298
+[1] 0.8878
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -250,10 +250,8 @@ An example where we reject the null hypothesis would have rate parameters that a
 \end{knitrout}
 
 
-Unbalanced data isn't actually ready yet.
-
 \subsection*{Tests}
-
+\subsubsection*{Complete, Balanced Data}
 We can test our functions by simulating many datasets with the same underlying parameters, fitting the model, and plotting the distribution of the estimates.  Let's first set the values of the parameters to be constant across time and species.
 
 \begin{knitrout}
@@ -277,7 +275,7 @@ Using the function \texttt{spiders::testPref} we simulate $M=250$ datasets based
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
-  5.677   0.400   6.135 
+  5.348   0.041   5.389 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -318,8 +316,51 @@ Since we know the value of the underlying parameters, we can plot these data and
 \end{knitrout}
 
 
-To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.4956$. 
+To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.4962$. 
 
+\subsubsection*{Complete, Unbalanced Data}
+
+Here, we simply have to simulate an uneven number of predators and prey species caught in each time period. We do this and also create a more fun set of parameter values.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{Predators} \hlkwb{<-} \hlnum{4} \hlopt{*} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{,} \hlnum{22}\hlstd{,} \hlnum{33}\hlstd{,} \hlnum{44}\hlstd{,} \hlnum{77}\hlstd{)}
+\hlstd{Traps} \hlkwb{<-} \hlnum{3} \hlopt{*} \hlstd{Predators}\hlopt{/}\hlnum{4}
+\hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{cbind}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{,} \hlnum{2}\hlopt{:}\hlnum{6}\hlstd{),} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{g} \hlkwb{<-} \hlkwd{matrix}\hlstd{(pi,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+Then we can simulate the data and plot it just as before.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{system.time}\hlstd{(out} \hlkwb{<-} \hlkwd{testPref}\hlstd{(PreySpecies, Times, Predators,}
+    \hlstd{Traps, l, g,} \hlkwc{M} \hlstd{= M))}
+\end{alltt}
+\begin{verbatim}
+   user  system elapsed 
+ 11.711   0.054  11.782 
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/cu} 
+
+}
+
+
+
+\end{knitrout}
+
+
+\subsubsection*{Non-Count Gut Data}
 Similarly, we can test the EM algorithm using the same funciton, but declaring the variable \texttt{EM} to be true.
 
 \begin{knitrout}
@@ -327,14 +368,14 @@ Similarly, we can test the EM algorithm using the same funciton, but declaring t
 \begin{alltt}
 \hlstd{Predators} \hlkwb{<-} \hlnum{124}
 \hlstd{Traps} \hlkwb{<-} \hlnum{145}
-\hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{sqrt}\hlstd{(}\hlnum{2}\hlstd{),} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
-\hlstd{g} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{5}\hlstd{,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{l} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1.5}\hlstd{,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
+\hlstd{g} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{2} \hlopt{*} \hlstd{pi,} \hlkwc{nrow} \hlstd{= Times,} \hlkwc{ncol} \hlstd{= PreySpecies)}
 \hlkwd{system.time}\hlstd{(out} \hlkwb{<-} \hlkwd{testPref}\hlstd{(PreySpecies, Times, Predators,}
     \hlstd{Traps, l, g,} \hlkwc{M} \hlstd{= M,} \hlkwc{EM} \hlstd{=} \hlnum{TRUE}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
- 35.986   2.628  38.501 
+ 35.693   0.103  35.823 
 \end{verbatim}
 \begin{alltt}
 \hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
@@ -350,7 +391,7 @@ Similarly, we can test the EM algorithm using the same funciton, but declaring t
 \end{knitrout}
 
 
-The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.4188$.  Also, we can check how many iterations of the EM algorithm the last simulated dataset required
+The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5049$.  Also, we can check how many iterations of the EM algorithm the last simulated dataset required
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -359,7 +400,7 @@ The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamm
 \end{alltt}
 \begin{verbatim}
 null gAtl 
-   7   17 
+   9   19 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
