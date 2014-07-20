@@ -2,12 +2,12 @@
 \alias{plotTestPref}
 \title{plot the output of testPref}
 \usage{
-plotTestPref(H0, H1)
+plotTestPref(null, alt)
 }
 \arguments{
-  \item{H0}{null hypothesis dataset}
+  \item{null}{null hypothesis dataset}
 
-  \item{H1}{alternative hypothesis dataset}
+  \item{alt}{alternative hypothesis dataset}
 }
 \description{
 plot the output of testPref

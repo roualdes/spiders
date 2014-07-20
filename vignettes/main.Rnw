@@ -10,7 +10,7 @@
 <<setup, include=FALSE>>=
 options(replace.assign=TRUE, width = 55)
 opts_knit$set(progress = FALSE)
-opts_chunk$set(comment=NA, cache.extra = rand_seed,
+opts_chunk$set(comment=NA, cache.extra = rand_seed, cache=TRUE,
                dev='png',dpi=150,fig.align="center", autodep=TRUE)
 @
 
@@ -108,7 +108,7 @@ fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g)
 
 Then we can fit the model and calculate a p-value from these data.  The output of the model fit is below.
 
-<<>>=
+<<cache=TRUE>>=
 (prefs <- predPref(fdata$eaten, fdata$caught))
 @ 
 
@@ -125,7 +125,7 @@ predPref(fdata$eaten, fdata$caught)$p.value
 \subsubsection*{Complete, Balanced Data}
 We can test our functions by simulating many datasets with the same underlying parameters, fitting the model, and plotting the distribution of the estimates.  Let's first set the values of the parameters to be constant across time and species.
 
-<<>>=
+<<cache=TRUE>>=
 l <- matrix(1.5, nrow=Times, ncol=PreySpecies)
 g <- matrix(2*pi, nrow=Times, ncol=PreySpecies)
 @ 
@@ -153,6 +153,13 @@ plotTestPref(out$null, out$alt)
 
 To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = \Sexpr{mean(out$null$c)*mean(out$null$gamma)}$. 
 
+Further, we can calculate and plot the estimated bias.  The boxplot contains the same randomly sampled parameters of $\lambda_{st},\gamma_{st}$ as before.  Here, the indices on the abcissa represent the enumeration of the set $\{(T,S)\}$ indexing $T$ first, e.g.\ index $8$ for would refer to the parameter value for the third time point of the second prey species since we have $\Sexpr{Times}$ time points and $\Sexpr{PreySpecies}$.   Averaged over all simulations, both mean (dot) and median (line), for each parameter value, are shown.
+
+<<>>=
+bias <- calcBias(out$null, out$alt, l, g)
+plotBias(bias)
+@ 
+
 \subsubsection*{Complete, Unbalanced Data}
 
 Here, we simply have to simulate an uneven number of predators and prey species caught in each time period. We do this and also create a more fun set of parameter values.
@@ -169,6 +176,13 @@ Then we can simulate the data and plot it just as before.
 <<cu, cache=T>>=
 system.time(out <- testPref(PreySpecies, Times, Predators, Traps, l, g, M=M))
 plotTestPref(out$null, out$alt)
+@ 
+
+It is fairly obvious, by the bias plots, when the null hypothesis is false.
+
+<<>>=
+bias <- calcBias(out$null, out$alt, l, g)
+plotBias(bias)
 @ 
 
 \subsubsection*{Non-Count Gut Data}

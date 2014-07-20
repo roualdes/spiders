@@ -179,39 +179,39 @@ Then we can fit the model and calculate a p-value from these data.  The output o
 $gAlt
 $gAlt$gamma
   preySpecies1 preySpecies2
-1        2.356        2.184
-2        2.218        2.172
-3        1.839        2.000
-4        2.011        1.839
-5        1.954        2.103
+1        2.000        1.874
+2        2.184        2.011
+3        1.471        1.989
+4        2.092        1.966
+5        2.103        2.046
 
 $gAlt$lambda
   preySpecies1 preySpecies2
-1       1.0779        1.078
-2       1.0519        1.117
-3       1.0519        1.000
-4       1.0519        1.013
-5       0.8052        0.961
+1       0.8571       1.0000
+2       0.8961       0.8571
+3       1.0000       0.7013
+4       0.8571       1.0519
+5       1.0130       1.1299
 
 
 $null
 $null$gamma
   preySpecies1 preySpecies2
-1        2.304        2.184
-2        2.192        2.200
-3        1.928        2.008
-4        2.048        1.904
-5        1.856        2.056
+1        1.943        1.943
+2        2.097        1.951
+3        1.659        1.838
+4        2.008        2.040
+5        2.113        2.145
 
 $null$c
-[1] 0.4937
+[1] 0.4745
 
 
 $loglikH1
-[1] 10195
+[1] 9496
 
 $loglikH0
-[1] 10192
+[1] 9488
 
 $numPredators
 [1] 77 77 77 77 77
@@ -220,13 +220,13 @@ $numTraps
 [1] 87 87 87 87 87
 
 $Lambda
-[1] 4.339
+[1] 15.86
 
 $df
 [1] 9
 
 $p.value
-[1] 0.8878
+[1] 0.06977
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -275,7 +275,7 @@ Using the function \texttt{spiders::testPref} we simulate $M=250$ datasets based
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
-  5.348   0.041   5.389 
+  5.430   0.041   5.482 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -307,7 +307,7 @@ Since we know the value of the underlying parameters, we can plot these data and
 \end{alltt}
 \end{kframe}
 
-{\centering \includegraphics[width=\maxwidth]{figure/unnamed-chunk-7} 
+{\centering \includegraphics[width=\maxwidth]{figure/unnamed-chunk-6} 
 
 }
 
@@ -316,7 +316,26 @@ Since we know the value of the underlying parameters, we can plot these data and
 \end{knitrout}
 
 
-To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.4962$. 
+To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.505$. 
+
+Further, we can calculate and plot the estimated bias.  The boxplot contains the same randomly sampled parameters of $\lambda_{st},\gamma_{st}$ as before.  Here, the indices on the abcissa represent the enumeration of the set $\{(T,S)\}$ indexing $T$ first, e.g.\ index $8$ for would refer to the parameter value for the third time point of the second prey species since we have $5$ time points and $2$.   Averaged over all simulations, both mean (dot) and median (line), for each parameter value, are shown.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{bias} \hlkwb{<-} \hlkwd{calcBias}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt, l, g)}
+\hlkwd{plotBias}\hlstd{(bias)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/unnamed-chunk-7} 
+
+}
+
+
+
+\end{knitrout}
+
 
 \subsubsection*{Complete, Unbalanced Data}
 
@@ -344,7 +363,7 @@ Then we can simulate the data and plot it just as before.
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
- 11.711   0.054  11.782 
+ 11.587   0.053  11.646 
 \end{verbatim}
 \begin{alltt}
 \hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
@@ -352,6 +371,25 @@ Then we can simulate the data and plot it just as before.
 \end{kframe}
 
 {\centering \includegraphics[width=\maxwidth]{figure/cu} 
+
+}
+
+
+
+\end{knitrout}
+
+
+It is fairly obvious, by the bias plots, when the null hypothesis is false.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{bias} \hlkwb{<-} \hlkwd{calcBias}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt, l, g)}
+\hlkwd{plotBias}\hlstd{(bias)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/unnamed-chunk-9} 
 
 }
 
@@ -375,7 +413,7 @@ Similarly, we can test the EM algorithm using the same funciton, but declaring t
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
- 35.693   0.103  35.823 
+ 34.314   0.087  34.405 
 \end{verbatim}
 \begin{alltt}
 \hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
@@ -391,7 +429,7 @@ Similarly, we can test the EM algorithm using the same funciton, but declaring t
 \end{knitrout}
 
 
-The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5049$.  Also, we can check how many iterations of the EM algorithm the last simulated dataset required
+The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5058$.  Also, we can check how many iterations of the EM algorithm the last simulated dataset required
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -400,7 +438,7 @@ The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamm
 \end{alltt}
 \begin{verbatim}
 null gAtl 
-   9   19 
+  13   19 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

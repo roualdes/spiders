@@ -19,7 +19,13 @@ testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, n=4) {
     iters <- matrix(1, nrow=M, ncol=2)
     colnames(iters) <- c('null', 'gAtl')
     jdx <- 2:(S+1)                      # selects only data columns
-    s <- sample(1:(S*T), n)             # randomly sample n parameters
+    ST <- S*T
+    if ( n <= ST ) {
+        s <- sample(1:ST, n)            # randomly sample n parameters
+    } else {
+        stop(sprintf('n must be smaller than S*T = %d', ST))
+    }
+
 
     ## simulations
     for (m in seq_len(M)) {
@@ -45,18 +51,77 @@ testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, n=4) {
 
 ##' plot the output of testPref
 ##'
-##' @param H0 null hypothesis dataset
-##' @param H1 alternative hypothesis dataset
-plotTestPref <- function(H0, H1) {
+##' @param null null hypothesis dataset
+##' @param alt alternative hypothesis dataset
+plotTestPref <- function(null, alt) {
     require(lattice)
     require(gridExtra)
-    grid.arrange(densityplot(~c+gamma, data=H0, groups=f,
+    grid.arrange(densityplot(~c+gamma, data=null, groups=f,
                              main='Null Hypothesis', xlab='',
                              scales = list(y = list(relation = "free"),
                                  x = list(relation='free'))),
-                 densityplot(~lambda+gamma, data=H1, group=f,
+                 densityplot(~lambda+gamma, data=alt, group=f,
                              xlab='', main='Alternative Hypothesis',
                              scales = list(y = list(relation = "free"),
                                  x = list(relation='free'))),
+                 nrow=2)
+}
+
+##' calculate bias from output of testPref
+##'
+##' @param null null hypothesis dataset
+##' @param alt alternative hypothesis dataset
+##' @param lambda true values of lambda; TxS numbers
+##' @param gamma true values of gamma; TxS numbers
+calcBias <- function(null, alt, lambda, gamma) {
+    ## get bias = param - est for each simulation
+    s <- unique(null$f)
+    H0bias <- as.data.frame(sapply(s, function(x) gamma[x] - null$gamma[which(null$f == x)]))
+    H1biasG <- as.data.frame(sapply(s, function(x) gamma[x] - alt$gamma[which(alt$f == x)]))
+    H1biasL <- as.data.frame(sapply(s, function(x) lambda[x] - alt$lambda[which(alt$f == x)]))
+    colnames(H0bias) <- colnames(H1biasG) <- colnames(H1biasL) <- as.character(s)
+
+    ## format alternative hypothesis data
+    sL <- stack(H1biasL); sG <- stack(H1biasG)
+    oL <- order(sL$ind); oG <- order(sG$ind)
+    altDat <- as.data.frame(cbind(sL[oL,'values'], sG[oG,]))
+    colnames(altDat) <- c('lambda', 'gamma', 'ind')
+
+    ## format null data
+    nullDat <- stack(H0bias)
+    nullDat$variable <- 'gamma'
+    
+    return( list('null' = nullDat,
+                 'alt' = melt(altDat, id.vars='ind')) )
+}
+
+##' plot bias calculations from calcBias
+##'
+##' @param Bias output from calcBias
+##' @details Means and medians are represented by dots and bars, respectively.  
+plotBias <- function(Bias) {
+    require(lattice)
+    require(gridExtra)
+    nullM <- ddply(Bias$null, .(ind, variable), summarize, means=mean(values))
+    altM <- ddply(Bias$alt, .(ind, variable), summarize, means=mean(value))
+    grid.arrange(bwplot(values~ind|variable, data=Bias$null, main='Null Hypothesis',
+                        strip=strip.custom(var.name='gamma'), pch='|', ylab='Bias',
+                        xlab='',
+                        panel = function(...) {
+                            panel.bwplot(...)
+                            panel.points(x=nullM$means, col='black', pch=20)
+                            ## ensures order of means is correct
+                            #panel.text(x=nullM$ind, y=0.5, labels=as.character(nullM$ind))
+                            panel.abline(h=0, col='black', lty='dotted')
+                        }),
+                 bwplot(value~ind|variable, data=Bias$alt, main='Alternative Hypothesis',
+                        pch='|', ylab='Bias', xlab='',
+                        panel = function(...) {
+                            panel.bwplot(...)
+                            panel.points(x=altM$means, col='black', pch=20)
+                            ## ensures order of means is correct
+                            #panel.text(x=altM$ind, y=0.5, labels=as.character(altM$ind))
+                            panel.abline(h=0, col='black', lty='dotted')
+                        }),
                  nrow=2)
 }
