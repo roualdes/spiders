@@ -8,7 +8,7 @@
 ##' @param I vector of number of days all traps were left out in a given time period
 ##' @param c scalar in null hypotheses
 llb <- function(Xdst, Ydst, lambda, gamma, J, I, c=NULL) {
-    if ( missing(c) ) {
+    if ( is.null(c) ) {
         ## general alternative
         out <- -J*sumST(lambda) + log(J)*sumST(Xdst) + sumST(Xdst*log(lambda)) 
     } else {
@@ -27,8 +27,8 @@ llb <- function(Xdst, Ydst, lambda, gamma, J, I, c=NULL) {
 ##' @param J vector of predators caught in each time period
 ##' @param I vector of number of days all traps were left out in a given time period
 ##' @param c scalar in null hypotheses
-ll <- function(Xdst, Ydst, lambda, gamma, J, I, c) {
-    if ( missing(c) ) {
+ll <- function(Xdst, Ydst, lambda, gamma, J, I, c=NULL) {
+    if ( is.null(c) ) {
         ## general alternative
         out <- -sumT(J*sumSp(lambda)) + sumT(log(J)*sumSp(Xdst)) + sumST(Xdst*log(lambda))
     } else {
@@ -49,22 +49,18 @@ ll <- function(Xdst, Ydst, lambda, gamma, J, I, c) {
 ##' @param J vector of predators caught in each time period
 ##' @param I vector of number of days all traps were left out in a given time period
 ##' @param c scalar in null hypotheses
-llEM <- function(Zdst, Ydst, lambda, gamma, J, I, c) {
-    if ( missing(c) ) {
+llEM <- function(Zdst, Ydst, lambda, gamma, J, I, c=NULL) {
+    if ( is.null(c) ) {
         ## avoid log(0) when hat{lambda} = 0
         ## these values contribute nothing, so ignore them
         ## TBD might also need to watch for any hat{gamma} = 0
         w <- which(Zdst != 0, arr.ind=T)
         ## general alternative
-        elambda <- exp(lambda[w])
-        EX <- lambda[w]*elambda / (elambda - 1)
-        out <- -sumT(J*sumSp(lambda)) + sumST(Zdst[w]*log(lambda[w])*EX)
+        out <- sumST(Zdst[w]*log(1-exp(-lambda[w])) - (J-Zdst[w])*lambda[w])
     } else {
         ## null
         cg <- c*gamma
-        elambda <- exp(cg)
-        EX <- cg*elambda / (elambda - 1)
-        out <- -c*sumT(J*sumSp(gamma)) + sumST(Zdst*log(cg)*EX)
+        out <- sumST(Zdst*log(1-exp(-cg)) - (J-Zdst)*cg)
     }
     out - sumT(I*sumSp(gamma)) + sumT(log(I)*sumSp(Ydst)) + sumST(Ydst*log(gamma))
 }
