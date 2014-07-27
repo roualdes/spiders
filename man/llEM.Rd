@@ -2,7 +2,7 @@
 \alias{llEM}
 \title{log-likelihood of predators preferances model with EM}
 \usage{
-llEM(Zdst, Ydst, lambda, gamma, J, I, c)
+llEM(Zdst, Ydst, lambda, gamma, J, I, c = NULL)
 }
 \arguments{
   \item{Zdst}{matrix of sums of indicators whether or not

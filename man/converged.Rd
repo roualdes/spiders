@@ -2,7 +2,7 @@
 \alias{converged}
 \title{checks convergence of the parameters for the estimation functions}
 \usage{
-converged(theta, theta_old, eps = 0.001)
+converged(theta, theta_old, eps = 1e-05)
 }
 \arguments{
   \item{theta}{an object, convertible to a matrix, of

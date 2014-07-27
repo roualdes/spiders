@@ -176,42 +176,42 @@ Then we can fit the model and calculate a p-value from these data.  The output o
 \hlstd{(prefs} \hlkwb{<-} \hlkwd{predPref}\hlstd{(fdata}\hlopt{$}\hlstd{eaten, fdata}\hlopt{$}\hlstd{caught))}
 \end{alltt}
 \begin{verbatim}
-$gAlt
-$gAlt$gamma
+$alt
+$alt$gamma
   preySpecies1 preySpecies2
-1        2.000        1.874
-2        2.184        2.011
-3        1.471        1.989
-4        2.092        1.966
-5        2.103        2.046
+1        1.828        1.931
+2        1.632        2.080
+3        2.149        2.000
+4        2.011        1.954
+5        2.011        1.793
 
-$gAlt$lambda
+$alt$lambda
   preySpecies1 preySpecies2
-1       0.8571       1.0000
-2       0.8961       0.8571
-3       1.0000       0.7013
-4       0.8571       1.0519
-5       1.0130       1.1299
+1       0.9481       1.0519
+2       0.9740       1.0909
+3       0.9481       0.9481
+4       1.0779       0.9481
+5       1.1429       1.0000
 
 
 $null
 $null$gamma
   preySpecies1 preySpecies2
-1        1.943        1.943
-2        2.097        1.951
-3        1.659        1.838
-4        2.008        2.040
-5        2.113        2.145
+1        1.824        1.957
+2        1.706        2.083
+3        2.044        1.941
+4        2.028        1.910
+5        2.067        1.831
 
 $null$c
-[1] 0.4745
+[1] 0.5224
 
 
 $loglikH1
-[1] 9496
+[1] 9589
 
 $loglikH0
-[1] 9488
+[1] 9587
 
 $numPredators
 [1] 77 77 77 77 77
@@ -220,13 +220,13 @@ $numTraps
 [1] 87 87 87 87 87
 
 $Lambda
-[1] 15.86
+[1] 3.933
 
 $df
 [1] 9
 
 $p.value
-[1] 0.06977
+[1] 0.9157
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -275,7 +275,7 @@ Using the function \texttt{spiders::testPref} we simulate $M=250$ datasets based
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
-  5.430   0.041   5.482 
+  6.279   0.069   6.443 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -316,7 +316,7 @@ Since we know the value of the underlying parameters, we can plot these data and
 \end{knitrout}
 
 
-To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.505$. 
+To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5044$. 
 
 Further, we can calculate and plot the estimated bias.  The boxplot contains the same randomly sampled parameters of $\lambda_{st},\gamma_{st}$ as before.  Here, the indices on the abcissa represent the enumeration of the set $\{(T,S)\}$ indexing $T$ first, e.g.\ index $8$ for would refer to the parameter value for the third time point of the second prey species since we have $5$ time points and $2$.   Averaged over all simulations, both mean (dot) and median (line), for each parameter value, are shown.
 
@@ -363,7 +363,7 @@ Then we can simulate the data and plot it just as before.
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
- 11.587   0.053  11.646 
+ 11.784   0.064  11.855 
 \end{verbatim}
 \begin{alltt}
 \hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
@@ -413,7 +413,7 @@ Similarly, we can test the EM algorithm using the same funciton, but declaring t
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
- 34.314   0.087  34.405 
+ 34.536   0.074  34.626 
 \end{verbatim}
 \begin{alltt}
 \hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
@@ -429,7 +429,7 @@ Similarly, we can test the EM algorithm using the same funciton, but declaring t
 \end{knitrout}
 
 
-The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5058$.  Also, we can check how many iterations of the EM algorithm the last simulated dataset required
+The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5047$.  Also, we can check how many iterations of the EM algorithm the last simulated dataset required
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -438,7 +438,7 @@ The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamm
 \end{alltt}
 \begin{verbatim}
 null gAtl 
-  13   19 
+  14   18 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -501,7 +501,8 @@ When the count data are not observed we can fall back on treating the counts as 
 For this we need the conditional distribution of the missing data given the observed data
 
 \begin{equation*}
-  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x) = \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{X_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) X_{jst}!} \quad \text{ where } \quad \E_{[X|Y,Z]}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
+  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x) =
+    \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{X_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) X_{jst}!} \quad \text{ where } \quad \E_{[X|Y,Z]}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
 \end{equation*}
 
 Since the joint density of $X_{jst}, Z_{jst}$ is

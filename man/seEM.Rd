@@ -1,8 +1,8 @@
-\name{hess}
-\alias{hess}
-\title{calculate second derivatives of Q, H}
+\name{seEM}
+\alias{seEM}
+\title{calculate standard error of EM estimates}
 \usage{
-hess(lambda, gamma, c, Zdst, Ydst, J, I)
+seEM(lambda, gamma, c, Zdst, Ydst, J, I)
 }
 \arguments{
   \item{lambda}{parameter estimates of lambda from EM}
@@ -15,9 +15,9 @@ hess(lambda, gamma, c, Zdst, Ydst, J, I)
   prey species s was eaten or not during occurrence t; rows
   indexed by time, and cols indexed by prey species, TxS}
 
-  \item{Ydst}{matrix sum of number of caught prey species s
-  during occurrence t; rows indexed by time, and cols
-  indexed by prey species, TxS}
+  \item{Ydst}{matrix of sum of number of caught prey
+  species s during occurrence t; rows indexed by time, and
+  cols indexed by prey species, TxS}
 
   \item{J}{vector of predators caught in each time period}
 
@@ -25,6 +25,10 @@ hess(lambda, gamma, c, Zdst, Ydst, J, I)
   in a given time period}
 }
 \description{
-calculate second derivatives of Q, H
+calculate standard error of EM estimates
+}
+\details{
+output is an array where the rownames are indexed by
+{(T,S)}, T enumerated first
 }
 

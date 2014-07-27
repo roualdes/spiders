@@ -43,31 +43,43 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
     if ( EM ) {
         ## estimate parameters
         null <- estEM0(Xdst, Ydst, J, I, em_maxiter)
-        gAlt <- estEM1(Xdst, Ydst, J, I, em_maxiter)
+        alt <- estEM1(Xdst, Ydst, J, I, em_maxiter)
 
+        ## standard errors
+        null$SE <- seEM(NULL, null$gamma, null$c, Xdst, Ydst, J, I)
+        alt$SE <- seEM(alt$lambda, alt$gamma, NULL, Xdst, Ydst, J, I)
+        
         ## calc likelihoods
         llH0 <- llEM(Xdst, Ydst, NA, null$gamma, J, I, null$c)
-        llH1 <- llEM(Xdst, Ydst, gAlt$lambda, gAlt$gamma, J, I)        
+        llH1 <- llEM(Xdst, Ydst, alt$lambda, alt$gamma, J, I)        
     } else {
 
         ## balanced data
         if ( length(unique(J)) == 1 && length(unique(I)) == 1 ) {
             ## estimate parameters
             null <- est0b(Xdst, Ydst, J[1], I[1])
-            gAlt <- est1b(Xdst, Ydst, J[1], I[1])
+            alt <- est1b(Xdst, Ydst, J[1], I[1])
+
+            ## standard errors
+            null$SE <- se(NULL, null$gamma, null$c, Xdst, Ydst, J, I)
+            alt$SE <- se(alt$lambda, alt$gamma, NULL, Xdst, Ydst, J, I)
 
             ## calc likelihoods
             llH0 <- llb(Xdst, Ydst, NA, null$gamma, J[1], I[1], null$c)
-            llH1 <- llb(Xdst, Ydst, gAlt$lambda, gAlt$gamma, J[1], I[1])
+            llH1 <- llb(Xdst, Ydst, alt$lambda, alt$gamma, J[1], I[1])
             
         } else {                        # not balanced
             ## estimate parameters
             null <- est0(Xdst, Ydst, J, I)
-            gAlt <- est1(Xdst, Ydst, J, I)
+            alt <- est1(Xdst, Ydst, J, I)
+
+            ## standard errors
+            null$SE <- se(NULL, null$gamma, null$c, Xdst, Ydst, J, I)
+            alt$SE <- se(alt$lambda, alt$gamma, NULL, Xdst, Ydst, J, I)
 
             ## calc likelihoods
             llH0 <- ll(Xdst, Ydst, NA, null$gamma, J, I, null$c)
-            llH1 <- ll(Xdst, Ydst, gAlt$lambda, gAlt$gamma, J, I)
+            llH1 <- ll(Xdst, Ydst, alt$lambda, alt$gamma, J, I)
         }
     }
 
@@ -76,8 +88,11 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
     df <- S*T-1
     Lambda <- -2*(llH0 - llH1)
     
-    list('gAlt' = gAlt, 'null' = null,
-        'loglikH1' = llH1, 'loglikH0' = llH0,
-         'numPredators' = J, 'numTraps' = I,
-         'Lambda' = Lambda, 'df' = df, 'p.value' = pchisq(Lambda, df=df, lower.tail=F))
+    out <- list('alt' = alt, 'null' = null,
+                'loglikH1' = llH1, 'loglikH0' = llH0,
+                'numPredators' = J, 'numTraps' = I,
+                'Lambda' = Lambda, 'df' = df,
+                'p.value' = pchisq(Lambda, df=df, lower.tail=F))
+    class(out) <- 'predPref'
+    out
 }

@@ -6,8 +6,13 @@
 ##' @param I scalar or vector (of length T) effective number of traps at each time
 ##' @param lambda matrix of rates at which predator eats prey species; TxS
 ##' @param gamma matrix of rates at which prey species is seen in habitat; TxS
+##' @param EM boolean specifying test of EM algorithm
 ##' @export
-simPref <- function(S, T, J, I, lambda, gamma) {
+simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
+
+    ## checks
+    if (!isTRUE(all.equal(J, round(J)))) J <- round(J)
+    if (!isTRUE(all.equal(I, round(I)))) I <- round(I)
     
     ## some numbers
     ns <- seq_len(S)                    # index prey species
@@ -41,6 +46,12 @@ simPref <- function(S, T, J, I, lambda, gamma) {
             eaten[jdx,i+1] <- rpois(J[j], lambda[j,i])
             caught[idx,i+1] <- rpois(I[j], gamma[j,i])
         }
+    }
+
+    ## if EM set, produce only binary observations
+    if (EM) {
+        jdx <- 2:(S+1)
+        eaten[,jdx][which(eaten[,jdx]>0, arr.ind=T)] <- 1
     }
     
     list('eaten' = eaten,

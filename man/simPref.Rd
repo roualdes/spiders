@@ -2,7 +2,7 @@
 \alias{simPref}
 \title{simulate data for predator preferences model}
 \usage{
-simPref(S, T, J, I, lambda, gamma)
+simPref(S, T, J, I, lambda, gamma, EM = F)
 }
 \arguments{
   \item{S}{number of prey species}
@@ -20,6 +20,8 @@ simPref(S, T, J, I, lambda, gamma)
 
   \item{gamma}{matrix of rates at which prey species is
   seen in habitat; TxS}
+
+  \item{EM}{boolean specifying test of EM algorithm}
 }
 \description{
 simulate data for predator preferences model

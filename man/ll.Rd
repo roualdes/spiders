@@ -2,7 +2,7 @@
 \alias{ll}
 \title{log-likelihood of predator preferances model with unbalanced data}
 \usage{
-ll(Xdst, Ydst, lambda, gamma, J, I, c)
+ll(Xdst, Ydst, lambda, gamma, J, I, c = NULL)
 }
 \arguments{
   \item{Xdst}{matrix of sums of number of eaten prey

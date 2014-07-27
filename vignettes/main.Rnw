@@ -260,7 +260,8 @@ When the count data are not observed we can fall back on treating the counts as 
 For this we need the conditional distribution of the missing data given the observed data
 
 \begin{equation*}
-  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x) = \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{X_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) X_{jst}!} \quad \text{ where } \quad \E_{[X|Y,Z]}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
+  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x) =
+    \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{X_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) X_{jst}!} \quad \text{ where } \quad \E_{[X|Y,Z]}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
 \end{equation*}
 
 Since the joint density of $X_{jst}, Z_{jst}$ is

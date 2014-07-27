@@ -9,6 +9,7 @@
 ##' @param M number of simulated datasets
 ##' @param EM boolean specifying test of EM algorithm
 ##' @param n number of parameters to randomly sample; max allowed S*T
+##' @export
 testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, n=4) {
 
 
@@ -31,8 +32,7 @@ testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, n=4) {
     for (m in seq_len(M)) {
         
         ## simulate data
-        fdata <- simPref(S, T, J, I, lambda, gamma)
-        if (EM) fdata$eaten[,jdx][which(fdata$eaten[,jdx]>0, arr.ind=T)] <- 1
+        fdata <- simPref(S, T, J, I, lambda, gamma, EM=EM)
         
         ## fit model
         prefs <- predPref(fdata$eaten, fdata$caught)
@@ -40,19 +40,20 @@ testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, n=4) {
         
         ## store estimates
         if (EM) {
-            iters[m,] <- c(prefs$null$em_iters, prefs$gAlt$em_iters)
+            iters[m,] <- c(prefs$null$em_iters, prefs$alt$em_iters)
         }
-        alt[idxs,] <- cbind(s, unlist(prefs$gAlt$lambda)[s],
-                            unlist(prefs$gAlt$gamma)[s])
+        alt[idxs,] <- cbind(s, unlist(prefs$alt$lambda)[s],
+                            unlist(prefs$alt$gamma)[s])
         null[idxs,] <- cbind(s, rep(prefs$null$c, n), unlist(prefs$null$gamma)[s])
     }
-    return( list('null' = null, 'alt' = alt, 'iters' = iters))
+    list('null' = null, 'alt' = alt, 'iters' = iters)
 }
 
 ##' plot the output of testPref
 ##'
 ##' @param null null hypothesis dataset
 ##' @param alt alternative hypothesis dataset
+##' @export
 plotTestPref <- function(null, alt) {
     require(lattice)
     require(gridExtra)
@@ -73,12 +74,16 @@ plotTestPref <- function(null, alt) {
 ##' @param alt alternative hypothesis dataset
 ##' @param lambda true values of lambda; TxS numbers
 ##' @param gamma true values of gamma; TxS numbers
+##' @export
 calcBias <- function(null, alt, lambda, gamma) {
     ## get bias = param - est for each simulation
     s <- unique(null$f)
-    H0bias <- as.data.frame(sapply(s, function(x) gamma[x] - null$gamma[which(null$f == x)]))
-    H1biasG <- as.data.frame(sapply(s, function(x) gamma[x] - alt$gamma[which(alt$f == x)]))
-    H1biasL <- as.data.frame(sapply(s, function(x) lambda[x] - alt$lambda[which(alt$f == x)]))
+    H0bias <- as.data.frame(sapply(s, function(x) {
+        (gamma[x] - null$gamma[which(null$f == x)])/gamma[x]}))
+    H1biasG <- as.data.frame(sapply(s, function(x) {
+        (gamma[x] - alt$gamma[which(alt$f == x)])/gamma[x]}))
+    H1biasL <- as.data.frame(sapply(s, function(x) {
+        (lambda[x] - alt$lambda[which(alt$f == x)])/lambda[x]}))
     colnames(H0bias) <- colnames(H1biasG) <- colnames(H1biasL) <- as.character(s)
 
     ## format alternative hypothesis data
@@ -91,13 +96,14 @@ calcBias <- function(null, alt, lambda, gamma) {
     nullDat <- stack(H0bias)
     nullDat$variable <- 'gamma'
     
-    return( list('null' = nullDat,
-                 'alt' = melt(altDat, id.vars='ind')) )
+    list('null' = nullDat,
+         'alt' = melt(altDat, id.vars='ind'))
 }
 
 ##' plot bias calculations from calcBias
 ##'
 ##' @param Bias output from calcBias
+##' @export
 ##' @details Means and medians are represented by dots and bars, respectively.  
 plotBias <- function(Bias) {
     require(lattice)
@@ -105,7 +111,7 @@ plotBias <- function(Bias) {
     nullM <- ddply(Bias$null, .(ind, variable), summarize, means=mean(values))
     altM <- ddply(Bias$alt, .(ind, variable), summarize, means=mean(value))
     grid.arrange(bwplot(values~ind|variable, data=Bias$null, main='Null Hypothesis',
-                        strip=strip.custom(var.name='gamma'), pch='|', ylab='Bias',
+                        strip=strip.custom(var.name='gamma'), pch='|', ylab='Bias (% of true value)',
                         xlab='',
                         panel = function(...) {
                             panel.bwplot(...)
@@ -115,7 +121,7 @@ plotBias <- function(Bias) {
                             panel.abline(h=0, col='black', lty='dotted')
                         }),
                  bwplot(value~ind|variable, data=Bias$alt, main='Alternative Hypothesis',
-                        pch='|', ylab='Bias', xlab='',
+                        pch='|', ylab='Bias (% of true value)', xlab='',
                         panel = function(...) {
                             panel.bwplot(...)
                             panel.points(x=altM$means, col='black', pch=20)

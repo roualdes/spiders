@@ -11,7 +11,7 @@ est0b <- function(Xdst, Ydst, J, I) {
     iXdY <- i*sumST(Xdst)/sumST(Ydst)
     gammaHat <- (Xdst + Ydst) / (iXdY + i)
     cHat <- iXdY/J[1]
-    return(list('gamma' = gammaHat, 'c' = cHat))
+    list('gamma' = gammaHat, 'c' = cHat)
 }
 
 ##' estimates parameters from the general alternative model when data balanced
@@ -23,7 +23,7 @@ est0b <- function(Xdst, Ydst, J, I) {
 est1b <- function(Xdst, Ydst, J, I) {
     gammaHat <- Ydst/I
     lambdaHat <- Xdst/J
-    return(list('gamma' = gammaHat, 'lambda' = lambdaHat))
+    list('gamma' = gammaHat, 'lambda' = lambdaHat)
 }
 
 
@@ -73,7 +73,7 @@ est0 <- function(Xdst, Ydst, J, I) {
         
         if ( iter > maxiter ) break
     }
-    return( list('gamma' = gammaHat, 'c' = cHat, 'iters' = iter) )
+    list('gamma' = gammaHat, 'c' = cHat, 'iters' = iter)
 }
 
 ##' estimates parameters from the general alternative model when data unbalanced
@@ -92,7 +92,7 @@ est1 <- function(Xdst, Ydst, J, I) {
 
     gammaHat <- Ydst / I                # row-wise division
     lambdaHat <- Xdst / J
-    return( list('lambda' = lambdaHat, 'gamma' = gammaHat) )
+    list('lambda' = lambdaHat, 'gamma' = gammaHat)
 }
 
 ## non-count data
@@ -142,7 +142,7 @@ estEM0 <- function(Zdst, Ydst, J, I, em_maxiter){
         if ( em_iter > em_maxiter )
             stop(sprintf('H0: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
     }
-    return( list('c' = cHat, 'gamma' = gammaHat, 'em_iters' = em_iter) )
+    list('c' = cHat, 'gamma' = gammaHat, 'em_iters' = em_iter)
 }
 
 ##' estimates parameters from the general alternative model with non-count data via EM
@@ -181,6 +181,6 @@ estEM1 <- function(Zdst, Ydst, J, I, em_maxiter){
     ## since estimated 0s don't follow from calculations above
     lambdaHat[which(Zdst == 0, arr.ind=T)] <- 0
     
-    return( list('lambda' = lambdaHat, 'gamma' = gammaHat, 'em_iters' = em_iter) )
+    list('lambda' = lambdaHat, 'gamma' = gammaHat, 'em_iters' = em_iter)
 }
 

@@ -20,9 +20,8 @@ getUnitCounts <- function(data) {
 ##' @param theta an object, convertible to a matrix, of current parameter values
 ##' @param theta_old an object, convertible to a matrix, of old parameter values
 ##' @param eps tolerance to determine convergence
-converged <- function(theta, theta_old, eps=1e-3) {
-    isTRUE(max(abs(theta-theta_old)) < eps)
-    ## isTRUE(all.equal(theta, theta_old, tolerance=eps, check.names=F, check.attr=F))
+converged <- function(theta, theta_old, eps=1e-5) {
+    isTRUE(all.equal(theta, theta_old, tolerance=eps, check.names=F, check.attr=F))
 }
 
 ## sum over species to get a vector of values for each time period
