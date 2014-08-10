@@ -56,7 +56,7 @@ llEM <- function(Zdst, Ydst, lambda, gamma, J, I, c=NULL) {
         ## TBD might also need to watch for any hat{gamma} = 0
         w <- which(Zdst != 0, arr.ind=T)
         ## general alternative
-        out <- sumST(Zdst[w]*log(1-exp(-lambda[w])) - (J[w]-Zdst[w])*lambda[w])
+        out <- sumST(Zdst[w]*log(1-exp(-lambda[w])) - (J[w[,1]]-Zdst[w])*lambda[w])
     } else {
         ## null
         cg <- c*gamma

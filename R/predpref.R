@@ -27,8 +27,8 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
     EM <- ifelse(!any(X > 1), TRUE, FALSE)
 
     ## data for calculations
-    Xdst <- getTimeCounts(eaten, preyNames)[,preyNames]
-    Ydst <- getTimeCounts(caught, preyNames)[,preyNames]
+    Xdst <- getTimeCounts(eaten, preyNames)[,preyNames, drop=F]
+    Ydst <- getTimeCounts(caught, preyNames)[,preyNames, drop=F]
 
     ## errors with time points
     if ( nrow(Xdst) != nrow(Ydst) ) stop("Differing number of time points in eaten/caught data.")
@@ -51,7 +51,7 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
         
         ## calc likelihoods
         llH0 <- llEM(Xdst, Ydst, NA, null$gamma, J, I, null$c)
-        llH1 <- llEM(Xdst, Ydst, alt$lambda, alt$gamma, J, I)        
+        llH1 <- llEM(Xdst, Ydst, alt$lambda, alt$gamma, J, I)
     } else {
 
         ## balanced data

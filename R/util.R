@@ -5,7 +5,8 @@
 ##' @param by extra variables to sum by
 getTimeCounts <- function(data, vars, by) {
     if (missing(by)) by <- 'time' else by <- c('time', by)
-    ddply(data, by, function(dfr, idx) colSums(as.matrix(dfr[,idx])), vars)
+    ## ddply(data, by, function(dfr, idx) colSums(as.matrix(dfr[,idx])), vars)
+    ddply(data, by, colwise(sum, vars))
 }
 
 ##' count number of spiders or traps in each unit of time

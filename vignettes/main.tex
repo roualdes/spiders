@@ -179,39 +179,58 @@ Then we can fit the model and calculate a p-value from these data.  The output o
 $alt
 $alt$gamma
   preySpecies1 preySpecies2
-1        1.828        1.931
-2        1.632        2.080
-3        2.149        2.000
-4        2.011        1.954
-5        2.011        1.793
+1        2.138        2.253
+2        2.253        1.977
+3        1.862        1.931
+4        2.034        1.885
+5        1.977        2.276
 
 $alt$lambda
   preySpecies1 preySpecies2
-1       0.9481       1.0519
-2       0.9740       1.0909
-3       0.9481       0.9481
-4       1.0779       0.9481
-5       1.1429       1.0000
+1       1.0260       0.8831
+2       1.0000       1.0260
+3       0.9351       0.9740
+4       1.1818       1.1169
+5       1.0000       1.2208
+
+$alt$SE
+   lambda  gamma
+11 0.1154 0.1568
+21 0.1140 0.1609
+31 0.1102 0.1463
+41 0.1239 0.1529
+51 0.1140 0.1507
+12 0.1071 0.1609
+22 0.1154 0.1507
+32 0.1125 0.1490
+42 0.1204 0.1472
+52 0.1259 0.1617
 
 
 $null
 $null$gamma
   preySpecies1 preySpecies2
-1        1.824        1.957
-2        1.706        2.083
-3        2.044        1.941
-4        2.028        1.910
-5        2.067        1.831
+1        2.107        2.099
+2        2.171        1.996
+3        1.861        1.932
+4        2.131        1.988
+5        1.980        2.322
 
 $null$c
-[1] 0.5224
+[1] 0.5034
+
+$null$SE
+      c gamma11 gamma21 gamma31 gamma41 gamma51 
+0.01782 0.12944 0.13138 0.12163 0.13017 0.12547 
+gamma12 gamma22 gamma32 gamma42 gamma52 
+0.12920 0.12597 0.12395 0.12572 0.13587 
 
 
 $loglikH1
-[1] 9589
+[1] 10206
 
 $loglikH0
-[1] 9587
+[1] 10202
 
 $numPredators
 [1] 77 77 77 77 77
@@ -220,13 +239,16 @@ $numTraps
 [1] 87 87 87 87 87
 
 $Lambda
-[1] 3.933
+[1] 7.293
 
 $df
 [1] 9
 
 $p.value
-[1] 0.9157
+[1] 0.6066
+
+attr(,"class")
+[1] "predPref"
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -275,7 +297,7 @@ Using the function \texttt{spiders::testPref} we simulate $M=250$ datasets based
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
-  6.279   0.069   6.443 
+  6.771   0.054   6.859 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -316,7 +338,7 @@ Since we know the value of the underlying parameters, we can plot these data and
 \end{knitrout}
 
 
-To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5044$. 
+To see that $c$ is estimated accurately, we use the fact that $\gamma_{st} = \gamma$ for all $\{s,t\}$ by averaging over the $4$ values of $\boldsymbol{\gamma}$ that were sampled: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5023$. 
 
 Further, we can calculate and plot the estimated bias.  The boxplot contains the same randomly sampled parameters of $\lambda_{st},\gamma_{st}$ as before.  Here, the indices on the abcissa represent the enumeration of the set $\{(T,S)\}$ indexing $T$ first, e.g.\ index $8$ for would refer to the parameter value for the third time point of the second prey species since we have $5$ time points and $2$.   Averaged over all simulations, both mean (dot) and median (line), for each parameter value, are shown.
 
@@ -363,7 +385,7 @@ Then we can simulate the data and plot it just as before.
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
- 11.784   0.064  11.855 
+ 15.807   0.072  16.225 
 \end{verbatim}
 \begin{alltt}
 \hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
@@ -413,7 +435,7 @@ Similarly, we can test the EM algorithm using the same funciton, but declaring t
 \end{alltt}
 \begin{verbatim}
    user  system elapsed 
- 34.536   0.074  34.626 
+ 51.223   0.127  51.494 
 \end{verbatim}
 \begin{alltt}
 \hlkwd{plotTestPref}\hlstd{(out}\hlopt{$}\hlstd{null, out}\hlopt{$}\hlstd{alt)}
@@ -429,7 +451,7 @@ Similarly, we can test the EM algorithm using the same funciton, but declaring t
 \end{knitrout}
 
 
-The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5047$.  Also, we can check how many iterations of the EM algorithm the last simulated dataset required
+The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamma}} = 1.5055$.  Also, we can check how many iterations of the EM algorithm the last simulated dataset required
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -438,7 +460,7 @@ The same as before, $c$ is estimated fairly well: $\bar{\hat{c}}*\bar{\hat{\gamm
 \end{alltt}
 \begin{verbatim}
 null gAtl 
-  14   18 
+  25   27 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
