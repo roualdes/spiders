@@ -35,7 +35,8 @@ est1b <- function(Xdst, Ydst, J, I) {
 ##' @param Ydst matrix sum of number of caught prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS
 ##' @param J vector of predators caught in each time period
 ##' @param I vector of number of days all traps were left out in a given time period
-est0 <- function(Xdst, Ydst, J, I) {
+##' @param indexC boolean; TRUE indexes c in null hypothesis by t
+est0 <- function(Xdst, Ydst, J, I, indexC) {
     
     ## some numbers
     S <- ncol(Xdst)
@@ -52,15 +53,23 @@ est0 <- function(Xdst, Ydst, J, I) {
     if ( lI != T ) stop("I indexed oddly says est0.")
 
     ## initialize some values
-    cHat <- cHat_old <- runif(1)
+    if ( indexC ) {
+        cHat <- cHat_old <- runif(length(J))
+    } else {
+        cHat <- cHat_old <- runif(1)
+    }
     gammaHat <- gammaHat_old <- XYdst / (J*cHat + I)
 
     ## iteratively update; relies on concavity of log-lik
     while ( TRUE ) {
 
         ## update parameters
+        if ( indexC ) {
+            cHat <- sumSp(Xdst) / (J*sumSp(gammaHat))
+        } else {
+            cHat <- stXdst / sumT(J*sumSp(gammaHat))            
+        }
         gammaHat <- XYdst / (J*cHat + I) # row-wise division
-        cHat <- stXdst / sumT(J*sumSp(gammaHat))
 
         ## check convergence
         if ( converged(gammaHat, gammaHat_old) &&
@@ -103,12 +112,18 @@ est1 <- function(Xdst, Ydst, J, I) {
 ##' @param Ydst matrix sum of number of caught prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS
 ##' @param J vector of predators caught in each time period
 ##' @param I vector of number of days all traps were left out in a given time period
+##' @param indexC boolean; TRUE indexes c in null hypothesis by t
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
-estEM0 <- function(Zdst, Ydst, J, I, em_maxiter){
+estEM0 <- function(Zdst, Ydst, J, I, indexC, em_maxiter){
 
     ## initialize some values
     em_iter <- 1
-    cHat <- cHat_old <- runif(1)
+    if ( indexC ) {
+        cHat <- cHat_old <- runif(length(J))
+    } else {
+        cHat <- cHat_old <- runif(1)        
+    }
+
     init <- est1(Zdst, Ydst, J, I)
     gammaHat <- gammaHat_old <- init$gamma 
     lambda <- elambda <- init$lambda
@@ -126,7 +141,11 @@ estEM0 <- function(Zdst, Ydst, J, I, em_maxiter){
 
         ## iterate only once simultaneous eqs
         gammaHat <- (ZEX + Ydst) / (cHat*J + I)
-        cHat <- sumST(ZEX) / sumT(J*sumSp(gammaHat))
+        if ( indexC ) {
+            cHat <- sumSp(ZEX) / (J*sumSp(gammaHat))
+        } else {
+            cHat <- sumST(ZEX) / sumT(J*sumSp(gammaHat))
+        }
 
         ## check convergence of EM
         if ( converged(cHat, cHat_old) &&

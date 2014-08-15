@@ -2,16 +2,17 @@
 \alias{calcBias}
 \title{calculate bias from output of testPref}
 \usage{
-calcBias(null, alt, lambda, gamma)
+calcBias(x, lambda, gamma)
 }
 \arguments{
-  \item{null}{null hypothesis dataset}
+  \item{x}{a testPref object as returned by the eponymous
+  function}
 
-  \item{alt}{alternative hypothesis dataset}
+  \item{lambda}{true values of lambda; TxS numbers in a
+  data.frame}
 
-  \item{lambda}{true values of lambda; TxS numbers}
-
-  \item{gamma}{true values of gamma; TxS numbers}
+  \item{gamma}{true values of gamma; TxS numbers in a
+  data.frame}
 }
 \description{
 calculate bias from output of testPref

@@ -8,9 +8,11 @@
 ##' @param gamma matrix of rates at which prey species is seen in habitat; TxS
 ##' @param M number of simulated datasets
 ##' @param EM boolean specifying test of EM algorithm
+##' @param index_c boolean; TRUE indexes c in null hypothesis by t
+##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 ##' @param n number of parameters to randomly sample; max allowed S*T
 ##' @export
-testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, n=4) {
+testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, index_c = TRUE, em_maxiter = 100, n=4) {
 
 
     ## initialize output strucutres
@@ -22,7 +24,7 @@ testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, n=4) {
     jdx <- 2:(S+1)                      # selects only data columns
     ST <- S*T
     if ( n <= ST ) {
-        s <- sample(1:ST, n)            # randomly sample n parameters
+        s <- sort(sample(1:ST, n))            # randomly sample n parameters
     } else {
         stop(sprintf('n must be smaller than S*T = %d', ST))
     }
@@ -35,7 +37,7 @@ testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, n=4) {
         fdata <- simPref(S, T, J, I, lambda, gamma, EM=EM)
         
         ## fit model
-        prefs <- predPref(fdata$eaten, fdata$caught)
+        prefs <- predPref(fdata$eaten, fdata$caught, index_c = index_c, em_maxiter = em_maxiter)
         idx <- (n*(m-1)+1); idxs <- idx:(idx+(n-1))
         
         ## store estimates
@@ -44,23 +46,34 @@ testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, n=4) {
         }
         alt[idxs,] <- cbind(s, unlist(prefs$alt$lambda)[s],
                             unlist(prefs$alt$gamma)[s])
-        null[idxs,] <- cbind(s, rep(prefs$null$c, n), unlist(prefs$null$gamma)[s])
+        if (index_c) {
+            r <- s[which(s<=T)]
+            if (any(s>T)) r <- c(r, s[which(s>T)]-T)
+            null[idxs,] <- cbind(s, prefs$null$c[r], unlist(prefs$null$gamma)[s])
+        } else {
+            null[idxs,] <- cbind(s, rep(prefs$null$c, n), unlist(prefs$null$gamma)[s])            
+        }
+
     }
-    list('null' = null, 'alt' = alt, 'iters' = iters)
+    out <- list('null' = null, 'alt' = alt, 'iters' = iters)
+    class(out) <- 'testPref'
+    out
 }
 
 ##' plot the output of testPref
 ##'
-##' @param null null hypothesis dataset
-##' @param alt alternative hypothesis dataset
+##' @param x a testPref object as returned by the eponymous function
 ##' @export
-plotTestPref <- function(null, alt) {
+plotTestPref <- function(x) {
     require(lattice)
     require(gridExtra)
+    null <- x$null
+    alt <- x$alt
     grid.arrange(densityplot(~c+gamma, data=null, groups=f,
                              main='Null Hypothesis', xlab='',
                              scales = list(y = list(relation = "free"),
-                                 x = list(relation='free'))),
+                                 x = list(relation='free')),
+                             ),
                  densityplot(~lambda+gamma, data=alt, group=f,
                              xlab='', main='Alternative Hypothesis',
                              scales = list(y = list(relation = "free"),
@@ -68,66 +81,42 @@ plotTestPref <- function(null, alt) {
                  nrow=2)
 }
 
-##' calculate bias from output of testPref
-##'
-##' @param null null hypothesis dataset
-##' @param alt alternative hypothesis dataset
-##' @param lambda true values of lambda; TxS numbers
-##' @param gamma true values of gamma; TxS numbers
-##' @export
-calcBias <- function(null, alt, lambda, gamma) {
-    ## get bias = param - est for each simulation
-    s <- unique(null$f)
-    H0bias <- as.data.frame(sapply(s, function(x) {
-        (gamma[x] - null$gamma[which(null$f == x)])/gamma[x]}))
-    H1biasG <- as.data.frame(sapply(s, function(x) {
-        (gamma[x] - alt$gamma[which(alt$f == x)])/gamma[x]}))
-    H1biasL <- as.data.frame(sapply(s, function(x) {
-        (lambda[x] - alt$lambda[which(alt$f == x)])/lambda[x]}))
-    colnames(H0bias) <- colnames(H1biasG) <- colnames(H1biasL) <- as.character(s)
-
-    ## format alternative hypothesis data
-    sL <- stack(H1biasL); sG <- stack(H1biasG)
-    oL <- order(sL$ind); oG <- order(sG$ind)
-    altDat <- as.data.frame(cbind(sL[oL,'values'], sG[oG,]))
-    colnames(altDat) <- c('lambda', 'gamma', 'ind')
-
-    ## format null data
-    nullDat <- stack(H0bias)
-    nullDat$variable <- 'gamma'
-    
-    list('null' = nullDat,
-         'alt' = melt(altDat, id.vars='ind'))
+##' summarize output from testPref()
+##' 
+##' @param object a testPref object as returned by the eponymous function
+##' @param ... additional arguments
+##' @param fun a vectorized function to summarize each column by; defaults to mean()
+##' @S3method 
+summary.testPref <- function(object, ..., fun = mean) {
+    fun <- match.fun(fun)
+    list('null' = ddply(object$null, .(f), colwise(fun)),
+         'alt' = ddply(object$alt, .(f), colwise(fun)))
 }
 
-##' plot bias calculations from calcBias
+##' calculate bias from output of testPref
 ##'
-##' @param Bias output from calcBias
+##' @param x a testPref object as returned by the eponymous function
+##' @param lambda true values of lambda; TxS numbers in a data.frame
+##' @param gamma true values of gamma; TxS numbers in a data.frame
 ##' @export
-##' @details Means and medians are represented by dots and bars, respectively.  
-plotBias <- function(Bias) {
-    require(lattice)
-    require(gridExtra)
-    nullM <- ddply(Bias$null, .(ind, variable), summarize, means=mean(values))
-    altM <- ddply(Bias$alt, .(ind, variable), summarize, means=mean(value))
-    grid.arrange(bwplot(values~ind|variable, data=Bias$null, main='Null Hypothesis',
-                        strip=strip.custom(var.name='gamma'), pch='|', ylab='Bias (% of true value)',
-                        xlab='',
-                        panel = function(...) {
-                            panel.bwplot(...)
-                            panel.points(x=nullM$means, col='black', pch=20)
-                            ## ensures order of means is correct
-                            #panel.text(x=nullM$ind, y=0.5, labels=as.character(nullM$ind))
-                            panel.abline(h=0, col='black', lty='dotted')
-                        }),
-                 bwplot(value~ind|variable, data=Bias$alt, main='Alternative Hypothesis',
-                        pch='|', ylab='Bias (% of true value)', xlab='',
-                        panel = function(...) {
-                            panel.bwplot(...)
-                            panel.points(x=altM$means, col='black', pch=20)
-                            ## ensures order of means is correct
-                            #panel.text(x=altM$ind, y=0.5, labels=as.character(altM$ind))
-                            panel.abline(h=0, col='black', lty='dotted')
-                        }),
-                 nrow=2)
+calcBias <- function(x, lambda, gamma) {
+    
+    ## ensure proper structure and calculate means of each randomly sampled element
+    if ( class(x) != 'testPref' ) stop('argument out is not of correct class.')
+    summOut <- summary(x)
+    null <- summOut$null                # H0 means
+    alt <- summOut$alt                  # H1 means
+    f <- unique(null$f)                 # randomly sampled indices
+    T <- nrow(lambda)                   # units of time
+    c <- lambda/gamma                   # true value of c
+        
+    ## match randomly sampled indices with parameter estimates for c
+    cidx <- f[which(f<=T)]
+    cidx <- c(cidx,f[which(f>T)]-T)
+
+    ## output parameter - mean(estimates)
+    list('null' = data.frame('gamma' = gamma[f] - null$gamma,
+             'c' = c[cidx] - null$c),
+         'alt' = data.frame('lambda' = lambda[f] - alt$lambda,
+             'gamma' = gamma[f] - alt$gamma))
 }

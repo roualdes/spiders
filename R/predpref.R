@@ -3,9 +3,10 @@
 ##' @param eaten a df of eatings preferences; TxS
 ##' @param caught a df of caught prey species; TxS
 ##' @param alpha LRT level of significance
+##' @param index_c boolean; TRUE indexes c in null hypothesis by t
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 ##' @export
-predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
+predPref <- function(eaten, caught, alpha=0.05, index_c = TRUE, em_maxiter=100) {
 
     xNames <- colnames(eaten)
     yNames <- colnames(caught)
@@ -42,7 +43,7 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
     ## EM?
     if ( EM ) {
         ## estimate parameters
-        null <- estEM0(Xdst, Ydst, J, I, em_maxiter)
+        null <- estEM0(Xdst, Ydst, J, I, index_c, em_maxiter)
         alt <- estEM1(Xdst, Ydst, J, I, em_maxiter)
 
         ## standard errors
@@ -55,7 +56,7 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
     } else {
 
         ## balanced data
-        if ( length(unique(J)) == 1 && length(unique(I)) == 1 ) {
+        if ( length(unique(J)) == 1 && length(unique(I)) == 1 && index_c == FALSE ) {
             ## estimate parameters
             null <- est0b(Xdst, Ydst, J[1], I[1])
             alt <- est1b(Xdst, Ydst, J[1], I[1])
@@ -70,7 +71,7 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
             
         } else {                        # not balanced
             ## estimate parameters
-            null <- est0(Xdst, Ydst, J, I)
+            null <- est0(Xdst, Ydst, J, I, index_c)
             alt <- est1(Xdst, Ydst, J, I)
 
             ## standard errors
@@ -85,7 +86,7 @@ predPref <- function(eaten, caught, alpha=0.05, em_maxiter=100) {
 
     ## LRT stats
     ## calculate degrees of freedom on asymptotic chi-squared
-    df <- S*T-1
+    df <- S*T-length(c)
     Lambda <- -2*(llH0 - llH1)
     
     out <- list('alt' = alt, 'null' = null,

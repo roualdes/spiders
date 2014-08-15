@@ -27,14 +27,20 @@ seEM <- function(lambda, gamma, c, Zdst, Ydst, J, I) {
         out[,'lambda'] <- unlist(J*elambda/(1-elambda)^2)
         rownames(out) <- indices
     } else {                            # H0
-        out <- rep(0, ST+1)
         l <- c*gamma
         el <- exp(l)
         tmp <- J*el/(1-el)^2
         g2 <- gamma^2
-        out[1] <- sumST(tmp*g2)
-        out[-1] <- unlist(tmp*c^2 + Ydst/g2)
-        names(out) <- c('c', paste('gamma', indices, sep=''))
+        lc <- length(c)
+        slc <- seq_len(lc)
+        out <- rep(0, ST+lc)
+        if ( lc > 1 ) {
+            out[slc] <- sumSp(tmp*g2)
+        } else {
+            out[slc] <- sumST(tmp*g2)
+        }
+        out[-slc] <- unlist(tmp*c^2 + Ydst/g2)
+        names(out) <- c(paste('c', slc, sep=''), paste('gamma', indices, sep=''))
     }
     sqrt(1/out)
 }
@@ -68,10 +74,16 @@ se <- function(lambda, gamma, c, Xdst, Ydst, J, I) {
         out[,'lambda'] <- unlist(Xdst/lambda^2)
         rownames(out) <- indices
     } else {
-        out <- rep(0, ST+1)
-        out[1] <- sumST(Xdst/c^2)
-        out[-1] <- unlist((Xdst+Ydst)/gamma^2)
-        names(out) <- c('c', paste('gamma', indices, sep=''))
+        lc <- length(c)
+        slc <- seq_len(lc)
+        out <- rep(0, ST+lc)
+        if ( lc > 1 ) {
+            out[slc] <- sumSp(Xdst/c^2)
+        } else {
+            out[slc] <- sumST(Xdst/c^2)            
+        }
+        out[-slc] <- unlist((Xdst+Ydst)/gamma^2)
+        names(out) <- c(paste('c', slc, sep=''), paste('gamma', indices, sep=''))
     }
     sqrt(1/out)
 }

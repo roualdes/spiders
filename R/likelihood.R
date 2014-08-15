@@ -33,11 +33,10 @@ ll <- function(Xdst, Ydst, lambda, gamma, J, I, c=NULL) {
         out <- -sumT(J*sumSp(lambda)) + sumT(log(J)*sumSp(Xdst)) + sumST(Xdst*log(lambda))
     } else {
         ## null
-        out <- -c*sumT(J*sumSp(gamma)) + sumT(log(c*J)*sumSp(Xdst)) + sumST(Xdst*log(gamma)) 
+        out <- -1*sumT(c*J*sumSp(gamma)) + sumT(log(c*J)*sumSp(Xdst)) + sumST(Xdst*log(gamma)) 
     }
     out - sumT(I*sumSp(gamma)) + sumT(log(I)*sumSp(Ydst)) + sumST(Ydst*log(gamma))
 }
-
 
 
 ##' log-likelihood of predators preferances model with EM

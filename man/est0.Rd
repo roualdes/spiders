@@ -2,7 +2,7 @@
 \alias{est0}
 \title{estimates parameters from the null model when data unbalanced}
 \usage{
-est0(Xdst, Ydst, J, I)
+est0(Xdst, Ydst, J, I, indexC)
 }
 \arguments{
   \item{Xdst}{matrix of sums of number of eaten prey
@@ -17,6 +17,9 @@ est0(Xdst, Ydst, J, I)
 
   \item{I}{vector of number of days all traps were left out
   in a given time period}
+
+  \item{indexC}{boolean; TRUE indexes c in null hypothesis
+  by t}
 }
 \description{
 estimates parameters from the null model when data

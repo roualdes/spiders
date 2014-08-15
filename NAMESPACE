@@ -1,4 +1,3 @@
 import(plyr, reshape2)
-export(predPref, simPref, format.predPref, summary.predPref, testPref, plotTestPref, calcBias, plotBias)
-S3method("format", "predPref")
+export(predPref, simPref, summary.predPref, testPref, plotTestPref, calcBias)
 S3method("summary", "predPref")

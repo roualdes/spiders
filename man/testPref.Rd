@@ -2,7 +2,8 @@
 \alias{testPref}
 \title{test predPref function by simulating data and fitting model}
 \usage{
-testPref(S, T, J, I, lambda, gamma, M = 100, EM = F, n = 4)
+testPref(S, T, J, I, lambda, gamma, M = 100, EM = F, index_c = TRUE,
+  em_maxiter = 100, n = 4)
 }
 \arguments{
   \item{S}{number of prey species}
@@ -22,6 +23,12 @@ testPref(S, T, J, I, lambda, gamma, M = 100, EM = F, n = 4)
   \item{M}{number of simulated datasets}
 
   \item{EM}{boolean specifying test of EM algorithm}
+
+  \item{index_c}{boolean; TRUE indexes c in null hypothesis
+  by t}
+
+  \item{em_maxiter}{maximum number of iterations allowed
+  for EM algorithm}
 
   \item{n}{number of parameters to randomly sample; max
   allowed S*T}

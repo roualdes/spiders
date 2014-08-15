@@ -2,7 +2,7 @@
 \alias{estEM0}
 \title{estimates parameters from the null model with non-count data via EM}
 \usage{
-estEM0(Zdst, Ydst, J, I, em_maxiter)
+estEM0(Zdst, Ydst, J, I, indexC, em_maxiter)
 }
 \arguments{
   \item{Zdst}{matrix of sums of binary response, whether
@@ -17,6 +17,9 @@ estEM0(Zdst, Ydst, J, I, em_maxiter)
 
   \item{I}{vector of number of days all traps were left out
   in a given time period}
+
+  \item{indexC}{boolean; TRUE indexes c in null hypothesis
+  by t}
 
   \item{em_maxiter}{maximum number of iterations allowed
   for EM algorithm}
