@@ -2,17 +2,18 @@
 \alias{predPref}
 \title{estimates parameters of predator preferences model and calculates LRT}
 \usage{
-predPref(eaten, caught, alpha = 0.05, index_c = TRUE, em_maxiter = 100)
+predPref(eaten, caught, hypotheses = c("c", "index_c"), alpha = 0.05,
+  em_maxiter = 100)
 }
 \arguments{
   \item{eaten}{a df of eatings preferences; TxS}
 
   \item{caught}{a df of caught prey species; TxS}
 
-  \item{alpha}{LRT level of significance}
+  \item{hypotheses}{a 2-tuple with names 'null' and 'alt'
+  specifying the null and alternative hypotheses}
 
-  \item{index_c}{boolean; TRUE indexes c in null hypothesis
-  by t}
+  \item{alpha}{LRT level of significance}
 
   \item{em_maxiter}{maximum number of iterations allowed
   for EM algorithm}

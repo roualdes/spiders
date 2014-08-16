@@ -8,11 +8,11 @@
 ##' @param gamma matrix of rates at which prey species is seen in habitat; TxS
 ##' @param M number of simulated datasets
 ##' @param EM boolean specifying test of EM algorithm
-##' @param index_c boolean; TRUE indexes c in null hypothesis by t
+##' @param hyp a 2-tuple with names 'null' and 'alt' specifying the null and alternative hypotheses
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 ##' @param n number of parameters to randomly sample; max allowed S*T
 ##' @export
-testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, index_c = TRUE, em_maxiter = 100, n=4) {
+testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, hyp = c('c', 'gen'), em_maxiter = 100, n=4) {
 
 
     ## initialize output strucutres
@@ -37,7 +37,9 @@ testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, index_c = TRUE, em_
         fdata <- simPref(S, T, J, I, lambda, gamma, EM=EM)
         
         ## fit model
-        prefs <- predPref(fdata$eaten, fdata$caught, index_c = index_c, em_maxiter = em_maxiter)
+        prefs <- predPref(fdata$eaten, fdata$caught, hypotheses = hyp, em_maxiter = em_maxiter)
+        
+        index_c <- ifelse(length(prefs$null$c)>1, TRUE, FALSE) # might need to fix this line in future
         idx <- (n*(m-1)+1); idxs <- idx:(idx+(n-1))
         
         ## store estimates

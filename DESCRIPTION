@@ -13,5 +13,6 @@ Imports:
     reshape2
 Suggests:
     lattice,
-    gridExtra
+    gridExtra,
+    testthat
 License: GPL (>= 2.0)

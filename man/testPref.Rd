@@ -2,7 +2,7 @@
 \alias{testPref}
 \title{test predPref function by simulating data and fitting model}
 \usage{
-testPref(S, T, J, I, lambda, gamma, M = 100, EM = F, index_c = TRUE,
+testPref(S, T, J, I, lambda, gamma, M = 100, EM = F, hyp = c("c", "gen"),
   em_maxiter = 100, n = 4)
 }
 \arguments{
@@ -24,8 +24,8 @@ testPref(S, T, J, I, lambda, gamma, M = 100, EM = F, index_c = TRUE,
 
   \item{EM}{boolean specifying test of EM algorithm}
 
-  \item{index_c}{boolean; TRUE indexes c in null hypothesis
-  by t}
+  \item{hyp}{a 2-tuple with names 'null' and 'alt'
+  specifying the null and alternative hypotheses}
 
   \item{em_maxiter}{maximum number of iterations allowed
   for EM algorithm}

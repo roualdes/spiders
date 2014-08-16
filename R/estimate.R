@@ -14,19 +14,6 @@ est0b <- function(Xdst, Ydst, J, I) {
     list('gamma' = gammaHat, 'c' = cHat)
 }
 
-##' estimates parameters from the general alternative model when data balanced
-##'
-##' @param Xdst matrix of sums of number of eaten prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS
-##' @param Ydst matrix sum of number of caught prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS
-##' @param J vector of predators caught in each time period
-##' @param I vector of number of days all traps were left out in a given time period 
-est1b <- function(Xdst, Ydst, J, I) {
-    gammaHat <- Ydst/I
-    lambdaHat <- Xdst/J
-    list('gamma' = gammaHat, 'lambda' = lambdaHat)
-}
-
-
 ## unbalanced, completely observed data
 
 ##' estimates parameters from the null model when data unbalanced
@@ -43,7 +30,7 @@ est0 <- function(Xdst, Ydst, J, I, indexC) {
     T <- nrow(Xdst)
     XYdst <- Xdst + Ydst
     stXdst <- sumST(Xdst)
-    iter <- 1; maxiter <- 50
+    iter <- 1; maxiter <- 500
 
     ## not sure this is the right spot for these checks
     ## ensure J & I have dimension T or 1
@@ -80,7 +67,8 @@ est0 <- function(Xdst, Ydst, J, I, indexC) {
         cHat_old <- cHat
         iter <- iter+1
         
-        if ( iter > maxiter ) break
+        if ( iter > maxiter )
+            stop(sprintf('est0: %d not sufficient iterations for simultaneous equations.', maxiter))
     }
     list('gamma' = gammaHat, 'c' = cHat, 'iters' = iter)
 }
@@ -202,4 +190,6 @@ estEM1 <- function(Zdst, Ydst, J, I, em_maxiter){
     
     list('lambda' = lambdaHat, 'gamma' = gammaHat, 'em_iters' = em_iter)
 }
+
+
 

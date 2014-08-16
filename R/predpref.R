@@ -2,12 +2,15 @@
 ##'
 ##' @param eaten a df of eatings preferences; TxS
 ##' @param caught a df of caught prey species; TxS
+##' @param hypotheses a 2-tuple with names 'null' and 'alt' specifying the null and alternative hypotheses
 ##' @param alpha LRT level of significance
-##' @param index_c boolean; TRUE indexes c in null hypothesis by t
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 ##' @export
-predPref <- function(eaten, caught, alpha=0.05, index_c = TRUE, em_maxiter=100) {
+predPref <- function(eaten, caught, hypotheses = c('c', 'index_c'), alpha=0.05, em_maxiter=100) {
 
+    ## check hypotheses specification
+    hypotheses <- checkHypotheses(hypotheses)
+    
     xNames <- colnames(eaten)
     yNames <- colnames(caught)
 
@@ -24,69 +27,30 @@ predPref <- function(eaten, caught, alpha=0.05, index_c = TRUE, em_maxiter=100) 
     Y <- caught[,preyNames]
     if ( any(X < 0) || any(Y < 0) ) stop("Count data can not be less than 0.")
 
-    ## do we run EM?
-    EM <- ifelse(!any(X > 1), TRUE, FALSE)
-
+    ## predators (J), traps (I)
+    J <- getTimeCounts(eaten, 'adj')[,2]
+    I <- getTimeCounts(caught, 'adj')[,2] # total days traps were out each t
+    
     ## data for calculations
     Xdst <- getTimeCounts(eaten, preyNames)[,preyNames, drop=F]
     Ydst <- getTimeCounts(caught, preyNames)[,preyNames, drop=F]
 
+    ## do we run EM?
+    EM <- ifelse(!any(X > 1), TRUE, FALSE)
+    
+    ## are data balanced
+    BAL <- length(unique(J)) == 1 && length(unique(I)) == 1
+
     ## errors with time points
     if ( nrow(Xdst) != nrow(Ydst) ) stop("Differing number of time points in eaten/caught data.")
 
-    ## predators (J), traps (I), prey species (S), times (T)
-    J <- getTimeCounts(eaten, 'adj')[,2]
-    I <- getTimeCounts(caught, 'adj')[,2] # total days traps were out each t
-    S <- length(preyNames)
-    T <- nrow(Xdst)                  # assuming same times in both X,Y
+    calcs <- calcHypotheses(hyp = hypotheses, Xdst = Xdst, Ydst = Ydst,
+                            J=J, I=I, balanced = BAL, EM=EM, em_maxiter = em_maxiter)
+    llH0 <- calcs$llH0; llH1 <- calcs$llH1
+    null <- calcs$null; alt <- calcs$alt
+    df <- calcs$df
 
-    ## EM?
-    if ( EM ) {
-        ## estimate parameters
-        null <- estEM0(Xdst, Ydst, J, I, index_c, em_maxiter)
-        alt <- estEM1(Xdst, Ydst, J, I, em_maxiter)
-
-        ## standard errors
-        null$SE <- seEM(NULL, null$gamma, null$c, Xdst, Ydst, J, I)
-        alt$SE <- seEM(alt$lambda, alt$gamma, NULL, Xdst, Ydst, J, I)
-        
-        ## calc likelihoods
-        llH0 <- llEM(Xdst, Ydst, NA, null$gamma, J, I, null$c)
-        llH1 <- llEM(Xdst, Ydst, alt$lambda, alt$gamma, J, I)
-    } else {
-
-        ## balanced data
-        if ( length(unique(J)) == 1 && length(unique(I)) == 1 && index_c == FALSE ) {
-            ## estimate parameters
-            null <- est0b(Xdst, Ydst, J[1], I[1])
-            alt <- est1b(Xdst, Ydst, J[1], I[1])
-
-            ## standard errors
-            null$SE <- se(NULL, null$gamma, null$c, Xdst, Ydst, J, I)
-            alt$SE <- se(alt$lambda, alt$gamma, NULL, Xdst, Ydst, J, I)
-
-            ## calc likelihoods
-            llH0 <- llb(Xdst, Ydst, NA, null$gamma, J[1], I[1], null$c)
-            llH1 <- llb(Xdst, Ydst, alt$lambda, alt$gamma, J[1], I[1])
-            
-        } else {                        # not balanced
-            ## estimate parameters
-            null <- est0(Xdst, Ydst, J, I, index_c)
-            alt <- est1(Xdst, Ydst, J, I)
-
-            ## standard errors
-            null$SE <- se(NULL, null$gamma, null$c, Xdst, Ydst, J, I)
-            alt$SE <- se(alt$lambda, alt$gamma, NULL, Xdst, Ydst, J, I)
-
-            ## calc likelihoods
-            llH0 <- ll(Xdst, Ydst, NA, null$gamma, J, I, null$c)
-            llH1 <- ll(Xdst, Ydst, alt$lambda, alt$gamma, J, I)
-        }
-    }
-
-    ## LRT stats
-    ## calculate degrees of freedom on asymptotic chi-squared
-    df <- S*T-length(c)
+    ## LRT stat
     Lambda <- -2*(llH0 - llH1)
     
     out <- list('alt' = alt, 'null' = null,
