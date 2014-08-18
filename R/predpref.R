@@ -44,8 +44,9 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'index_c'), alpha=0.05, 
     ## errors with time points
     if ( nrow(Xdst) != nrow(Ydst) ) stop("Differing number of time points in eaten/caught data.")
 
-    calcs <- calcHypotheses(hyp = hypotheses, Xdst = Xdst, Ydst = Ydst,
-                            J=J, I=I, balanced = BAL, EM=EM, em_maxiter = em_maxiter)
+    calcs <- calcHyps(hyp = hypotheses,
+                      Xdst = Xdst, Ydst = Ydst, J=J, I=I,
+                      balanced = BAL, EM=EM, em_maxiter = em_maxiter)
     llH0 <- calcs$llH0; llH1 <- calcs$llH1
     null <- calcs$null; alt <- calcs$alt
     df <- calcs$df

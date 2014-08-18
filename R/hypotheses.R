@@ -66,6 +66,28 @@ calcHypotheses <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
     list('llH0' = llH0, 'llH1' = llH1, 'null' = null, 'alt' = alt, 'df' = df)
 }
 
+
+calcHyps <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
+
+    ## create map of estimators
+    fns <- list()
+    fns[['1']] <- est1t; fns[['c']] <- estC
+    fns[['Ct']] <- estCt; fns[['general']] <- estGen
+
+    ## calculate null and alternative hypotheses
+    null <- fns[[hyp[1]]](Xdst, Ydst, J, I, EM, em_maxiter, balanced)
+    alt <- fns[[hyp[2]]](Xdst, Ydst, J, I, EM, em_maxiter, balanced)        
+
+    ## calculate degrees of freedom
+    S <- ncol(Xdst); T <- nrow(Xdst); ST <- S*T
+    nullDF <- length(null[['c']])
+    altDF <- ifelse(is.null(alt[['c']]), ST, length(alt[['c']]))
+    df <- altDF - nullDF
+    
+    list('llH0' = null[['ll']], 'llH1' = alt[['ll']],
+         'null' = null, 'alt' = alt, 'df' = df)    
+}
+
 ##' function to check user specified hypotheses
 ##'
 ##' @param hyp a 2-tuple specifying the null and alternative hypotheses, respectively
@@ -75,8 +97,8 @@ checkHypotheses <- function(hyp) {
     H <- rep(0, 2)
     
     ## H0
-    if ( grepl('index', hyp[1]) ) {
-        H[1] <- 'index_c'
+    if ( grepl('t', hyp[1]) ) {
+        H[1] <- 'Ct'
     } else if ( grepl('c', hyp[1]) ) {
         H[1] <- 'c'
     } else {
@@ -86,8 +108,8 @@ checkHypotheses <- function(hyp) {
     ## H1
     if ( grepl('gen', hyp[2]) ) {
         H[2] <- 'general'
-    } else if ( grepl('index', hyp[2]) ) {
-        H[2] <- 'index_c'
+    } else if ( grepl('t', hyp[2]) ) {
+        H[2] <- 'Ct'
     }
 
     ## both
