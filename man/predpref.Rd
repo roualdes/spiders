@@ -2,7 +2,7 @@
 \alias{predPref}
 \title{estimates parameters of predator preferences model and calculates LRT}
 \usage{
-predPref(eaten, caught, hypotheses = c("c", "index_c"), alpha = 0.05,
+predPref(eaten, caught, hypotheses = c("c", "Ct"), alpha = 0.05,
   em_maxiter = 100)
 }
 \arguments{

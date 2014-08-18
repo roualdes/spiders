@@ -10,68 +10,9 @@
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 calcHypotheses <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
 
-    ## EM?
-    if ( EM ) {
-        ## null
-        null <- estEM0(Xdst, Ydst, J, I, ifelse(hyp[1]=='index_c', TRUE, FALSE), em_maxiter)
-        null$SE <- seEM(NULL, null$gamma, null$c, Xdst, Ydst, J, I)
-        llH0 <- llEM(Xdst, Ydst, NA, null$gamma, J, I, null$c)
-
-        ## alt
-        if ( hyp[2] == 'general' ) {
-            alt <- estEM1(Xdst, Ydst, J, I, em_maxiter)
-            alt$SE <- seEM(alt$lambda, alt$gamma, NULL, Xdst, Ydst, J, I)
-            llH1 <- llEM(Xdst, Ydst, alt$lambda, alt$gamma, J, I)
-        } else {
-            alt <- estEM0(Xdst, Ydst, J, I, TRUE, em_maxiter)
-            alt$SE <- seEM(NULL, alt$gamma, alt$c, Xdst, Ydst, J, I)
-            llH1 <- llEM(Xdst, Ydst, NA, alt$gamma, J, I, alt$c)
-        }
-    } else {
-
-        ## null
-        if ( balanced && hyp[1] == 'c') {
-            ## solve analytically
-            null <- est0b(Xdst, Ydst, J[1], I[1])
-            null$SE <- se(NULL, null$gamma, null$c, Xdst, Ydst, J, I)
-            llH0 <- llb(Xdst, Ydst, NA, null$gamma, J[1], I[1], null$c)
-        } else {
-            ## even if c is not indexed, data not balanced => need iterative solution
-            null <- est0(Xdst, Ydst, J, I, ifelse(hyp[1] == 'index_c', TRUE, FALSE))
-            null$SE <- se(NULL, null$gamma, null$c, Xdst, Ydst, J, I)
-            llH0 <- ll(Xdst, Ydst, NA, null$gamma, J, I, null$c)
-        }
-        
-        
-        ## alt
-        if ( hyp[2] == 'general' ) {
-            ## general alternative
-            alt <- est1(Xdst, Ydst, J, I)
-            alt$SE <- se(alt$lambda, alt$gamma, NULL, Xdst, Ydst, J, I)
-            llH1 <- ll(Xdst, Ydst, alt$lambda, alt$gamma, J, I)            
-        } else {
-            ## c is indexed
-            alt <- est0(Xdst, Ydst, J, I, TRUE)
-            alt$SE <- se(NULL, alt$gamma, alt$c, Xdst, Ydst, J, I)
-            llH1 <- ll(Xdst, Ydst, NA, alt$gamma, J, I, alt$c)
-        }
-    }
-    
-    ## calculate degrees of freedom
-    S <- ncol(Xdst); T <- nrow(Xdst); ST <- S*T
-    nullDF <- ST + ifelse( hyp[1] == 'index_c', T, 1)
-    altDF <- ST + ifelse( hyp[2] == 'general', ST, T)
-    df <- altDF - nullDF
-    
-    list('llH0' = llH0, 'llH1' = llH1, 'null' = null, 'alt' = alt, 'df' = df)
-}
-
-
-calcHyps <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
-
     ## create map of estimators
     fns <- list()
-    fns[['1']] <- est1t; fns[['c']] <- estC
+    fns[['1']] <- est1; fns[['c']] <- estC
     fns[['Ct']] <- estCt; fns[['general']] <- estGen
 
     ## calculate null and alternative hypotheses
@@ -101,8 +42,10 @@ checkHypotheses <- function(hyp) {
         H[1] <- 'Ct'
     } else if ( grepl('c', hyp[1]) ) {
         H[1] <- 'c'
+    } else if ( grepl('1', hyp[1]) ) {
+        H[1] <- '1'
     } else {
-        stop('Hypotheses specified incorrectly; please check documentation.')
+        stop('Null hypothis specified incorrectly; please check documentation.')
     }
 
     ## H1
@@ -110,6 +53,10 @@ checkHypotheses <- function(hyp) {
         H[2] <- 'general'
     } else if ( grepl('t', hyp[2]) ) {
         H[2] <- 'Ct'
+    } else if ( grepl('c', hyp[2]) ) {
+        H[2] <- 'c'
+    } else {
+        stop('Alt hypothis specified incorrectly; please check documentation.')
     }
 
     ## both

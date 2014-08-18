@@ -6,7 +6,7 @@
 ##' @param alpha LRT level of significance
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 ##' @export
-predPref <- function(eaten, caught, hypotheses = c('c', 'index_c'), alpha=0.05, em_maxiter=100) {
+predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_maxiter=100) {
 
     ## check hypotheses specification
     hypotheses <- checkHypotheses(hypotheses)
@@ -44,7 +44,7 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'index_c'), alpha=0.05, 
     ## errors with time points
     if ( nrow(Xdst) != nrow(Ydst) ) stop("Differing number of time points in eaten/caught data.")
 
-    calcs <- calcHyps(hyp = hypotheses,
+    calcs <- calcHypotheses(hyp = hypotheses,
                       Xdst = Xdst, Ydst = Ydst, J=J, I=I,
                       balanced = BAL, EM=EM, em_maxiter = em_maxiter)
     llH0 <- calcs$llH0; llH1 <- calcs$llH1

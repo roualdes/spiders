@@ -1,8 +1,8 @@
-\name{est0}
-\alias{est0}
-\title{estimates parameters from the null model when data unbalanced}
+\name{estC}
+\alias{estC}
+\title{estimate parameters from hypothesis: lambda = c*gamma; S*T + 1 free parameters}
 \usage{
-est0(Xdst, Ydst, J, I, indexC)
+estC(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
 }
 \arguments{
   \item{Xdst}{matrix of sums of number of eaten prey
@@ -18,11 +18,16 @@ est0(Xdst, Ydst, J, I, indexC)
   \item{I}{vector of number of days all traps were left out
   in a given time period}
 
-  \item{indexC}{boolean; TRUE indexes c in null hypothesis
-  by t}
+  \item{EM}{boolean; whether or not EM algorithm is used}
+
+  \item{em_maxiter}{integer specifying max number of EM
+  iterations}
+
+  \item{BALANCED}{boolean; whether or not data are
+  BALANCED}
 }
 \description{
-estimates parameters from the null model when data
-unbalanced
+estimate parameters from hypothesis: lambda = c*gamma; S*T
++ 1 free parameters
 }
 
