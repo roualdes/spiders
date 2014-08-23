@@ -11,10 +11,8 @@
 seEM <- function(lambda, gamma, c, Zdst, Ydst, J, I) {
 
     ## some numbers
-    S <- ncol(gamma)
-    s <- seq_len(S)
-    T <- nrow(gamma)
-    t <- seq_len(T)
+    S <- ncol(gamma); s <- seq_len(S)
+    T <- nrow(gamma); t <- seq_len(T)
     ST <- S*T
     indices <- unlist(lapply(s,
                              function(y) sapply(t,
@@ -27,20 +25,34 @@ seEM <- function(lambda, gamma, c, Zdst, Ydst, J, I) {
         out[,'lambda'] <- unlist(J*elambda/(1-elambda)^2)
         rownames(out) <- indices
     } else {                            # H0
-        l <- c*gamma
-        el <- exp(l)
-        tmp <- J*el/(1-el)^2
-        g2 <- gamma^2
         lc <- length(c)
         slc <- seq_len(lc)
         out <- rep(0, ST+lc)
-        if ( lc > 1 ) {
-            out[slc] <- sumSp(tmp*g2)
+        
+        if ( lc == 1 || lc == T ) {
+            l <- c*gamma
+            el <- exp(l)
+            tmp <- J*el/(1-el)^2
+            g2 <- gamma^2
+
+            if ( lc > 1 ) {
+                out[slc] <- sumSp(tmp*g2)
+            } else {
+                out[slc] <- sumST(tmp*g2)
+            }
+            out[-slc] <- unlist(tmp*c^2 + Ydst/g2)
+            names(out) <- c(paste('c', slc, sep=''), paste('gamma', indices, sep=''))
+        } else if ( lc == S ) {
+            l <- sapply(s, function(j) gamma[,j]*c[j]) # col-wise `*`
+            el <- exp(l)
+            tmp <- J*el/(1-el)^2
+            g2 <- gamma^2
+            out[slc] <- sumT(tmp*g2)
+            out[-slc] <- unlist(sapply(s, function(j) tmp[,j]*c[j]^2) + Ydst/g2)
+            names(out) <- c(paste('c', slc, sep=''), paste('gamma', indices, sep=''))            
         } else {
-            out[slc] <- sumST(tmp*g2)
+            stop('seEM: dimension of c is off.')
         }
-        out[-slc] <- unlist(tmp*c^2 + Ydst/g2)
-        names(out) <- c(paste('c', slc, sep=''), paste('gamma', indices, sep=''))
     }
     sqrt(1/out)
 }
@@ -77,13 +89,18 @@ se <- function(lambda, gamma, c, Xdst, Ydst, J, I) {
         lc <- length(c)
         slc <- seq_len(lc)
         out <- rep(0, ST+lc)
-        if ( lc > 1 ) {
+
+        if ( lc == 1  ) {
+            out[slc] <- sumST(Xdst/c^2)
+        } else if ( lc == T ) {
             out[slc] <- sumSp(Xdst/c^2)
+        } else if ( lc == S ){
+            out[slc] <- sumT(sapply(s, function(j) Xdst[,j]/c[j]^2)) # col-wise `/`
         } else {
-            out[slc] <- sumST(Xdst/c^2)            
+            stop('se: dimension of c is off.')
         }
         out[-slc] <- unlist((Xdst+Ydst)/gamma^2)
-        names(out) <- c(paste('c', slc, sep=''), paste('gamma', indices, sep=''))
+        names(out) <- c(paste('c', slc, sep=''), paste('gamma', indices, sep=''))            
     }
     sqrt(1/out)
 }

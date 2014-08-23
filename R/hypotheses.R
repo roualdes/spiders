@@ -13,7 +13,8 @@ calcHypotheses <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
     ## create map of estimators
     fns <- list()
     fns[['1']] <- est1; fns[['c']] <- estC
-    fns[['Ct']] <- estCt; fns[['general']] <- estGen
+    fns[['Cs']] <- estCs; fns[['Ct']] <- estCt
+    fns[['Cst']] <- estCst
 
     ## calculate null and alternative hypotheses
     null <- fns[[hyp[1]]](Xdst, Ydst, J, I, EM, em_maxiter, balanced)
@@ -33,6 +34,8 @@ calcHypotheses <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
 ##'
 ##' @param hyp a 2-tuple specifying the null and alternative hypotheses, respectively
 checkHypotheses <- function(hyp) {
+
+    hyp <- tolower((as.character(hyp)))
     
     ## initialize output
     H <- rep(0, 2)
@@ -40,6 +43,8 @@ checkHypotheses <- function(hyp) {
     ## H0
     if ( grepl('t', hyp[1]) ) {
         H[1] <- 'Ct'
+    } else if ( grepl('s', hyp[1]) ) {
+        H[1] <- 'Cs'
     } else if ( grepl('c', hyp[1]) ) {
         H[1] <- 'c'
     } else if ( grepl('1', hyp[1]) ) {
@@ -49,10 +54,12 @@ checkHypotheses <- function(hyp) {
     }
 
     ## H1
-    if ( grepl('gen', hyp[2]) ) {
-        H[2] <- 'general'
+    if ( grepl('gen', hyp[2]) || grepl('st', hyp[2]) ) {
+        H[2] <- 'Cst'
     } else if ( grepl('t', hyp[2]) ) {
         H[2] <- 'Ct'
+    } else if ( grepl('s', hyp[2]) ) {
+        H[2] <- 'Cs'
     } else if ( grepl('c', hyp[2]) ) {
         H[2] <- 'c'
     } else {

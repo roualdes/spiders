@@ -2,7 +2,7 @@
 ##'
 ##' @param eaten a df of eatings preferences; TxS
 ##' @param caught a df of caught prey species; TxS
-##' @param hypotheses a 2-tuple with names 'null' and 'alt' specifying the null and alternative hypotheses
+##' @param hypotheses a 2-tuple specifying the null and alternative hypotheses, respectively
 ##' @param alpha LRT level of significance
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 ##' @export
@@ -58,7 +58,8 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
                 'loglikH1' = llH1, 'loglikH0' = llH0,
                 'numPredators' = J, 'numTraps' = I,
                 'Lambda' = Lambda, 'df' = df,
-                'p.value' = pchisq(Lambda, df=df, lower.tail=F))
+                'p.value' = pchisq(Lambda, df=df, lower.tail=F),
+                hypotheses = hypotheses)
     class(out) <- 'predPref'
     out
 }

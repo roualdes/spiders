@@ -1,8 +1,8 @@
-\name{summary.testPref}
-\alias{summary.testPref}
+\name{mean.testPref}
+\alias{mean.testPref}
 \title{summarize output from testPref()}
 \usage{
-\method{summary}{testPref}(object, ..., fun = mean)
+\method{mean}{testPref}(object, ..., hypothesis = c("null", "alt", "both"))
 }
 \arguments{
   \item{object}{a testPref object as returned by the
@@ -10,8 +10,7 @@
 
   \item{...}{additional arguments}
 
-  \item{fun}{a vectorized function to summarize each column
-  by; defaults to mean()}
+  \item{hypothesis}{specify which hypothesis to plot}
 }
 \description{
 summarize output from testPref()

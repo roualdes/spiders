@@ -10,8 +10,8 @@ predPref(eaten, caught, hypotheses = c("c", "Ct"), alpha = 0.05,
 
   \item{caught}{a df of caught prey species; TxS}
 
-  \item{hypotheses}{a 2-tuple with names 'null' and 'alt'
-  specifying the null and alternative hypotheses}
+  \item{hypotheses}{a 2-tuple specifying the null and
+  alternative hypotheses, respectively}
 
   \item{alpha}{LRT level of significance}
 

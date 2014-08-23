@@ -12,8 +12,16 @@ ll <- function(Xdst, Ydst, lambda, gamma, J, I, c=NULL) {
         ## general alternative
         out <- -sumT(J*sumSp(lambda)) + sumT(log(J)*sumSp(Xdst)) + sumST(Xdst*log(lambda))
     } else {
+        lc <- length(c)
         ## null
-        out <- -1*sumT(c*J*sumSp(gamma)) + sumT(log(c*J)*sumSp(Xdst)) + sumST(Xdst*log(gamma)) 
+        if ( lc == nrow(Xdst) || lc == 1 ) {
+            out <- -1*sumT(c*J*sumSp(gamma)) + sumT(log(c*J)*sumSp(Xdst)) + sumST(Xdst*log(gamma)) 
+        } else {
+            s <- seq_len(ncol(Xdst))
+            cGamma <- sapply(s, function(j) gamma[,j]*c[j])
+            out <- -1*sumT(J*sumSp(cGamma)) + sumT(log(J)*sumSp(Xdst)) + sumST(Xdst*log(cGamma))           
+        }
+        
     }
     out - sumT(I*sumSp(gamma)) + sumT(log(I)*sumSp(Ydst)) + sumST(Ydst*log(gamma))
 }
@@ -37,9 +45,15 @@ llEM <- function(Zdst, Ydst, lambda, gamma, J, I, c=NULL) {
         ## general alternative
         out <- sumST(Zdst[w]*log(1-exp(-lambda[w])) - (J[w[,1]]-Zdst[w])*lambda[w])
     } else {
+        lc <- length(c)
         ## null
-        cg <- c*gamma
-        out <- sumST(Zdst*log(1-exp(-cg)) - (J-Zdst)*cg)
+        if ( lc == nrow(Zdst) || lc == 1 ) {
+            cGamma <- c*gamma
+        } else {
+            s <- seq_len(ncol(Zdst))
+            cGamma <- sapply(s, function(j) gamma[,j]*c[j])
+        }
+        out <- sumST(Zdst*log(1-exp(-cGamma)) - (J-Zdst)*cGamma)
     }
     out - sumT(I*sumSp(gamma)) + sumT(log(I)*sumSp(Ydst)) + sumST(Ydst*log(gamma))
 }

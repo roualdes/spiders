@@ -1,8 +1,8 @@
-\name{estGen}
-\alias{estGen}
-\title{estimates parameters from hypothesis lambda != gamma; 2*S*T free parameters}
+\name{estCs}
+\alias{estCs}
+\title{estimates parameters from hypothesis lambda = gamma c'_s; S*T + S free parameters}
 \usage{
-estGen(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
+estCs(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
 }
 \arguments{
   \item{Xdst}{matrix of sums of number of eaten prey
@@ -27,7 +27,7 @@ estGen(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
   BALANCED}
 }
 \description{
-estimates parameters from hypothesis lambda != gamma; 2*S*T
-free parameters
+estimates parameters from hypothesis lambda = gamma c'_s;
+S*T + S free parameters
 }
 

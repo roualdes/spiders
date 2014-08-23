@@ -27,5 +27,22 @@ print.summary.predPref <- function(x) {
     cat("Likelihood Ratio Test:\n\t-2*(llH0-llH1) =", x$Lambda, "on", x$df, "degrees of freedom\n")
     cat("\tp-value =", x$p.value, "\n")
     cat("Parameter Estimates:\n")
-    print(x$estimates)
+    if ( !is.null(x$estimates$c) ) {
+        indices <- names(x$estimates$se)
+        est <- cbind(c(as.vector(x$estimates$c), as.vector(x$estimates$gamma)), as.vector(x$estimates$se))
+    }
+    if ( !is.null(x$estimates$lambda)) {
+
+        ## some numbers
+        S <- ncol(x$estimates$gamma); s <- seq_len(S)
+        T <- nrow(x$estimates$gamma); t <- seq_len(T)
+        indices <- unlist(lapply(colnames(x$estimates$se), function(z)
+                                 lapply(s,
+                                        function(y) sapply(t,
+                                                           function(x) paste(z, x, y, sep='')))))
+        est <- cbind(c(as.vector(x$estimates$lambda), as.vector(x$estimates$gamma)), as.vector(x$estimates$se))
+    }
+    colnames(est) <- c('estimate', 'Std. Err.')
+    rownames(est) <- indices
+    printCoefmat(est)
 }

@@ -1,63 +1,81 @@
 ##' test predPref function by simulating data and fitting model
 ##'
-##' @param S number of prey species
-##' @param T number of time periods
 ##' @param J number of predators caught at each time
 ##' @param I effective number of traps at each time
 ##' @param lambda matrix of rates at which predator eats prey species; TxS
 ##' @param gamma matrix of rates at which prey species is seen in habitat; TxS
 ##' @param M number of simulated datasets
+##' @param hyp a 2-tuple specifying the null and alternative hypotheses, respectively
 ##' @param EM boolean specifying test of EM algorithm
-##' @param hyp a 2-tuple with names 'null' and 'alt' specifying the null and alternative hypotheses
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
-##' @param n number of parameters to randomly sample; max allowed S*T
 ##' @export
-testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, hyp = c('c', 'gen'), em_maxiter = 100, n=4) {
+testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, em_maxiter = 100) {
 
+    ## initialize output structure
+    out <- vector('list', 2)
+    names(out) <- c('null', 'alt')
+    need_set_output <- TRUE             # need initialize storage within output?
 
-    ## initialize output strucutres
-    alt <- null <- as.data.frame(matrix(NA, nrow=M*n, ncol=3))
-    colnames(alt) <- c('f', 'lambda', 'gamma')
-    colnames(null) <- c('f', 'c', 'gamma')
-    iters <- matrix(1, nrow=M, ncol=2)
-    colnames(iters) <- c('null', 'gAtl')
-    jdx <- 2:(S+1)                      # selects only data columns
-    ST <- S*T
-    if ( n <= ST ) {
-        s <- sort(sample(1:ST, n))            # randomly sample n parameters
-    } else {
-        stop(sprintf('n must be smaller than S*T = %d', ST))
-    }
-
-
-    ## simulations
-    for (m in seq_len(M)) {
+    ## some numbers 
+    S <- ncol(lambda)
+    T <- nrow(lambda)
+    
+    for ( m in seq_len(M) ) {
         
-        ## simulate data
+        ## simulate data and fit model
         fdata <- simPref(S, T, J, I, lambda, gamma, EM=EM)
-        
-        ## fit model
         prefs <- predPref(fdata$eaten, fdata$caught, hypotheses = hyp, em_maxiter = em_maxiter)
-        
-        index_c <- ifelse(length(prefs$null$c)>1, TRUE, FALSE) # might need to fix this line in future
-        idx <- (n*(m-1)+1); idxs <- idx:(idx+(n-1))
-        
-        ## store estimates
-        if (EM) {
-            iters[m,] <- c(prefs$null$em_iters, prefs$alt$em_iters)
-        }
-        alt[idxs,] <- cbind(s, unlist(prefs$alt$lambda)[s],
-                            unlist(prefs$alt$gamma)[s])
-        if (index_c) {
-            r <- s[which(s<=T)]
-            if (any(s>T)) r <- c(r, s[which(s>T)]-T)
-            null[idxs,] <- cbind(s, prefs$null$c[r], unlist(prefs$null$gamma)[s])
-        } else {
-            null[idxs,] <- cbind(s, rep(prefs$null$c, n), unlist(prefs$null$gamma)[s])            
+
+        ## initialize storage within output structure
+        if ( need_set_output ) {
+            ST <- length(unlist(prefs$null$gamma))
+            out$null[['gamma']] <- out$alt[['gamma']] <- matrix(0, M, ST)
+            
+            ## null model storage
+            if ( !is.null(prefs$null$c) ) 
+                out$null[['c']] <- matrix(0, M, length(prefs$null$c))
+            if ( !is.null(prefs$null$lambda) )
+                out$null[['lambda']] <- matrix(0, M, ST)
+            if ( !is.null(prefs$null$em_iters) )
+                out$null[['em_iters']] <- rep(0, M)
+            if ( !is.null(prefs$null$iters) )
+                out$null[['iters']] <- rep(0, M)
+
+            ## alt model storage
+            if ( !is.null(prefs$alt$c) )
+                out$alt[['c']] <- matrix(0, M, length(prefs$alt$c))
+            if ( !is.null(prefs$alt$lambda) )
+                out$alt[['lambda']] <- matrix(0, M, ST)            
+            if ( !is.null(prefs$alt$em_iters) )
+                out$alt[['em_iters']] <- rep(0, M)
+            if ( !is.null(prefs$alt$iters) )
+                out$alt[['iters']] <- rep(0, M)
+            
+            need_set_output <- FALSE
         }
 
+        ## store output
+        out$null$gamma[m,] <- unlist(prefs$null$gamma)
+        out$alt$gamma[m,] <- unlist(prefs$alt$gamma)
+
+        ## null
+        if ( !is.null(prefs$null$c) )
+            out$null$c[m,] <- prefs$null$c
+        if ( !is.null(prefs$null$lambda) )
+            out$null$lambda[m,] <- unlist(prefs$null$lambda)
+        if ( !is.null(prefs$null$em_iters) )
+                out$null$em_iters <- prefs$null$em_iters
+        if ( !is.null(prefs$null$iters) )
+            out$null[['iters']] <- prefs$null$iters
+        
+        ## alt
+        if ( !is.null(prefs$alt$c) )
+            out$alt$c[m,] <- prefs$alt$c
+        if ( !is.null(prefs$alt$lambda) )
+            out$alt$lambda[m,] <- unlist(prefs$alt$lambda)
+        if ( !is.null(prefs$alt$iters) )
+            out$alt$iters <- prefs$alt$iters
     }
-    out <- list('null' = null, 'alt' = alt, 'iters' = iters)
     class(out) <- 'testPref'
     out
 }
@@ -65,60 +83,84 @@ testPref <- function(S, T, J, I, lambda, gamma, M=100, EM=F, hyp = c('c', 'gen')
 ##' plot the output of testPref
 ##'
 ##' @param x a testPref object as returned by the eponymous function
+##' @param hypothesis specify which hypothesis to plot
 ##' @export
-plotTestPref <- function(x) {
+plotTestPref <- function(x, hypothesis = 'null') {
+    
+    ## some numbers
+    ST <- ncol(x$null$gamma); st <- seq_len(ST)
+
+    ## data
+    nullGamma <- data.frame('gamma' = as.vector(x$null$gamma), 'index' = st)
+    altGamma <- data.frame('gamma' = as.vector(x$alt$gamma), 'index' = st)
+
+    ## more null data
+    if ( !is.null(x$null$c) )
+        nullC <- data.frame('c' = as.vector(x$null$c), 'index' = seq_len(ncol(x$null$c)))
+    if ( !is.null(x$null$lambda) )
+        nullLambda <- data.frame('lambda' = as.vector(x$null$lambda), 'index' = st)
+
+    ## more alt data
+    if ( !is.null(x$alt$c) )
+        altC <- data.frame('c' = as.vector(x$alt$c), 'index' = seq_len(ncol(x$alt$c)))
+    if ( !is.null(x$alt$lambda) )
+        altLambda <- data.frame('lambda' = as.vector(x$alt$lambda), 'index' = st)
+
+    ## plot data
     require(lattice)
     require(gridExtra)
-    null <- x$null
-    alt <- x$alt
-    grid.arrange(densityplot(~c+gamma, data=null, groups=f,
-                             main='Null Hypothesis', xlab='',
-                             scales = list(y = list(relation = "free"),
-                                 x = list(relation='free')),
-                             ),
-                 densityplot(~lambda+gamma, data=alt, group=f,
-                             xlab='', main='Alternative Hypothesis',
-                             scales = list(y = list(relation = "free"),
-                                 x = list(relation='free'))),
-                 nrow=2)
+    
+    two <- densityplot(~gamma, data=nullGamma, groups=index)
+    four <- densityplot(~gamma, data=altGamma, groups=index)
+    if ( !is.null(x$null$c) )
+        one <- densityplot(~c, data=nullC, groups=index)
+    if ( !is.null(x$null$lambda) )
+        one <- densityplot(~lambda, data=nullLambda, groups=index)
+
+    if ( !is.null(x$alt$c) )
+        three <- densityplot(~c, data=altC, groups=index)
+    if ( !is.null(x$alt$lambda) )
+        three <- densityplot(~lambda, data=altLambda, groups=index)
+
+    if ( hypothesis == 'null' ) {
+        grid.arrange(one, two, nrow=2, main = 'Null Hypothesis')
+    } else if ( hypothesis == 'alt' ) {
+        grid.arrange(three, four, nrow=2, main = 'Alternative Hypothesis')
+    } else {
+        grid.arrange(one, two, three, four, nrow=2, main = '')
+    }
 }
 
 ##' summarize output from testPref()
 ##' 
 ##' @param object a testPref object as returned by the eponymous function
 ##' @param ... additional arguments
-##' @param fun a vectorized function to summarize each column by; defaults to mean()
+##' @param hypothesis specify which hypothesis to plot
 ##' @S3method 
-summary.testPref <- function(object, ..., fun = mean) {
-    fun <- match.fun(fun)
-    list('null' = ddply(object$null, .(f), colwise(fun)),
-         'alt' = ddply(object$alt, .(f), colwise(fun)))
-}
+mean.testPref <- function(object, ..., hypothesis = c('null', 'alt', 'both')) {
 
-##' calculate bias from output of testPref
-##'
-##' @param x a testPref object as returned by the eponymous function
-##' @param lambda true values of lambda; TxS numbers in a data.frame
-##' @param gamma true values of gamma; TxS numbers in a data.frame
-##' @export
-calcBias <- function(x, lambda, gamma) {
+    hypothesis <- match.arg(hypothesis)
+    meanFn <- function(x, ...) mean(x, ...)
     
-    ## ensure proper structure and calculate means of each randomly sampled element
-    if ( class(x) != 'testPref' ) stop('argument out is not of correct class.')
-    summOut <- summary(x)
-    null <- summOut$null                # H0 means
-    alt <- summOut$alt                  # H1 means
-    f <- unique(null$f)                 # randomly sampled indices
-    T <- nrow(lambda)                   # units of time
-    c <- lambda/gamma                   # true value of c
-        
-    ## match randomly sampled indices with parameter estimates for c
-    cidx <- f[which(f<=T)]
-    cidx <- c(cidx,f[which(f>T)]-T)
+    ## null
+    if ( !is.null(object$null$c) ) {
+        null <- list('gamma' = apply(object$null$gamma, 2, meanFn), 'c' = apply(object$null$c, 2, meanFn))
+    } else {
+        null <- list('gamma' = apply(object$null$gamma, 2, meanFn), 'lambda' = apply(object$null$lambda, 2, meanFn))
+    }
 
-    ## output parameter - mean(estimates)
-    list('null' = data.frame('gamma' = gamma[f] - null$gamma,
-             'c' = c[cidx] - null$c),
-         'alt' = data.frame('lambda' = lambda[f] - alt$lambda,
-             'gamma' = gamma[f] - alt$gamma))
+    ## alt
+    if ( !is.null(object$alt$c) ) {
+        alt <- list('gamma' = apply(object$alt$gamma, 2, meanFn), 'c' = apply(object$alt$c, 2, meanFn))
+    } else {
+        alt <- list('gamma' = apply(object$alt$gamma, 2, meanFn), 'lambda' = apply(object$alt$lambda, 2, meanFn))
+    }
+
+    if ( isTRUE(hypothesis == 'null') ) {
+        null
+    } else if ( isTRUE(hypothesis == 'alt') ) {
+        alt
+    } else {
+        list('null' = null, 'alt' = alt)
+    }
 }
