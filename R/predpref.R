@@ -25,6 +25,7 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
     ## data errors
     X <- eaten[,preyNames]
     Y <- caught[,preyNames]
+
     if ( any(X < 0) || any(Y < 0) ) stop("Count data can not be less than 0.")
 
     ## predators (J), traps (I)

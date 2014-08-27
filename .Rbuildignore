@@ -20,6 +20,7 @@ play\.R
 notes\.org
 Rhistory$
 .*\-Ex\.R$
+paper
 
 ### OS Files ###
 DS_Store$

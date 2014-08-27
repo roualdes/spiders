@@ -1,0 +1,41 @@
+\section*{Methods}
+
+One can imagine that a predator eats prey species $s$ upon each encounter, but prey species $s'$ less frequently.  Further, predator preferences could change by 
+
+Let $X_{jst} \sim \mathcal{P}(\lambda_{st})$ denote the number of prey species $s$ that predator $j$ eaten during occurrence $t$; $j \in \{1, \ldots, J_t\}, s \in \{1, \ldots, S\}, t \in \{1, \ldots, T\}$.  Further, let $Y_{ist} \sim \mathcal{P}(\gamma_{st})$ denote the number of prey species $s$ found in trap $i$ during occurence $t$; $i \in \{1, \ldots, I_t\}$.  We make a formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda}$ and $\boldsymbol{\gamma}$.  The four hypotheses considered provide variations on the relative magnitude of $c_{st} = \lambda_{st}/\gamma_{st}$.  Holding $c_{st}$ steady over either $s$ or $t$ provides intuitive statements about the predator's preferences.  Table~\ref{tab:hyp} depicts the ways in which the proportionality constants can vary, or not, for each of the four hypotheses.  
+
+All hypotheses are evaluated via a likelihood ratio test, essentially an asymptotic $\chi_{\rho}^2$ distribution with $\rho$ degrees of freedom set equal to the number of free parameters available in the stated hypotheses under question.  For instance, if we state under the null hypothesis that $H_0: \lambda_t = c_t \gamma_t, \forall t$ and contrast this against $H_1: \lambda_{st} = c_{st}\gamma_{st}$ then there are $\rho = 2 \cdot S \cdot T - S \cdot T - T = S \cdot T - T$ degrees of freedom.  The alternative hypothesis previously stated is not in fact fit by estimating $c_{st}$, but is instead fit as if $c_{st}\gamma_{st}$ were $S \cdot T$ unique parameters indepdent of $\lambda_{st}$ for all $s,t$, thus providing $2 \cdot S \cdot T$ total parameters under that particular hypothesis.  
+
+\begin{figure}
+  \centering
+  \begin{tabular}{rrcc}
+    & & \multicolumn{2}{c}{Time} \\
+    & & constant & varies \\
+    \cline{3-4}
+    \multirow{2}{*}{Species} & \multicolumn{1}{r|}{constant} & \multicolumn{1}{c}{$c$} & \multicolumn{1}{|c|}{$c_t$} \\ 
+    \cline{3-4}
+    & \multicolumn{1}{r|}{varies} & \multicolumn{1}{c}{$c_s$} & \multicolumn{1}{|c|}{$c_{st}$} \\
+    \cline{3-4}
+  \end{tabular}
+  \caption{Four hypotheses considered.}
+  \label{tab:hyp}
+\end{figure}
+
+The likelihood function that allows for estimation of these parameters is as follows.  Since we assume $X_{jst} \perp Y_{ist}$ we can simply multiply the respective Poisson probability density functions together, and then form products over all $s,t$ to get a complete data likelihood 
+
+\begin{equation}
+  \label{eq:likelihood}
+  L(x_{jst}, y_{ist} |\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \prod_{t = 1}^{T} \prod_{s=1}^S \left\{ \prod_{j=1}^{J_t} f_X(x_{jst}|\boldsymbol{\lambda}) \prod_{i=1}^{I_t} f_Y(y_{ist} | \boldsymbol{\gamma}) \right\}.
+\end{equation}
+
+\noindent In some cases one can find analytic solutions for the maximum likelihood estimates, namely when the data are balanced $J_t = J$, $I_t = I$, and $c_{st} = c$ and when estimating $\lambda_{st}, \gamma_{st}$ under the hypothesis represented by $c_{st}$.  In all other cases, analytic solutions are not readily available.  Instead, we rely on the fact that the log-likelihood $l(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log{L}$ is concave and iteratively solve 
+
+\begin{equation*}
+  c = \frac{\sum_{s,t} X_{\cdot st}}{\sum_t J_t \sum_s \gamma_{st}}, \quad c_t =  \frac{\sum_s X_{\cdot st}}{J_t \sum_s \gamma_{st}}, \quad \text{ or } \quad c_s = \frac{\sum_{t}X_{\cdot st}}{\sum_t J_t \gamma_{st}}, \text{ and } \quad \gamma_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_tc_{st} + I_t}
+\end{equation*}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

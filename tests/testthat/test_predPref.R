@@ -19,7 +19,7 @@ test_that('noEM, 1 vs c, null', {
     expect_equal(length(pref$alt$c), 1)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.05)     # correct conclusion
+    expect_more_than(pref$p.value, 0.001)     # correct conclusion
 })
 
 test_that('noEM, c vs c^t, null', {
@@ -31,7 +31,7 @@ test_that('noEM, c vs c^t, null', {
     expect_equal(length(pref$alt$c), Times)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.05)     # correct conclusion
+    expect_more_than(pref$p.value, 0.001)     # correct conclusion
 })
 
 test_that('noEM, c vs general, null', {
@@ -43,7 +43,7 @@ test_that('noEM, c vs general, null', {
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$lambda), TxS)
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.05)     # correct conclusion    
+    expect_more_than(pref$p.value, 0.001)     # correct conclusion    
 })
 
 test_that('noEM, c vs c^t, alt', {
@@ -82,7 +82,7 @@ test_that('EM, 1 vs c, null', {
     expect_equal(length(pref$alt$c), 1)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.05)     # correct conclusion
+    expect_more_than(pref$p.value, 0.001)     # correct conclusion
 })
 
 test_that('EM, c vs c^t, null', {
@@ -94,7 +94,7 @@ test_that('EM, c vs c^t, null', {
     expect_equal(length(pref$alt$c), Times)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.05)     # correct conclusion
+    expect_more_than(pref$p.value, 0.001)     # correct conclusion
 })
 
 test_that('EM, c vs general, null', {
@@ -106,7 +106,7 @@ test_that('EM, c vs general, null', {
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$lambda), TxS)
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.05)     # correct conclusion    
+    expect_more_than(pref$p.value, 0.001)     # correct conclusion    
 })
 
 test_that('EM, c vs c^t, alt', {

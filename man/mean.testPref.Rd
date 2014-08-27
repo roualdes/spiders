@@ -2,15 +2,15 @@
 \alias{mean.testPref}
 \title{summarize output from testPref()}
 \usage{
-\method{mean}{testPref}(object, ..., hypothesis = c("null", "alt", "both"))
+\method{mean}{testPref}(x, ..., hypothesis = c("null", "alt", "both"))
 }
 \arguments{
-  \item{object}{a testPref object as returned by the
-  eponymous function}
+  \item{x}{a testPref object as returned by the eponymous
+  function}
 
   \item{...}{additional arguments}
 
-  \item{hypothesis}{specify which hypothesis to plot}
+  \item{hypothesis}{specify which hypothesis}
 }
 \description{
 summarize output from testPref()

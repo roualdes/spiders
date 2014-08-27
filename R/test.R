@@ -133,27 +133,27 @@ plotTestPref <- function(x, hypothesis = 'null') {
 
 ##' summarize output from testPref()
 ##' 
-##' @param object a testPref object as returned by the eponymous function
+##' @param x a testPref object as returned by the eponymous function
 ##' @param ... additional arguments
-##' @param hypothesis specify which hypothesis to plot
+##' @param hypothesis specify which hypothesis
 ##' @S3method 
-mean.testPref <- function(object, ..., hypothesis = c('null', 'alt', 'both')) {
+mean.testPref <- function(x, ..., hypothesis = c('null', 'alt', 'both')) {
 
     hypothesis <- match.arg(hypothesis)
-    meanFn <- function(x, ...) mean(x, ...)
+    meanFn <- function(y, ...) mean(y, ...)
     
     ## null
-    if ( !is.null(object$null$c) ) {
-        null <- list('gamma' = apply(object$null$gamma, 2, meanFn), 'c' = apply(object$null$c, 2, meanFn))
+    if ( !is.null(x$null$c) ) {
+        null <- list('gamma' = apply(x$null$gamma, 2, meanFn), 'c' = apply(x$null$c, 2, meanFn))
     } else {
-        null <- list('gamma' = apply(object$null$gamma, 2, meanFn), 'lambda' = apply(object$null$lambda, 2, meanFn))
+        null <- list('gamma' = apply(x$null$gamma, 2, meanFn), 'lambda' = apply(x$null$lambda, 2, meanFn))
     }
 
     ## alt
-    if ( !is.null(object$alt$c) ) {
-        alt <- list('gamma' = apply(object$alt$gamma, 2, meanFn), 'c' = apply(object$alt$c, 2, meanFn))
+    if ( !is.null(x$alt$c) ) {
+        alt <- list('gamma' = apply(x$alt$gamma, 2, meanFn), 'c' = apply(x$alt$c, 2, meanFn))
     } else {
-        alt <- list('gamma' = apply(object$alt$gamma, 2, meanFn), 'lambda' = apply(object$alt$lambda, 2, meanFn))
+        alt <- list('gamma' = apply(x$alt$gamma, 2, meanFn), 'lambda' = apply(x$alt$lambda, 2, meanFn))
     }
 
     if ( isTRUE(hypothesis == 'null') ) {
