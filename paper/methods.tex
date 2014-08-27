@@ -1,12 +1,11 @@
 \section*{Methods}
+\label{sec:methods}
 
 One can imagine that a predator eats prey species $s$ upon each encounter, but prey species $s'$ less frequently.  Further, predator preferences could change by 
 
-Let $X_{jst} \sim \mathcal{P}(\lambda_{st})$ denote the number of prey species $s$ that predator $j$ eaten during occurrence $t$; $j \in \{1, \ldots, J_t\}, s \in \{1, \ldots, S\}, t \in \{1, \ldots, T\}$.  Further, let $Y_{ist} \sim \mathcal{P}(\gamma_{st})$ denote the number of prey species $s$ found in trap $i$ during occurence $t$; $i \in \{1, \ldots, I_t\}$.  We make a formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda}$ and $\boldsymbol{\gamma}$.  The four hypotheses considered provide variations on the relative magnitude of $c_{st} = \lambda_{st}/\gamma_{st}$.  Holding $c_{st}$ steady over either $s$ or $t$ provides intuitive statements about the predator's preferences.  Table~\ref{tab:hyp} depicts the ways in which the proportionality constants can vary, or not, for each of the four hypotheses.  
+Let $X_{jst} \iid \mathcal{P}(\lambda_{st})$ denote the number of prey species $s$ that predator $j$ ate during occurrence $t$; $j \in \{1, \ldots, J_t\}, s \in \{1, \ldots, S\}, t \in \{1, \ldots, T\}$.  Further, let $Y_{ist} \iid \mathcal{P}(\gamma_{st})$ denote the number of prey species $s$ found in trap $i$ during occurence $t$; $i \in \{1, \ldots, I_t\}$.  We make formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda}$ and $\boldsymbol{\gamma}$.  The four hypotheses considered provide variations on the relative magnitude of $\lambda_{st}/\gamma_{st} = \xi(c_{st})$, for a mapping $\xi: c_{st} \mapsto \{1, c, c_s, c_t, c_{st}\}$.  When $\xi$ maps to a constant with respect to one of the indexing variables, $s$ or $t$, intuitive statements are realized about the predator's preferences.  Table~\ref{tab:hyp} depicts the ways in which the proportionality constants can vary, or not, for each of the four hypotheses.
 
-All hypotheses are evaluated via a likelihood ratio test, essentially an asymptotic $\chi_{\rho}^2$ distribution with $\rho$ degrees of freedom set equal to the number of free parameters available in the stated hypotheses under question.  For instance, if we state under the null hypothesis that $H_0: \lambda_t = c_t \gamma_t, \forall t$ and contrast this against $H_1: \lambda_{st} = c_{st}\gamma_{st}$ then there are $\rho = 2 \cdot S \cdot T - S \cdot T - T = S \cdot T - T$ degrees of freedom.  The alternative hypothesis previously stated is not in fact fit by estimating $c_{st}$, but is instead fit as if $c_{st}\gamma_{st}$ were $S \cdot T$ unique parameters indepdent of $\lambda_{st}$ for all $s,t$, thus providing $2 \cdot S \cdot T$ total parameters under that particular hypothesis.  
-
-\begin{figure}
+\begin{figure}[h]
   \centering
   \begin{tabular}{rrcc}
     & & \multicolumn{2}{c}{Time} \\
@@ -17,22 +16,86 @@ All hypotheses are evaluated via a likelihood ratio test, essentially an asympto
     & \multicolumn{1}{r|}{varies} & \multicolumn{1}{c}{$c_s$} & \multicolumn{1}{|c|}{$c_{st}$} \\
     \cline{3-4}
   \end{tabular}
-  \caption{Four hypotheses considered.}
+  \caption{The four hypotheses considered are shown by their symbolic representations, highlighting which indices are allowed to vary.  This is essentially the range of the mapping $\xi$.  }
   \label{tab:hyp}
 \end{figure}
 
-The likelihood function that allows for estimation of these parameters is as follows.  Since we assume $X_{jst} \perp Y_{ist}$ we can simply multiply the respective Poisson probability density functions together, and then form products over all $s,t$ to get a complete data likelihood 
+All hypotheses are evaluated via a likelihood ratio test, essentially an asymptotic $\chi_{\rho}^2$ distribution with $\rho$ degrees of freedom set equal to the number of free parameters available in the stated hypotheses under question.  For instance, if we state under the null hypothesis that $H_0: \lambda_t = c_t \gamma_t, \forall t$ and contrast this against $H_1: \lambda_{st} = c_{st}\gamma_{st}$ then there are $\rho = 2 \cdot S \cdot T - S \cdot T - T = S \cdot T - T$ degrees of freedom.  The alternative hypothesis previously stated is not in fact fit by estimating $c_{st}$, but is instead fit as if $c_{st}\gamma_{st}$ were $S \cdot T$ unique parameters indepdent of $\lambda_{st}$ for all $s,t$, thus providing $2 \cdot S \cdot T$ total parameters for the hypothesis we denote by $c_{st}$.  
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm, semithick]
+
+    \node[state] (A)                    {$1$};
+    \node[state] (B) [below of=A]       {$c$};
+    \node[state] (C) [below left of=B]  {$c_s$};
+    \node[state] (D) [below right of=B] {$c_t$};
+    \node[state] (E) [below left of=D]       {$c_{st}$};
+
+    \path       (A) edge node {} (B)
+                (B) edge node {} (C)
+                    edge node {} (D)
+                (C) edge node {} (E)
+                (D) edge node {} (E);
+  \end{tikzpicture}
+  
+  \caption{Hierarchy of hypotheses.}
+  \label{fig:hier}
+\end{figure}
+
+The likelihood function that allows for estimation of these parameters is as follows.  Since we assume $X_{jst} \perp Y_{ist}$ we can simply multiply the respective Poisson probability density functions together, and then form products over all $s,t$ to get the likelihood 
 
 \begin{equation}
   \label{eq:likelihood}
   L(x_{jst}, y_{ist} |\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \prod_{t = 1}^{T} \prod_{s=1}^S \left\{ \prod_{j=1}^{J_t} f_X(x_{jst}|\boldsymbol{\lambda}) \prod_{i=1}^{I_t} f_Y(y_{ist} | \boldsymbol{\gamma}) \right\}.
 \end{equation}
 
-\noindent In some cases one can find analytic solutions for the maximum likelihood estimates, namely when the data are balanced $J_t = J$, $I_t = I$, and $c_{st} = c$ and when estimating $\lambda_{st}, \gamma_{st}$ under the hypothesis represented by $c_{st}$.  In all other cases, analytic solutions are not readily available.  Instead, we rely on the fact that the log-likelihood $l(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log{L}$ is concave and iteratively solve 
+\noindent In some cases analytic solutions for the maximum likelihood estimates are available, namely when the data are balanced $J_t = J$, $I_t = I$, and $\xi(c_{st}) = c$ or when estimating $\lambda_{st}, \gamma_{st}$ under the hypothesis represented by $c_{st}$.  In all other cases, analytic solutions are not readily available.  In this case, we rely on the fact that the log-likelihood $l(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log{L}$ is concave and iteratively solve 
 
 \begin{equation*}
-  c = \frac{\sum_{s,t} X_{\cdot st}}{\sum_t J_t \sum_s \gamma_{st}}, \quad c_t =  \frac{\sum_s X_{\cdot st}}{J_t \sum_s \gamma_{st}}, \quad \text{ or } \quad c_s = \frac{\sum_{t}X_{\cdot st}}{\sum_t J_t \gamma_{st}}, \text{ and } \quad \gamma_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_tc_{st} + I_t}
+  c = \frac{\sum_{s,t} X_{\cdot st}}{\sum_t J_t \sum_s \gamma_{st}}, \quad c_t =  \frac{\sum_s X_{\cdot st}}{J_t \sum_s \gamma_{st}}, \text{ or} \quad c_s = \frac{\sum_{t}X_{\cdot st}}{\sum_t J_t \gamma_{st}}, \text{ and } \quad \gamma_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_t\xi(c_{st}) + I_t}
 \end{equation*}
+
+\noindent depending on the hypothesis chosen.  
+
+\subsection*{Unobserved Counts}
+
+Probably need some words about why we might not observed the count data.  
+
+When the data $X_{jst}$ are observed as a binary response, instead of count data representing the number of prey species $s$ that the predator ate in time period $t$, we can still estimates the parameters of interest $\boldsymbol{\lambda}, \boldsymbol{\gamma}$.  Because some information is observed, we can treat the counts as missing and use the EM algorithm to find the maximum likelihood estimates of the observed data likelihood.  
+
+Let's define some new notation.  We denote the binary response that the predator did in fact eat at least one prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  Now, the observed data $Z_{jst} \iid \text{Bern}(1-\exp\{-\lambda_{st}\})$ are Bernoulli observations.  Using this we can find the complete (inclusive of all ovserved and unobserved) data likelihood, by first noting that the conditional distribution of the unobserved data $X_{jst}$ given everything else is a truncated Poisson distribution
+
+\begin{equation*}
+  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst}) =
+  \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{x_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) x_{jst}!} \quad \text{ where } \quad \E_{[X|Y,Z]}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
+\end{equation*}
+
+\noindent From this conditional distribution we get the joint distribution of $X_{jst}, Z_{jst}$
+
+\begin{equation*}
+    f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst}) = \left\{
+    \begin{array}{lr}
+      \exp{\{ -\lambda_{st} \}}, & x_{jst}=0 \mbox{ and } Z_{jst} = 0 \\
+      \frac{\exp{\{-\lambda_{st} \}} \lambda_{st}^{x_{jst}}}{x_{jst}!}, & x_{jst} > 0 \mbox{ and } Z_{jst} = 1\\
+      0 & \mbox{otherwise}
+    \end{array}
+  \right.
+\end{equation*}
+
+\noindent From standard EM theory we can now formulate the complete data log-likelihood and take the expectation of it with respect to $f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst})$ to get
+
+\begin{align*}
+  \E l_{comp} 
+  & = \E \log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})} + \log{f_{Y|\boldsymbol{\gamma}}(y_{ist})} \\
+  & = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \E \log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})}
+  + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)} \\
+  & = \sum_{s,t,j} \left( - \lambda_{st} 
+    + z_{jst} \log(\lambda_{st}) \E X_{jst} \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right) + \text{const} \\
+  & = \sum_{s,t} \left( -J_t \lambda_{st} + z_{\cdot st} \log(\lambda_{st}) \E X_{jst} \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right) + \text{const}.
+\end{align*}
+
+This EM algorithm works well when values $\lambda_{st}$ are relatively small and zeros are common in the data $Z_{jst}$.  In this case, not too much information is lost since estimation of $\E Z_{jst}$ can be estimated well by the proportion of observed zeros.  On the other hand, if the predator consistently eats a given prey species, few to no zeros will show up in the observed data and $\E Z_{jst}$ is estimated to be nearly $1$.  The loss of information is best seen by attempting to solve for $\lambda_{st}$ in the equation $1 = \E Z_{jst} = 1 - \exp\{-\lambda_{st}\}$; essentially $\lambda_{st}$ is sent off to $+\infty$. 
 
 
 %%% Local Variables: 
