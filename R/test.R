@@ -84,11 +84,14 @@ testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, 
 ##'
 ##' @param x a testPref object as returned by the eponymous function
 ##' @param hypothesis specify which hypothesis to plot
+##' @param lambda a matrix of true values of the parameter lambda; TxS
+##' @param gamma a matrix of true values of the parameter gamma; TxS
 ##' @export
-plotTestPref <- function(x, hypothesis = 'null') {
+plotTestPref <- function(x, hypothesis = 'null', lambda = NULL, gamma = NULL) {
     
     ## some numbers
     ST <- ncol(x$null$gamma); st <- seq_len(ST)
+    params <- ifelse( !is.null(lambda) && !is.null(gamma), TRUE, FALSE )
 
     ## data
     nullGamma <- data.frame('gamma' = as.vector(x$null$gamma), 'index' = st)
@@ -109,11 +112,29 @@ plotTestPref <- function(x, hypothesis = 'null') {
     ## plot data
     require(lattice)
     require(gridExtra)
-    
-    two <- densityplot(~gamma, data=nullGamma, groups=index)
+
+    if ( params ) {
+        two <- densityplot(~gamma, data=nullGamma, groups=index,
+                           panel = function(...) {
+                               panel.densityplot(...)
+                               panel.rug(x = unique(as.vector(gamma)), lwd=3)})
+    } else {
+        two <- densityplot(~gamma, data=nullGamma, groups=index)
+    }
+
     four <- densityplot(~gamma, data=altGamma, groups=index)
-    if ( !is.null(x$null$c) )
-        one <- densityplot(~c, data=nullC, groups=index)
+    if ( !is.null(x$null$c) ) {
+        if ( params ) {
+            trueC <- unique(apply(lambda/gamma, 1, unique))
+            one <- densityplot(~c, data=nullC, groups=index,
+                               panel = function(...) {
+                                   panel.densityplot(...)
+                                   panel.rug(x = trueC, lwd=3)})
+        } else {
+            one <- densityplot(~c, data=nullC, groups=index)            
+        }
+    }
+        
     if ( !is.null(x$null$lambda) )
         one <- densityplot(~lambda, data=nullLambda, groups=index)
 
