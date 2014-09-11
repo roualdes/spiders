@@ -5,11 +5,9 @@
 
 We assume data are collected in the following manner.  Traps are dispersed, for $T$ time periods, throughout the habitat of the predator and prey of interest.  Prey species, indexed by $s \in \{1, \ldots, S \}$, are collected in the traps and counted at each time period.  We assume these counts represent the number of prey species $s$ the predator will encounter on average during time period $t \in \{1, \ldots, T\}$.  Hence, the counts of prey species $s$ caught during time period $t$ are hypothesized to be independent draws from a Poisson distribution with rate parameter $\gamma_{st}$.  We further assume that the number of prey species found in the gut of the trapped predators, also follows a Poisson distribution with rate $\lambda_{st}$.  Here, the parameter $\lambda_{st}$ represents the rate at which the predator ate the encountered prey species $s$ during time period $t$.  We then make statistical claims about the relatives rates that the $S$ prey species are eaten to the rate at which they are encountered over $T$ time periods.  
 
+Our data collection scheme assumes the following: $1)$ traps independently catch prey that are encountered at a constant rate, $2)$ all traps are equally likely to catch the prey species of interest, $3)$ predators eat, at a constant rate, prey species independently, $4)$ predators eat indepedent of each other.  Though there exists a non-zero chance that these assumptions are broken, we feel that slight deviations from them will not overtly effect the estimates.  
+
 Let $X_{jst} \iid \mathcal{P}(\lambda_{st})$ denote the number of prey species $s$ that predator $j$ ate during occurrence $t$ where $j \in \{1, \ldots, J_t\}$.  Let $Y_{ist} \iid \mathcal{P}(\gamma_{st})$ denote the number of prey species $s$ found in trap $i$ during occurrence $t$, $i \in \{1, \ldots, I_t\}$.  We make formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda}$ and $\boldsymbol{\gamma}$.  
-
-\subsection*{Assumptions}
-
-Our data collection scheme assumes the following: $1)$ traps independently catch prey that are encountered at a constant rate, $2)$ all traps are equally likely to catch the prey species of interest, $3)$ predators eat, at a constant rate, prey species independently.  Though there exists a non-zero chance that these assumptions are broken, we feel that slight deviations from them will not overtly effect the estimates.  
 
 \begin{figure}
   \centering
@@ -95,7 +93,7 @@ We denote the binary response that the predator did in fact eat at least one pre
   \right.
 \end{equation*}
 
-\noindent  Take the expectation of the complete data log-likelihood with respect to $f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst})$ to get
+\noindent The E-step of the EM algorithm is completed by computing the expected value of the complete data log-likelihood with respect to $f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst})$ to get
 
 \begin{align*}
   \E l_{comp} 
