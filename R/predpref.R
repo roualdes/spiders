@@ -10,7 +10,9 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
 
     ## check hypotheses specification
     hypotheses <- checkHypotheses(hypotheses)
-    
+
+    ## data
+    dname <- paste(deparse(substitute(eaten)), 'and', deparse(substitute(caught)))
     xNames <- colnames(eaten)
     yNames <- colnames(caught)
 
@@ -54,13 +56,13 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
 
     ## LRT stat
     Lambda <- -2*(llH0 - llH1)
+    lrt <- list(Lambda = Lambda, df = df,
+                p.value = pchisq(Lambda, df=df, lower.tail=F))
     
     out <- list('alt' = alt, 'null' = null,
                 'loglikH1' = llH1, 'loglikH0' = llH0,
                 'numPredators' = J, 'numTraps' = I,
-                'Lambda' = Lambda, 'df' = df,
-                'p.value' = pchisq(Lambda, df=df, lower.tail=F),
-                hypotheses = hypotheses)
+                LRT = lrt, hypotheses = hypotheses, data.name = dname)
     class(out) <- 'predPref'
     out
 }

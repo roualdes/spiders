@@ -8,14 +8,14 @@ summary.predPref <- function(object, ..., sig.level=0.05) {
     out <- vector('list', 7)
     names(out) <- c('loglikH0', 'loglikH1', 'p.value',
                     'estimates', 'df', 'Lambda', 'hypotheses')
-    if ( object$p.value > sig.level ) {
+    if ( object$LRT$p.value > sig.level ) {
         out[['estimates']] <- object$null
     } else {
         out[['estimates']] <- object$alt
     }
-    out[['p.value']] <- object$p.value
-    out[['df']] <- object$df
-    out[['Lambda']] <- object$Lambda
+    out[['p.value']] <- object$LRT$p.value
+    out[['df']] <- object$LRT$df
+    out[['Lambda']] <- object$LRT$Lambda
     out[['loglikH0']] <- object$loglikH0
     out[['loglikH1']] <- object$loglikH1
     out[['hypotheses']] <- object$hypotheses

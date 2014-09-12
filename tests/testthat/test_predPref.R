@@ -19,7 +19,7 @@ test_that('noEM, 1 vs c, null', {
     expect_equal(length(pref$alt$c), 1)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.001)     # correct conclusion
+    expect_more_than(pref$LRT$p.value, 0.001)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })                                      
@@ -33,7 +33,7 @@ test_that('noEM, c vs c^t, null', {
     expect_equal(length(pref$alt$c), Times)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.001)     # correct conclusion
+    expect_more_than(pref$LRT$p.value, 0.001)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })
@@ -47,7 +47,7 @@ test_that('noEM, c vs general, null', {
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$lambda), TxS)
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.001)     # correct conclusion
+    expect_more_than(pref$LRT$p.value, 0.001)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })
@@ -61,7 +61,7 @@ test_that('noEM, c vs c^t, alt', {
     expect_equal(length(pref$alt$c), Times)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_less_than(pref$p.value, 0.1)     # correct conclusion
+    expect_less_than(pref$LRT$p.value, 0.1)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })
@@ -75,7 +75,7 @@ test_that('noEM, c vs c^t, alt', {
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$lambda), TxS)
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_less_than(pref$p.value, 0.1)     # correct conclusion
+    expect_less_than(pref$LRT$p.value, 0.1)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })
@@ -92,7 +92,7 @@ test_that('EM, 1 vs c, null', {
     expect_equal(length(pref$alt$c), 1)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.001)     # correct conclusion
+    expect_more_than(pref$LRT$p.value, 0.001)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })
@@ -106,7 +106,7 @@ test_that('EM, c vs c^t, null', {
     expect_equal(length(pref$alt$c), Times)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.001)     # correct conclusion
+    expect_more_than(pref$LRT$p.value, 0.001)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })
@@ -120,7 +120,7 @@ test_that('EM, c vs general, null', {
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$lambda), TxS)
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$p.value, 0.001)     # correct conclusion
+    expect_more_than(pref$LRT$p.value, 0.001)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })
@@ -134,7 +134,7 @@ test_that('EM, c vs c^t, alt', {
     expect_equal(length(pref$alt$c), Times)
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_less_than(pref$p.value, 0.1)     # correct conclusion
+    expect_less_than(pref$LRT$p.value, 0.1)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })
@@ -147,7 +147,7 @@ test_that('EM, c vs c^t, alt', {
     expect_equal(length(pref$null$c), 1)    # hypotheses correctly chosen
     expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
     expect_equal(dim(pref$alt$gamma), TxS)
-    expect_less_than(pref$p.value, 0.1)     # correct conclusion
+    expect_less_than(pref$LRT$p.value, 0.1)     # correct conclusion
     expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
     expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
 })
