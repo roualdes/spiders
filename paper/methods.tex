@@ -74,11 +74,11 @@ Probably need some words about why we might not observed the count data.
 
 When the data $X_{jst}$ are observed as a binary response, instead of count data representing the number of prey species $s$ that the predator ate in time period $t$, we can still estimates the parameters of interest $\boldsymbol{\lambda}, \boldsymbol{\gamma}$.  Because some information is observed, we can treat the counts as missing and use the EM algorithm to find the maximum likelihood estimates of the observed data likelihood.  
 
-We denote the binary response that the predator did in fact eat at least one prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  Now, the observed data $Z_{jst} \iid \text{Bern}(1-\exp\{-\lambda_{st}\})$.  Using this we can find the complete data likelihood, by first noting that the conditional distribution of the unobserved data $X_{jst}$ given $Z_{jst}, Y_{ist}, \boldsymbol{\lambda}, \boldsymbol{\gamma}$ is a truncated Poisson distribution
+We denote the binary response that the predator did in fact eat at least one prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  Now, the observed data are $Z_{jst} \iid \text{Bern}(1-\exp\{-\lambda_{st}\})$.  Using this we can find the complete data likelihood by first noting that the conditional distribution of the unobserved data $X_{jst}$ given $Z_{jst}, Y_{ist}, \boldsymbol{\lambda}, \boldsymbol{\gamma}$ is a truncated Poisson distribution
 
 \begin{equation*}
   f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst}) =
-  \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{x_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) x_{jst}!}1(x_{jst} \geq 0) \quad \text{ where } \quad \E_{[X|Y,Z]}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
+  \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{x_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) x_{jst}!}1(x_{jst} > 0) \quad \text{ where } \quad \E_{[X|Y,Z]}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
 \end{equation*}
 
 \noindent From this conditional distribution we get the joint distribution of $X_{jst}, Z_{jst}$
@@ -101,8 +101,8 @@ We denote the binary response that the predator did in fact eat at least one pre
   & = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \E \log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})}
   + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)} \\
   & = \sum_{s,t,j} \left( - \lambda_{st} 
-    + z_{jst} \log(\lambda_{st}) \E X_{jst} \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right) + \text{const} \\
-  & = \sum_{s,t} \left( -J_t \lambda_{st} + z_{\cdot st} \log(\lambda_{st}) \E X_{jst} \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right) + \text{const}.
+    + z_{jst} \E X_{jst} \log{\lambda_{st}}  \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right) + \text{const} \\
+  & = \sum_{s,t} \left( -J_t \lambda_{st} + z_{\cdot st} \E X_{jst} \log{\lambda_{st}} \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right) + \text{const}.
 \end{align*}
 
 The EM algorithm requires iteratively solving $(\boldsymbol{\lambda}^{(k+1)},\boldsymbol{\gamma}^{(k+1)}) = \argmax_{\boldsymbol{\lambda},\boldsymbol{\gamma}} \E l_{comp}$.  Though no analytic solution to this maximization exists, one idea is to iteratively solve partial derivatives of $\E l_{comp}$ set equal to zero until convergence.  In fact, as we only need find parameter values that increase the observed likelihood, we forgo fully iterating to find the maximized values of $(\boldsymbol{\lambda}, \boldsymbol{\gamma})$ and instead perform just one step uphill within each EM iteration.  This strategy is significantly less computationally intensive, thus generating a much faster generalized EM (GEM) algorithm.  
@@ -126,7 +126,7 @@ All hypotheses are evaluated via a likelihood ratio test (LRT), with statistic
     \Lambda(X,Y) := -2 \log{ \frac{ \sup L(\theta_0|X,Y)}{ \sup L(\theta_1|X,Y)} },
 \end{equation*}
 
-\noindent where $\theta_0, \theta_1$ represent the parameters estimated under the null and alternative hypotheses, respectively.  It is well known that the asymptotic distribution of $\Lambda$ is a $\chi_{\rho}^2$ distribution with $\rho$ degrees of freedom.  Under the EM algorithm we use $L_{observed}(Z,Y)$ as the likelihood in the calculation of $\Lambda$.  
+\noindent where $\theta_0, \theta_1$ represent the parameters estimated under the null and alternative hypotheses, respectively.  It is well known that the asymptotic distribution of $\Lambda$ is a $\chi_{\rho}^2$ distribution with $\rho$ degrees of freedom.  Under the EM algorithm we use $L_{obs}(Z,Y)$ as the likelihood in the calculation of $\Lambda$.  
 
 The degrees of freedom $\rho$ are set equal to the number of free parameters available in the stated hypotheses under question.  If we put the null hypothesis to be $H_0: \lambda_t = c_t \gamma_t, \forall t$ and contrast this against $H_1: \lambda_{st} = c_{st}\gamma_{st}$ then there are $\rho = 2(S \cdot T) - S \cdot T - T = S \cdot T - T$ degrees of freedom.  The alternative hypothesis previously stated is not in fact fit by estimating $c_{st}$, but is instead fit as if $c_{st}\gamma_{st}$ were $S \cdot T$ unique parameters independent of $\lambda_{st}$ for all $s,t$, thus providing $2(S \cdot T)$ total parameters for the hypothesis we denote by $c_{st}$.  
 

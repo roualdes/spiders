@@ -25,7 +25,7 @@ summary.predPref <- function(object, ..., sig.level=0.05) {
 
 print.summary.predPref <- function(x) {
     cat("\nPredator Preferences Model:\n\n")
-    cat("Log-likelihoods:\n\tH0 (", x$hypotheses[1], "):", x$loglikH0, "\n\tH1 (", x$hypotheses[2], "):", x$loglikH1, "\n")
+    cat("Hypotheses:\n\tH0 =", x$hypotheses[1], "\n\tH1 =", x$hypotheses[2], "\n")
     cat("Likelihood Ratio Test:\n\t-2*(llH0-llH1) =", x$Lambda, "on", x$df, "degrees of freedom\n")
     cat("\tp-value =", x$p.value, "\n")
     cat("Parameter Estimates:\n")

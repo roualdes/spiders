@@ -12,7 +12,8 @@ testC <- function(x, b, mu = 0, alternative = c("two.sided", "less", "greater"),
     if (!missing(mu) && (length(mu) != 1 || is.na(mu))) 
         stop("'mu' must be a single number")
     if (!missing(conf.level) && (length(conf.level) != 1 || !is.finite(conf.level) || 
-                                 conf.level < 0 || conf.level > 1)) 
+                                 conf.level < 0 || conf.level > 1))
+        stop("'conf.level' must be a single number between 0 and 1")
 
     ## get appropriate estimates
     alpha <- 1-conf.level

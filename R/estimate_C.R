@@ -28,8 +28,8 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             
             ## expected value of Xjst
             lambda <- cHat*gammaHat
-            elambda <- exp(lambda)
-            EX <- lambda*elambda / (elambda - 1)
+            elambda <- exp(-lambda)
+            EX <- lambda / (1-elambda)
 
             ## convenience
             ZEX <- Xdst*EX
@@ -50,7 +50,7 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             
             ## limit iterations
             if ( em_iter > em_maxiter )
-                stop(sprintf('H0: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+                stop(sprintf('estC: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
         }
         
         ## calc standard error with est params
@@ -68,7 +68,7 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         Info[lowmat] <- t(Info)[lowmat]      # make symmetric from upper tri
 
         ## calc log-lik with est params
-        loglik <- llEM(Xdst, Ydst, NA, gammaHat, J, I, cHat)
+        loglik <- llEM(Xdst, Ydst, NA, gammaHat, J, I, as.numeric(cHat))
         
         list('c' = cHat, 'gamma' = as.matrix(gammaHat), 'em_iters' = em_iter,
              'll' = loglik, 'var' = solve(Info))

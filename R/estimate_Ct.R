@@ -20,15 +20,14 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         cHat <- cHat_old <- runif(length(J))
         init <- est1(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
         gammaHat <- gammaHat_old <- init$gamma 
-        lambda <- elambda <- init$lambda
 
         ## iterate EM
         while ( TRUE ) {
             
             ## expected value of Xjst
             lambda <- cHat*gammaHat
-            elambda <- exp(lambda)
-            EX <- lambda*elambda / (elambda - 1)
+            elambda <- exp(-lambda)
+            EX <- lambda/(1-elambda)
 
             ## convenience
             ZEX <- Xdst*EX
@@ -49,13 +48,13 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             
             ## limit iterations
             if ( em_iter > em_maxiter )
-                stop(sprintf('H0: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+                stop(sprintf('estCt: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
         }
 
         ## calc standard error with est params
         ## SE <- seEM(NULL, gammaHat, cHat, Xdst, Ydst, J, I)
-        Info <- diag(ST+T)                 # initialize information matrix
-        g2 <- gammaHat^2                # gamma^2
+        Info <- diag(ST+T)             # initialize information matrix
+        g2 <- gammaHat^2               # gamma^2
         l <- cHat*gammaHat
         expl <- exp(l); tmp <- J*expl/(expl-1)^2 # a common term
 
@@ -104,7 +103,8 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             gammaHat_old <- gammaHat
             cHat_old <- cHat
             iter <- iter+1
-            
+
+            ## limit iterations
             if ( iter > maxiter )
                 stop(sprintf('estCt: %d not sufficient iterations for simultaneous equations.', maxiter))
         }
@@ -115,7 +115,7 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
         ## fill Info with second derivatives
         diag(Info)[-t] <- unlist(XYdst/gammaHat^2) # gamma
-        diag(Info)[t] <- sumSp(Xdst)/cHat^2           # c
+        diag(Info)[t] <- sumSp(Xdst)/cHat^2        # c
         for ( i in t ) {              # fill off diags; upper tri only
             Info[i,-t][seq(0, (S-1)*T, by=T)+i] <- J[i]
         }

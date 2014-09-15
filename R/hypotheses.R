@@ -14,7 +14,7 @@ calcHypotheses <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
     fns <- list()
     fns[['1']] <- est1; fns[['c']] <- estC
     fns[['Cs']] <- estCs; fns[['Ct']] <- estCt
-    fns[['Cst']] <- estCst
+    fns[['Cst']] <- estCst; fns[['gen']] <- estGen
 
     ## calculate null and alternative hypotheses
     null <- fns[[hyp[1]]](Xdst, Ydst, J, I, EM, em_maxiter, balanced)
@@ -50,11 +50,13 @@ checkHypotheses <- function(hyp) {
     } else if ( grepl('1', hyp[1]) ) {
         H[1] <- '1'
     } else {
-        stop('Null hypothis specified incorrectly; please check documentation.')
+        stop('Null hypothesis specified incorrectly; please check documentation.')
     }
 
     ## H1
-    if ( grepl('gen', hyp[2]) || grepl('st', hyp[2]) ) {
+    if ( grepl('g', hyp[2]) ) {
+        H[2] <- 'gen'
+    } else if ( grepl('st', hyp[2]) ) {
         H[2] <- 'Cst'
     } else if ( grepl('t', hyp[2]) ) {
         H[2] <- 'Ct'
@@ -63,7 +65,7 @@ checkHypotheses <- function(hyp) {
     } else if ( grepl('c', hyp[2]) ) {
         H[2] <- 'c'
     } else {
-        stop('Alt hypothis specified incorrectly; please check documentation.')
+        stop('Alt hypothesis specified incorrectly; please check documentation.')
     }
 
     ## both

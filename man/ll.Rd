@@ -1,6 +1,6 @@
 \name{ll}
 \alias{ll}
-\title{log-likelihood of predator preferances model with unbalanced data}
+\title{log-likelihood of predator preferances model}
 \usage{
 ll(Xdst, Ydst, lambda, gamma, J, I, c = NULL)
 }
@@ -27,7 +27,6 @@ ll(Xdst, Ydst, lambda, gamma, J, I, c = NULL)
   \item{c}{scalar in null hypotheses}
 }
 \description{
-log-likelihood of predator preferances model with
-unbalanced data
+log-likelihood of predator preferances model
 }
 

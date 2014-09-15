@@ -26,8 +26,8 @@ estCs <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             
             ## expected value of Xjst
             lambda <- sapply(s, function(j) cHat[j]*gammaHat[,j]) # col-wise `*`
-            elambda <- exp(lambda)
-            EX <- lambda*elambda / (elambda - 1)
+            elambda <- exp(-lambda)
+            EX <- lambda/(1-elambda)
 
             ## convenience
             ZEX <- Xdst*EX
@@ -49,12 +49,12 @@ estCs <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             
             ## limit iterations
             if ( em_iter > em_maxiter )
-                stop(sprintf('H0: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+                stop(sprintf('estCs: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
         }
 
         ## calc standard error with est params
         ## SE <- seEM(NULL, gammaHat, cHat, Xdst, Ydst, J, I)
-        Info <- diag(ST+S)                # initialize information matrix
+        Info <- diag(ST+S)             # initialize information matrix
         g2 <- gammaHat^2               # gamma^2
         l <- sapply(s, function(j) gammaHat[,j]*cHat[j]) # col-wise `*`
         expl <- exp(l); tmp <- J*expl/(expl-1)^2  # a common term

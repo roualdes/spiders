@@ -6,7 +6,7 @@
 ##' @param alpha LRT level of significance
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 ##' @export
-predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_maxiter=100) {
+predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_maxiter=1000) {
 
     ## check hypotheses specification
     hypotheses <- checkHypotheses(hypotheses)
