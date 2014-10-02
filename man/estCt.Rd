@@ -1,6 +1,6 @@
 \name{estCt}
 \alias{estCt}
-\title{estimates parameters from hypothesis lambda = gamma c'_t; S*T + T free parameters}
+\title{estimate hypothesis c_st = c_t}
 \usage{
 estCt(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
 }
@@ -27,7 +27,10 @@ estCt(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
   BALANCED}
 }
 \description{
-estimates parameters from hypothesis lambda = gamma c'_t;
-S*T + T free parameters
+estimates parameters from hypothesis lambda_t = c_t *
+gamma_t
+}
+\details{
+There are S*T + T free parameters under this hypothesis.
 }
 

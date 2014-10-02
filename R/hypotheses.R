@@ -1,4 +1,6 @@
-##' function to calculate hypotheses given a user specifed null and alternative
+##' @title calculate hypotheses
+##'
+##' @description calculates hypotheses, given a user specifed null and alternative
 ##'
 ##' @param hyp a 2-tuple specifying the null and alternative hypotheses, respectively
 ##' @param Xdst matrix of sums of number of eaten prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS

@@ -1,6 +1,6 @@
 \name{summary.predPref}
 \alias{summary.predPref}
-\title{summary method for predPref objects}
+\title{predPref summary}
 \usage{
 \method{summary}{predPref}(object, ..., sig.level = 0.05)
 }
@@ -14,6 +14,7 @@
   test}
 }
 \description{
-summary method for predPref objects
+summary method for predPref objects as returned by the
+function \code{predPref}
 }
 

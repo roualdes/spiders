@@ -1,4 +1,8 @@
-##' estimates parameters from hypothesis lambda = c_{st}*gamma; 2*S*T free parameters
+##' @title estimate hypothesis c_st
+##'
+##' @description estimates parameters from hypothesis lambda = c_st * gamma
+##'
+##' @details There are 2*S*T free parameters under this hypothesis
 ##' 
 ##' @param Xdst matrix of sums of number of eaten prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS
 ##' @param Ydst matrix sum of number of caught prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS

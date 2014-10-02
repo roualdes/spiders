@@ -1,4 +1,7 @@
-##' summary method for predPref objects
+##' @title predPref summary
+##'
+##' @description  summary method for predPref objects as returned by the
+##' function \code{predPref}
 ##'
 ##' @param object predPref object as returned from predPref()
 ##' @param ... additional arguments

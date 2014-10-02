@@ -1,6 +1,6 @@
 \name{estC}
 \alias{estC}
-\title{estimate parameters from hypothesis: lambda = c*gamma; S*T + 1 free parameters}
+\title{estimate hypothesis c_st = c}
 \usage{
 estC(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
 }
@@ -27,7 +27,9 @@ estC(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
   BALANCED}
 }
 \description{
-estimate parameters from hypothesis: lambda = c*gamma; S*T
-+ 1 free parameters
+estimate parameters from hypothesis lambda = c*gamma
+}
+\details{
+There are S*T + 1 free parameters under this hypothesis.
 }
 

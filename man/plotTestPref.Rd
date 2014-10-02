@@ -1,8 +1,9 @@
 \name{plotTestPref}
 \alias{plotTestPref}
-\title{plot the output of testPref}
+\title{plot testPref}
 \usage{
-plotTestPref(x, hypothesis = "null", lambda = NULL, gamma = NULL)
+plotTestPref(x, hypothesis = c("null", "alt", "both"), lambda = NULL,
+  gamma = NULL)
 }
 \arguments{
   \item{x}{a testPref object as returned by the eponymous
@@ -17,6 +18,12 @@ plotTestPref(x, hypothesis = "null", lambda = NULL, gamma = NULL)
   gamma; TxS}
 }
 \description{
-plot the output of testPref
+plot the output from \code{testPref}
+}
+\details{
+Function relies on packages \code{lattice} and
+\code{gridExtra}.  If true values of lambda and gamma are
+given, then tick marks will be placed at those values along
+the x-axis.
 }
 

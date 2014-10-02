@@ -1,4 +1,12 @@
-##' simulate data for predator preferences model
+##' @title simulate data
+##'
+##' @description  simulate data for predator preferences model
+##'
+##' @details Both lambda and gamma must be specified as a matrix with rows indexing
+##' time and columns indexing the number of species.
+##'
+##' @return A list consisting of two dataframes, eaten and caught, made
+##' specifically for the function \code{predPref}.
 ##'
 ##' @param S number of prey species
 ##' @param T number of time periods
@@ -7,6 +15,8 @@
 ##' @param lambda matrix of rates at which predator eats prey species; TxS
 ##' @param gamma matrix of rates at which prey species is seen in habitat; TxS
 ##' @param EM boolean specifying test of EM algorithm
+##'
+##' @seealso \code{\link{predPref}}, \code{\link{testPref}}
 ##' @export
 simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
 

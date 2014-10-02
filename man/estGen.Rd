@@ -1,6 +1,6 @@
 \name{estGen}
 \alias{estGen}
-\title{estimates parameters from hypothesis lambda != gamma; 2*S*T free parameters}
+\title{estimate a reparameterization of the  hypothesis c_st}
 \usage{
 estGen(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
 }
@@ -27,7 +27,10 @@ estGen(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
   BALANCED}
 }
 \description{
-estimates parameters from hypothesis lambda != gamma; 2*S*T
-free parameters
+estimates parameters from hypothesis lambda != gamma, where
+lambda is indepdent of gamma
+}
+\details{
+There are 2*S*T free parameters under this hypothesis.
 }
 

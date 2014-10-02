@@ -1,6 +1,6 @@
 \name{llEM}
 \alias{llEM}
-\title{log-likelihood of predators preferances model with EM}
+\title{non-observed count log-likelihood of predators preferances}
 \usage{
 llEM(Zdst, Ydst, lambda, gamma, J, I, c = NULL)
 }
@@ -25,6 +25,6 @@ llEM(Zdst, Ydst, lambda, gamma, J, I, c = NULL)
   \item{c}{scalar in null hypotheses}
 }
 \description{
-log-likelihood of predators preferances model with EM
+log-likelihood for non-observed count data; model with EM
 }
 

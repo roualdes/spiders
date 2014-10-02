@@ -1,6 +1,6 @@
 \name{est1}
 \alias{est1}
-\title{estimates parameters from hypothesis lambda = gamma; S*T free parameters}
+\title{estimate hypothesis c_st = 1}
 \usage{
 est1(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
 }
@@ -27,7 +27,9 @@ est1(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
   BALANCED}
 }
 \description{
-estimates parameters from hypothesis lambda = gamma; S*T
-free parameters
+estimates parameters from hypothesis lambda = gamma
+}
+\details{
+There are S*T free parameters under this hypothesis.
 }
 

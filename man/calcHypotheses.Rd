@@ -1,6 +1,6 @@
 \name{calcHypotheses}
 \alias{calcHypotheses}
-\title{function to calculate hypotheses given a user specifed null and alternative}
+\title{calculate hypotheses}
 \usage{
 calcHypotheses(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter)
 }
@@ -30,7 +30,7 @@ calcHypotheses(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter)
   for EM algorithm}
 }
 \description{
-function to calculate hypotheses given a user specifed null
-and alternative
+calculates hypotheses, given a user specifed null and
+alternative
 }
 

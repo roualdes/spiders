@@ -1,6 +1,6 @@
 \name{mean.testPref}
 \alias{mean.testPref}
-\title{summarize output from testPref()}
+\title{means of \code{testPref}}
 \usage{
 \method{mean}{testPref}(x, ..., hypothesis = c("null", "alt", "both"))
 }
@@ -13,6 +13,13 @@
   \item{hypothesis}{specify which hypothesis}
 }
 \description{
-summarize output from testPref()
+summarize output of \code{testPref} by calculating means
+for a specified hypothesis
+}
+\details{
+This function essentially calculates means over multiple
+replications and fits of a given set of hypotheses and
+parameter values, as is output from the function
+\code{testPref}.
 }
 

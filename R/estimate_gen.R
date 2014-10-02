@@ -1,4 +1,9 @@
-##' estimates parameters from hypothesis lambda != gamma; 2*S*T free parameters
+##' @title estimate a reparameterization of the  hypothesis c_st
+##'
+##' @description estimates parameters from hypothesis lambda != gamma, where lambda
+##' is indepdent of gamma
+##'
+##' @details There are 2*S*T free parameters under this hypothesis.
 ##' 
 ##' @param Xdst matrix of sums of number of eaten prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS
 ##' @param Ydst matrix sum of number of caught prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS

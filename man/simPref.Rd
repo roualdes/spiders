@@ -1,6 +1,6 @@
 \name{simPref}
 \alias{simPref}
-\title{simulate data for predator preferences model}
+\title{simulate data}
 \usage{
 simPref(S, T, J, I, lambda, gamma, EM = F)
 }
@@ -23,7 +23,19 @@ simPref(S, T, J, I, lambda, gamma, EM = F)
 
   \item{EM}{boolean specifying test of EM algorithm}
 }
+\value{
+A list consisting of two dataframes, eaten and caught, made
+specifically for the function \code{predPref}.
+}
 \description{
 simulate data for predator preferences model
+}
+\details{
+Both lambda and gamma must be specified as a matrix with
+rows indexing time and columns indexing the number of
+species.
+}
+\seealso{
+\code{\link{predPref}}, \code{\link{testPref}}
 }
 

@@ -1,6 +1,6 @@
 \name{ll}
 \alias{ll}
-\title{log-likelihood of predator preferances model}
+\title{observed count log-likelihood of predator preferances model}
 \usage{
 ll(Xdst, Ydst, lambda, gamma, J, I, c = NULL)
 }
@@ -27,6 +27,7 @@ ll(Xdst, Ydst, lambda, gamma, J, I, c = NULL)
   \item{c}{scalar in null hypotheses}
 }
 \description{
-log-likelihood of predator preferances model
+log-likelihood of fully observed count data predator
+preferances model
 }
 
