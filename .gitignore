@@ -9,6 +9,7 @@
 *.fff
 *.ttt
 *.aaa
+*.csv
 vignettes/cache
 vignettes/*.nav
 vignettes/*.snm

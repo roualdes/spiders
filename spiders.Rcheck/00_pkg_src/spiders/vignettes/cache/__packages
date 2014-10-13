@@ -1,0 +1,10 @@
+base
+codetools
+data.table
+devtools
+gridExtra
+knitr
+lattice
+plyr
+roxygen2
+spiders

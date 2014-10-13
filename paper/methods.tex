@@ -3,11 +3,11 @@
 
 \subsection{Data}
 
-We assume data are collected in the following manner.  Traps are dispersed, for $T$ time periods, throughout the habitat of the predator and prey of interest.  Prey species, indexed by $s \in \{1, \ldots, S \}$, are collected in the traps and counted at each time period.  We assume these counts represent the number of prey species $s$ the predator will encounter on average during time period $t \in \{1, \ldots, T\}$.  The counts of prey species $s$ caught during time period $t$ are hypothesized to be independent draws from a Poisson distribution with rate parameter $\gamma_{st}$.  We further assume that the number of prey species found in the gut of the trapped predators, also follows a Poisson distribution with rate $\lambda_{st}$.  Here, the parameter $\lambda_{st}$ represents the rate at which the predator ate the encountered prey species $s$ during time period $t$.  By modeling $\lambda_{st}$ and $\gamma_{st}$ we are able to test claims about a predator's eating preferences.  
+We assume data are collected in the following manner.  Traps are dispersed, for $T$ time periods, throughout the habitat of the predator and prey of interest.  Prey species, indexed by $s \in \{1, \ldots, S \}$, are collected in the traps and counted at each time period.  The number of prey species $s$ the predator will encounter on average during time period $t \in \{1, \ldots, T\}$ are considered random draws from a Poisson distribution with rate parameter $\gamma_{st}$.  We further assume that the number of prey species found in the gut of the similarly trapped predators follows a Poisson distribution with rate $\lambda_{st}$.  Here, the parameter $\lambda_{st}$ represents the rate at which the predator ate prey species $s$ during time period $t$.  By modeling $\lambda_{st}$ and $\gamma_{st}$ we are able to test claims about a predator's eating preferences.  
 
-The use of Poisson distributions make the following implicit assumptions: $1)$ traps independently catch the prey species of interest, $2)$ predators eat, at a constant rate, prey species independently, $3)$ predators eat indepedent of each other.  Our model's ability to accurately portray predators' habitats and underlying eating preferences dependes on the degree to which these assumptions are broken.
+The use of Poisson distributions make the following implicit assumptions: $1)$ traps independently catch the prey species of interest, $2)$ predators eat prey species independently, $3)$ predators eat indepedent of each other.
 
-Let $X_{jst} \iid \mathcal{P}(\lambda_{st})$ denote the number of prey species $s$ that predator $j$ ate during occurrence $t$ where $j \in \{1, \ldots, J_t\}$.  Let $Y_{ist} \iid \mathcal{P}(\gamma_{st})$ denote the number of prey species $s$ found in trap $i$ during occurrence $t$, $i \in \{1, \ldots, I_t\}$.  Formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda}$ and $\boldsymbol{\gamma}$ offer insights to the relative rates at which predators eat particular prey species.  
+We denote the number of predators and the numer of prey species caught, in each time period $t$, by $J_t$ and $I_t$, respectively.  Let $X_{jst} \iid \mathcal{P}(\lambda_{st})$ represent the number of prey species $s$ that predator $j$ ate during occurrence $t$, where $j \in \{1, \ldots, J_t\}$.  Let $Y_{ist} \iid \mathcal{P}(\gamma_{st})$ represent the number of prey species $s$ found in trap $i$ during occurrence $t$, $i \in \{1, \ldots, I_t\}$.  Formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda}$ and $\boldsymbol{\gamma}$ offer insights to the relative rates at which predators eat particular prey species.  
 
 % \begin{figure}
 %   \centering
@@ -34,6 +34,8 @@ We consider five variations on the relative magnitude of $\lambda_{st}/\gamma_{s
 \item $c_{st} = c_{st}, s = 1, \ldots, S; t = 1, \ldots, T$
 \end{enumerate}
 
+The first hypothesis states that predators and traps sample all prey species at the same rate.  One imagines this is the case if the predator simply eats that which comes within its reach, thus suggesting a diet indifferene.  The second says that predators sample prey proportionally across all time periods.  The third hypothesis says that predators sample different prey species at different rates, but each rate is steady across time.  This implies that the predator expresses preferences for one prey species over another, but is unresponsive to changes due to time.  Conversely, the forth hypothesis implies that each prey species is sampled similarly within each time period, while the rates across time are allowed to change.  The fifth assumes a predator's selection varies by both time and prey species.  This would make sense if environmental variables, say weather, or prey availability, and taste were affecting predators' selection strategies.  
+
 \begin{figure}
   \centering
   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm, semithick]
@@ -55,38 +57,43 @@ We consider five variations on the relative magnitude of $\lambda_{st}/\gamma_{s
   \label{fig:hier}
 \end{figure}
 
-\subsection{Fully Observed Data}
+\subsection{Fully Observed Count Data}
 
-The likelihood function that allows for estimation of these parameters is as follows.  Since we assume $X_{jst}$ is independent of $Y_{ist}$ we can simply multiply the respective Poisson probability density functions together, and then form products over all $s,t$ to get the likelihood.  
+The likelihood function that allows for estimation of these parameters is as follows.  Since we assume $X_{jst}$ is independent of $Y_{ist}$ we can simply multiply the respective Poisson probability density functions, and then form products over all $s,t$ to get the likelihood.  
 
 \begin{equation}
   \label{eq:likelihood}
   L(x_{jst}, y_{ist} |\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \prod_{t = 1}^{T} \prod_{s=1}^S \left\{ \prod_{j=1}^{J_t} f_X(x_{jst}|\boldsymbol{\lambda}) \prod_{i=1}^{I_t} f_Y(y_{ist} | \boldsymbol{\gamma}) \right\}.
 \end{equation}
 
-\noindent Writing all $5$ hypotheses as $\lambda_{st} = c_{st}\gamma_{st}$, we can, in some cases find analytic solutions for the maximum likelihood estimates of $c_{st}$ and $\gamma_{st}$.  When the data are balanced $J_t = J$, $I_t = I$, and $c_{st} = c$ analytic solutions exist -- {\color{red}what about $c_{st} = 1$}.  In all other cases, analytic solutions are not readily available and instead we rely on the fact that the log-likelihood $l(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log{L}$ is concave.  We maximize the log-likelihood by iteratively solving partial derivatives of $l$, with respect to $c_{st}$ and $\gamma_{st}$, set equal to zero
+\noindent Writing all five hypotheses as $\lambda_{st} = c_{st}\gamma_{st}$, we can, in the simplest cases, find analytic solutions for the maximum likelihood estimates of $c_{st}$ and $\gamma_{st}$.  Under the hypothesis $c_{st} = 1$, and when the data are balanced $J_t = J$, $I_t = I$, and $c_{st} = c$ analytic solutions exist.  Namely, these solutions are
+
+\begin{equation*}
+  \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_t + I_t}, \quad \text{ and } \quad \hat{c} = \frac{I \sum_{s,t} X_{\cdot st}}{J \sum_{s,t} Y_{\cdot st}}, \quad \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{I \left( \frac{\sum_{st} X_{\cdot st}}{\sum_{st} Y_{\cdot st}} + 1 \right)}
+\end{equation*}
+
+\noindent respectively, where $X_{\cdot st} = \sum_{j=1}^{J_t}X_{jst}$ and $Y_{\cdot st} = \sum_{i=1}^{I_t} Y_{ist}$.
+
+In all other cases, analytic solutions are not readily available and instead we rely on the fact that the log-likelihood $l(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log{L}$ is concave.  We maximize the log-likelihood, using coordinate descent \citep{Luo:1992}, by iteratively solving partial derivatives of $l$, with respect to $c_{st}$ and $\gamma_{st}$, set equal to zero
 
 \begin{equation*}
   \hat{c} = \frac{\sum_{s,t} X_{\cdot st}}{\sum_t J_t \sum_s \gamma_{st}}, \quad \hat{c}_t =  \frac{\sum_s X_{\cdot st}}{J_t \sum_s \gamma_{st}}, \text{ or} \quad \hat{c}_s = \frac{\sum_{t}X_{\cdot st}}{\sum_t J_t \gamma_{st}}, \text{ and } \quad \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_t c_{st} + I_t}.
 \end{equation*}
 
-\noindent where $X_{\cdot st} = \sum_{j=1}^{J_t}X_{jst}$ and $Y_{\cdot st} = \sum_{i=1}^{I_t} Y_{ist}$.
-
-
 \subsection{Unobserved Counts}
 
-Working with biologists who study spider eating preferences, we have found that not all predators' allow for easily counted prey species in their guts.  As an alternative strategy, we can rely on the DNA sequencing of a sample from the predators' guts.  If such sequencing returns a positive response, say a $1$ if a particular predator ate prey species $s$ and $0$ otherwise, we can, albeit with some information lost, model predators' eating preferences with the above framework using the EM algorithm.  
+Working with biologists who study spider foraging, we have found that not all predators allow for easily counted prey species in their guts.  As an alternative strategy, we can rely on the DNA sequencing of a sample from the predators' guts.  If such sequencing returns a positive response, say a $1$ if a particular predator ate prey species $s$, and $0$ otherwise, we can, albeit with these incomplete data, model predators' eating preferences with the above framework using the EM algorithm.  
 
-When the data $X_{jst}$ are not observed, and instead a boolean response indicating if a predator ate any number of prey species $s$ during time $t$ is observed, we can still, to some degree, estimates the parameters of interest $\boldsymbol{\lambda}, \boldsymbol{\gamma}$.  Because some information is observed, we can treat the counts as missing and use the EM algorithm to find the maximum likelihood estimates of the observed data likelihood.  
+We denote the binary response that the predator did in fact eat at least one prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  Now the observed data are independent and identically distributed Bernoulli observations with $p_{st} = 1-\exp\{-\lambda_{st}\}$.  Despite not observing $X_{jst}$, the EM algorithm is able to find maximum likelihood estimates of the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$ using the complete data log-likelihood, $l_{comp}(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log f_{X,Y,Z}(x_{jst},y_{ist},z_{jst}|\boldsymbol{\lambda}, \boldsymbol{\gamma})$.
 
-We denote the binary response that the predator did in fact eat at least one prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  Now, the observed data are independent and identically distributed Bernoulli observations with parameter $p_{st} = 1-\exp\{-\lambda_{st}\}$.  Using this we can find the complete data likelihood by first noting that the conditional distribution of the unobserved data $X_{jst}$ given $Z_{jst}, Y_{ist}, \boldsymbol{\lambda}, \boldsymbol{\gamma}$ is a truncated Poisson distribution
+With the distribution of $Z_{jst}$ in hand, we calculate the complete data likelihood by first noting that the conditional distribution of the unobserved data $X_{jst}$ given $Z_{jst}, Y_{ist}, \boldsymbol{\lambda}, \boldsymbol{\gamma}$ is a truncated Poisson distribution
 
 \begin{equation*}
   f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst}) =
-  \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{x_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) x_{jst}!}1(x_{jst} > 0) \quad \text{ where } \quad \E_{[X|Y,Z]}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
+  \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{x_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) x_{jst}!}1(x_{jst} > 0) \quad \text{ where } \quad \E_{X|Y,Z}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
 \end{equation*}
 
-\noindent From this conditional distribution we get the joint distribution of $X_{jst}, Z_{jst}$
+\noindent From this conditional distribution, we get the joint distribution of $X_{jst}, Z_{jst}$
 
 \begin{equation*}
     f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst}) = \left\{
@@ -98,42 +105,53 @@ We denote the binary response that the predator did in fact eat at least one pre
   \right.
 \end{equation*}
 
-\noindent The E-step of the EM algorithm is completed by computing the expected value of the complete data log-likelihood with respect to $f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst})$ to get
+% introduce EM and its iterative steps earlier
+% just a couple of general sentences; explain the two steps and what they do
+% rubin and little (~1980); mclchalan and Krishnan book
+% split up E and M step, with \cdot ^(k) notation earlier
+% mention convergence criterion
 
-\begin{align*}
-  \E l_{comp} 
-  & = \E \log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})} + \log{f_{Y|\boldsymbol{\gamma}}(y_{ist})} \\
+The EM algorithm works in two steps \citep{Dempster:1977,McLachlan:2007}.  To drop dependence on the unobserved data, the E-step consists of taking the expectation of $l_{comp}$ with respect to the conditional distribution of $X$ given the observed data and a current estimate of the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$, namely $f_{X|Y,Z,\boldsymbol{\lambda}}(x_{jst})$.  The current estimate of the parameters are used within the calculation of $\E_{X|Y,Z,\boldsymbol{\lambda}}X_{jst}$ and not within the distribution functions of the underlying model.  The M-step then maximizes $Q = \E l_{comp}$ with respect to the parameters in the model.  The E-step and M-step are then iteratively updated until a convergence criterion is met.  
+
+Denoting iterations and current estimates of parameters of the EM algorithm with a superscript $(k)$, the two EM steps are E-step: $Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \E_{X|Y,Z,\boldsymbol{\lambda}^{(k)}} l_{comp}$, and M-step: $(\boldsymbol{\lambda}^{(k+1)}, \boldsymbol{\gamma}^{(k+1)}) = \argmax_{(\boldsymbol{\lambda}, \boldsymbol{\gamma})} Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma})$.  The calculation of $Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma})$ is not difficult and is given in equation~\ref{eq:estep}.
+
+\begin{align}
+  \label{eq:estep}
+  \begin{split}
+  Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma})
+  & = \E \log{f_{X,Y,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})} + \log{f_{Y|\boldsymbol{\gamma}}(y_{ist})} \\
   & = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \E \log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})}
   + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)} \\
-  & = \sum_{s,t,j} \left( - \lambda_{st} 
-    + z_{jst} \E X_{jst} \log{\lambda_{st}}  \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right) + \text{const} \\
-  & = \sum_{s,t} \left( -J_t \lambda_{st} + z_{\cdot st} \E X_{jst} \log{\lambda_{st}} \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right) + \text{const}.
-\end{align*}
+  & \propto \sum_{s,t,j} \left( - \lambda_{st} 
+    + z_{jst} \E X_{jst} \log{\lambda_{st}}  \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right) \\
+  & \propto \sum_{s,t} \left( -J_t \lambda_{st} + z_{\cdot st} \E (X_{jst}|\lambda_{st}^{(k)},\gamma_{st}^{(k)}) \log{\lambda_{st}} \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right).
+\end{split}
+\end{align}
 
-The EM algorithm requires iteratively solving $(\boldsymbol{\lambda}^{(k+1)},\boldsymbol{\gamma}^{(k+1)}) = \argmax_{\boldsymbol{\lambda},\boldsymbol{\gamma}} \E l_{comp}^k$.  Though no analytic solution to this maximization exists, one idea is to iteratively solve partial derivatives of $\E l_{comp}$ set equal to zero until convergence.  In fact, as we only need find parameter values that increase the observed likelihood, we forgo fully iterating to find the maximum values of the parameters and instead perform just one step uphill within each EM iteration.  This strategy is significantly less computationally intensive, thus generating a much faster generalized EM (GEM) algorithm.  
+In this case, no analytic solution to the M-step exists so we choose to maximize $Q$ with coordinate descent \citep{Luo:1992}.  In fact, as we only need find parameters that increase the value of $Q$, we forgo fully iterating to find the maximum and instead perform just one step uphill within each EM iteration.  Since $Q^{(k)}$ is concave and smooth in the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$, we are able to use the convergence of parameter estimates, $||(\boldsymbol{\lambda}^{(k)}, \boldsymbol{\gamma}^{(k)}) - (\boldsymbol{\lambda}^{(k+1)}, \boldsymbol{\gamma}^{(k+1)})||_{\infty} < \tau $, for some $\tau>0$, as our stopping criterion.
 
-This GEM algorithm accurately estimates the parameters when values of $\lambda_{st}$ are relatively small, such that zeros are prevalent in the data $Z_{jst}$.  In this case, not too much information is lost since estimation of $\E Z_{jst}$ can be estimated well by the proportion of observed zeros.  On the other hand, if the predator consistently eats a given prey species, few to no zeros will show up in the observed data and $\E Z_{jst}$ is estimated to be nearly $1$.  The loss of information is best seen by attempting to solve for $\lambda_{st}$ in the equation $1 = \E Z_{jst} = 1 - \exp\{-\lambda_{st}\}$; essentially $\lambda_{st}$ is sent off to $+\infty$. 
+This generalized EM algorithm accurately estimates the parameters when values of $\lambda_{st}$ are relatively small, such that zeros are prevalent in the data $Z_{jst}$.  In this case, not too much information is lost since estimation of $\E Z_{jst}$ can be estimated well by the proportion of observed zeros.  On the other hand, if the predator consistently eats a given prey species, few to no zeros will show up in the observed data and $\E Z_{jst}$ is estimated to be nearly $1$.  The loss of information is best seen by attempting to solve for $\lambda_{st}$ in the equation $\E Z_{jst} = 1 = 1 - \exp\{-\lambda_{st}\}$.  As the proportion of ones in the observed data increase, we expect $\lambda_{st}$ to grow exponentially large.  When no zeros are present in the data, where only ones are observed, the maximum likelihood estimate can be made arbitrarily large by sending the parameter off to infinity.  
 
 \subsection{Testing}
 
-All hypotheses are evaluated via a likelihood ratio test (LRT), with statistic
+The likelihood ratio test (LRT) statistic is
 
 \begin{equation*}
   \label{eq:LRT}
-    \Lambda(X,Y) := -2 \log{ \frac{ \sup L(\theta_0|X,Y)}{ \sup L(\theta_1|X,Y)} },
+    \Lambda(X,Y) := -2 \log{ \frac{ \sup_{\theta_0} L(\theta_0|X,Y)}{ \sup_{\theta_1} L(\theta_1|X,Y)} },
 \end{equation*}
 
-\noindent where $\theta_0, \theta_1$ represent the parameters estimated under the null and alternative hypotheses, respectively.  It is well known that the asymptotic distribution of $\Lambda$ is a $\chi_{\rho}^2$ distribution with $\rho$ degrees of freedom.  Under the EM algorithm we use $L_{obs}(Z,Y)$ as the likelihood in the calculation of $\Lambda$.  
+\noindent where $\theta_0, \theta_1$ represent the parameters estimated under the null and alternative hypotheses, respectively.  It is well known that the asymptotic distribution of $\Lambda$ is a $\chi_{\rho}^2$ distribution with $\rho$ degrees of freedom \citep{Wilks:1938}.  When the observations $X_{jst}$ are not observed, we use $L_{obs}(Z,Y)$ as the likelihood in the calculation of $\Lambda$.  
 
-The degrees of freedom $\rho$ are set equal to the number of free parameters available in the stated hypotheses under question.  If we put the null hypothesis to be $H_0: \lambda_t = c_t \gamma_t$, for all $t$ and contrast this against $H_1: \lambda_{st} = c_{st}\gamma_{st}$ then there are $\rho = 2(S \cdot T) - S \cdot T - T = S \cdot T - T$ degrees of freedom.
+The degrees of freedom $\rho$ equal the number of free parameters available in the stated hypotheses under question.  If we put the null hypothesis to be $H_0: \lambda_t = c_t \gamma_t$, for all $t$ and contrast this against $H_1: \lambda_{st} = c_{st}\gamma_{st}$ then there are $\rho = 2(S \cdot T) - S \cdot T - T = S \cdot T - T$ degrees of freedom.
 
 A set of hypotheses is determined by the p-value of the $\chi^2_{\rho}$ distribution.  Hence, with a level of significance, $\alpha$, the null hypothesis is rejected in favor of the alternative hypothesis if $\mathbb{P}(\chi^2_{\rho} > \Lambda) < \alpha$.  
 
 \subsection{Testing $c_{st}$}
 
-After determining which model best fits the data, more detail can be extracted through a hypothesis test on the elements of $c_{st}$, or in vector notation as $\mathbf{c} \in \mathbb{R}^{S\cdot T}$.  Let the elements of $\hat{\mathbf{c}}$ be the estimated values, $\hat{c}_{st}$, as estimated via the above maximum likelihood framework.  Since $\hat{\mathbf{c}}$ is asymptotically normally distributed, any linear combination of the elements is also asymptotically normally distributed.  For instance, let $a$ be a vector of the same dimension of $\hat{\mathbf{c}}$.  Then $a^t\hat{\mathbf{c}}$ is asymptotically distrbuted as $\mathcal{N}(a^t\mathbf{c}, a^t\Sigma a)$, where $\Sigma$ is the covariance matrix of the asymptotic distrbution of $\hat{\mathbf{c}}$.  
+After determining which model best fits the data, more detail can be extracted through a hypothesis test of the elements of $c_{st}$, or in vector notation as $\mathbf{c} \in \mathbb{R}^{S\cdot T}$.  Let the elements of $\hat{\mathbf{c}}$ be the maximum likelihood estimates, $\hat{c}_{st}$, as found via the framework above.  Since $\hat{\mathbf{c}}$ is asymptotically normally distributed, any linear combination of the elements is also asymptotically normally distributed.  For instance, let $a$ be a vector of the same dimension of $\hat{\mathbf{c}}$.  Then $a^t\hat{\mathbf{c}}$ is asymptotically distrbuted as $\mathcal{N}(a^t\mathbf{c}, a^t\Sigma a)$, where $\Sigma$ is the covariance matrix of the asymptotic distrbution of $\hat{\mathbf{c}}$.  
 
-Suppose, for example, that the hypothesis $c_s$ is determined to best fit the data with $s$ ranging $s = 1, 2$.  We can test to see whether or not the two species $s_1$ and $s_2$ are statistically equally preferred under the null hypothesis $\hat{c}_{s_1} = \hat{c}_{s_2}$.  This hypothesis is alternatively written in vector notation as $a^t\hat{\mathbf{c}} = 0$, where $a = (1, -1)^t$.  Tests of the following form $H_0: a^t\mathbf{c} = \mu$ against any alternative of interest are then standard $Z$-tests.  Similarly, confidence intervals of any level can be obtained if desired. 
+Suppose, for example, that the hypothesis $c_s$ is determined to best fit the data with $s$ ranging $s = 1, 2, 3$.  We can test to see whether or not two species are statistically equally preferred under the null hypothesis $c_{1} = c_{2}$.  This hypothesis is alternatively written in vector notation as $a^t\mathbf{c} = 0$, where $a = (1, -1, 0)^t$.  Tests of the following form $H_0: a^t\mathbf{c} = \mu$ against any alternative of interest are then approximate $Z$-tests.  Confidence intervals of any size are similarly, readily obtained. 
 
 %%% Local Variables: 
 %%% mode: latex

@@ -1,0 +1,30 @@
+calcHypotheses          calculate hypotheses
+checkHypotheses         function to check user specified hypotheses
+converged               checks convergence of the parameters for the
+                        estimation functions
+est1                    estimate hypothesis c_st = 1
+estC                    estimate hypothesis c_st = c
+estCs                   estimate hypothesis c_st = c_s
+estCst                  estimate hypothesis c_st
+estCt                   estimate hypothesis c_st = c_t
+estGen                  estimate a reparameterization of the hypothesis
+                        c_st
+getTimeCounts           sum specified columns by time
+getUnitCounts           count number of spiders or traps in each unit
+                        of time
+ll                      observed count log-likelihood of predator
+                        preferances model
+llEM                    non-observed count log-likelihood of predators
+                        preferances
+mean.testPref           means of 'testPref'
+plotTestPref            plot testPref
+predPref                parameter estimation
+simPref                 simulate data
+spiders-package         Fits predator preferences model.
+sumSp                   sum over species to get a vector of values for
+                        each time period
+sumT                    sum over times to get a vector of values for
+                        each species
+summary.predPref        predPref summary
+testC                   linear contrast of c_st
+testPref                simulate and test predPref
