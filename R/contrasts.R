@@ -31,7 +31,7 @@
 ##' contrast, a linear transformation such that
 ##' t(b) \%*\% matrix(1, nrow=length(b)) != 0 is allowed.
 ##'
-##' @param x a prefPref object as fit by the eponymous function
+##' @param x a predPref object as fit by the eponymous function
 ##' @param b a vector to linearly transform c_st
 ##' @param mu a number to test the linear contrast against in the null
 ##' @param alternative string to specify alternative hypothesis

@@ -50,6 +50,7 @@ testPref(Predators, Traps, l, g, M=10, hyp=c('c', 'cst'), EM=F)
 }
 }
 \seealso{
-\code{\link{simPref}}
+\code{\link{simPref}} \code{\link{plotTestPref}}
+\code{\link{mean.testPref}}
 }
 

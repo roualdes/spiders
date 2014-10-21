@@ -82,19 +82,25 @@ In all other cases, analytic solutions are not readily available and instead we 
 
 \subsection{Unobserved Counts}
 
-Working with biologists who study spider foraging, we have found that not all predators allow for easily counted prey species in their guts.  As an alternative strategy, we can rely on the DNA sequencing of a sample from the predators' guts.  If such sequencing returns a positive response, say a $1$ if a particular predator ate prey species $s$, and $0$ otherwise, we can, albeit with these incomplete data, model predators' eating preferences with the above framework using the EM algorithm.  
+% Working with biologists who study spider foraging, we have found that not all predators allow for easily counted prey species in their guts.  As an alternative strategy, we can rely on the DNA sequencing of a sample from the predators' guts.  If such sequencing returns a positive response, say a $1$ if a particular predator ate prey species $s$, and $0$ otherwise, we can, albeit with these incomplete data, model predators' eating preferences with the above framework using the EM algorithm.  
 
-We denote the binary response that the predator did in fact eat at least one prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  Now the observed data are independent and identically distributed Bernoulli observations with $p_{st} = 1-\exp\{-\lambda_{st}\}$.  Despite not observing $X_{jst}$, the EM algorithm is able to find maximum likelihood estimates of the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$ using the complete data log-likelihood, $l_{comp}(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log f_{X,Y,Z}(x_{jst},y_{ist},z_{jst}|\boldsymbol{\lambda}, \boldsymbol{\gamma})$.
+Many times it may not be possible to count the number of individuals of each prey species that are in a predators gut. Instead, it may only be possible to detect whether or not a predator consumed the prey species during a given period. This is the case in the study of ? spiders which relied on DNA sequencing to identify the prey species in a spider's gut contents. Despite this, we can still make inference about the predators preferences for the different prey species by using the EM algorithm to compute maximum likelihood estimates. 
 
-With the distribution of $Z_{jst}$ in hand, we calculate the complete data likelihood by first noting that the conditional distribution of the unobserved data $X_{jst}$ given $Z_{jst}, Y_{ist}, \boldsymbol{\lambda}, \boldsymbol{\gamma}$ is a truncated Poisson distribution
+We denote the binary random variable indicating that the $j^{th}$ predator did in fact eat at least one individual of prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  The variables are independent Bernoulli observations with success probability $p_{st} = P(Z_{jst}=1)= 1-\exp\{-\lambda_{st}\}$.  Despite not observing $X_{jst}$, we can compute maximum likelihood estimates of the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$ through the EM algorithm using the complete data log-likelihood
+\[
+l_{comp}(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log f_{X,Y,Z}(\boldsymbol x, \boldsymbol y, \boldsymbol z|\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \sum_{s=1}^{S} \sum_{t=1}^T [\sum_{j=1}^{J_t} \log f_{X,Z}(x_{jst},z_{jst}|\boldsymbol{\lambda}) + \sum_{i=1}^{I_t}\log f_Y(y_{jst}|\boldsymbol{\gamma}).
+\]
 
+The density of $Y_{jst}$ is exactly as given above and so we focus on deriving the joint density of $X_{jst}$ and $Z_{jst}$. With the distribution of $Z_{jst}$ given above, we can compute $f_{X,Z}(x_{jst},z_{jst}|\boldsymbol{\lambda})$ by noting that $X_{jst}=0$ with probability 1 if $Z_{jst}=0$ and that $X_{jst}|Z_{jst}=0$ has a truncated Poisson distribution with density
 \begin{equation*}
-  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst}) =
-  \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{x_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) x_{jst}!}1(x_{jst} > 0) \quad \text{ where } \quad \E_{X|Y,Z}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
+  f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst}|z_{jst}) =
+  \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{x_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) x_{jst}!}1(x_{jst} > 0) \quad \text{ where } 
 \end{equation*}
-
-\noindent From this conditional distribution, we get the joint distribution of $X_{jst}, Z_{jst}$
-
+and expected value
+\[
+\E_{X|Y,Z}X_{jst} = \frac{\lambda_{st} \exp{\{\lambda_{st} \}}}{\exp{\{ \lambda_{st} \}} - 1}.
+\]
+\noindent The joint density of $X_{jst}, Z_{jst}$ is then 
 \begin{equation*}
     f_{X,Z|\boldsymbol{\lambda}}(x_{jst},z_{jst}) = \left\{
     \begin{array}{lr}
@@ -102,7 +108,7 @@ With the distribution of $Z_{jst}$ in hand, we calculate the complete data likel
       \frac{\exp{\{-\lambda_{st} \}} \lambda_{st}^{x_{jst}}}{x_{jst}!}, & x_{jst} > 0 \mbox{ and } Z_{jst} = 1\\
       0 & \mbox{otherwise}
     \end{array}
-  \right.
+  \right..
 \end{equation*}
 
 % introduce EM and its iterative steps earlier
@@ -111,15 +117,22 @@ With the distribution of $Z_{jst}$ in hand, we calculate the complete data likel
 % split up E and M step, with \cdot ^(k) notation earlier
 % mention convergence criterion
 
-The EM algorithm works in two steps \citep{Dempster:1977,McLachlan:2007}.  To drop dependence on the unobserved data, the E-step consists of taking the expectation of $l_{comp}$ with respect to the conditional distribution of $X$ given the observed data and a current estimate of the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$, namely $f_{X|Y,Z,\boldsymbol{\lambda}}(x_{jst})$.  The current estimate of the parameters are used within the calculation of $\E_{X|Y,Z,\boldsymbol{\lambda}}X_{jst}$ and not within the distribution functions of the underlying model.  The M-step then maximizes $Q = \E l_{comp}$ with respect to the parameters in the model.  The E-step and M-step are then iteratively updated until a convergence criterion is met.  
+The EM algorithm works by iterating two steps, the E-step and M-step, until the optimum is reached \citep{Dempster:1977,McLachlan:2007}.  Let $k$ index the iterations in the EM algorithm so that $\boldsymbol \lambda^{(k)}$ and $\boldsymbol \gamma^{(k)}$ denote the estimates computed on the $k^{th}$ M-step. The E-step consists of computing the expectation of $l_{comp}$ with respect to the conditional distribution of $X$ given the current estimates of the parameters
+\[
+Q^{(k)}(\boldsymbol{\lambda},\boldsymbol{\gamma}) = \E_{X|Y,Z,\boldsymbol{\lambda}^{(k)}} l_{comp}
+\]
+in order to remove the unobserved data. The M-step then involves maximizing $Q = \E l_{comp}$ with respect to the parameters in the model to obtain updated estimates of the parameters,
+\[
+(\boldsymbol{\lambda}^{(k+1)}, \boldsymbol{\gamma}^{(k+1)}) = \argmax_{(\boldsymbol{\lambda}, \boldsymbol{\gamma})} Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma}).
+\]
+These steps are then alternated until a convergence criterion monitoring subsequent differences in the parameter estimates/likelihood values is met.  
 
-Denoting iterations and current estimates of parameters of the EM algorithm with a superscript $(k)$, the two EM steps are E-step: $Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \E_{X|Y,Z,\boldsymbol{\lambda}^{(k)}} l_{comp}$, and M-step: $(\boldsymbol{\lambda}^{(k+1)}, \boldsymbol{\gamma}^{(k+1)}) = \argmax_{(\boldsymbol{\lambda}, \boldsymbol{\gamma})} Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma})$.  The calculation of $Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma})$ is not difficult and is given in equation~\ref{eq:estep}.
-
+The calculation of $Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma})$ is not difficult and is given by:
 \begin{align}
   \label{eq:estep}
   \begin{split}
   Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma})
-  & = \E \log{f_{X,Y,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})} + \log{f_{Y|\boldsymbol{\gamma}}(y_{ist})} \\
+  & = \E \log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})} + \log{f_{Y|\boldsymbol{\gamma}}(y_{ist})} \\
   & = \sum_{s=1}^S \sum_{t=1}^T \sum_{j=1}^{J_t} \E \log{f_{X,Z|\boldsymbol{\lambda}}(X_{jst},z_{jst})}
   + \sum_{s=1}^S \sum_{t=1}^T \sum_{i=1}^{I_t} \log{f_{Y|\boldsymbol{\gamma}}(y)} \\
   & \propto \sum_{s,t,j} \left( - \lambda_{st} 
@@ -127,10 +140,9 @@ Denoting iterations and current estimates of parameters of the EM algorithm with
   & \propto \sum_{s,t} \left( -J_t \lambda_{st} + z_{\cdot st} \E (X_{jst}|\lambda_{st}^{(k)},\gamma_{st}^{(k)}) \log{\lambda_{st}} \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right).
 \end{split}
 \end{align}
+\noindent No analytic solution to the M-step exists, however, so we chose to maximize $Q$ with coordinate descent \citep{Luo:1992}.  In fact, as we only need find parameters that increase the value of $Q$ on each iteration, we forgo fully iterating to find the maximum and instead perform just one step uphill within each EM iteration.  Since $Q^{(k)}$ is concave and smooth in the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$, we are able to use the convergence of parameter estimates, $||(\boldsymbol{\lambda}^{(k)}, \boldsymbol{\gamma}^{(k)}) - (\boldsymbol{\lambda}^{(k+1)}, \boldsymbol{\gamma}^{(k+1)})||_{\infty} < \tau $, for some $\tau>0$, as our stopping criterion.
 
-In this case, no analytic solution to the M-step exists so we choose to maximize $Q$ with coordinate descent \citep{Luo:1992}.  In fact, as we only need find parameters that increase the value of $Q$, we forgo fully iterating to find the maximum and instead perform just one step uphill within each EM iteration.  Since $Q^{(k)}$ is concave and smooth in the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$, we are able to use the convergence of parameter estimates, $||(\boldsymbol{\lambda}^{(k)}, \boldsymbol{\gamma}^{(k)}) - (\boldsymbol{\lambda}^{(k+1)}, \boldsymbol{\gamma}^{(k+1)})||_{\infty} < \tau $, for some $\tau>0$, as our stopping criterion.
-
-This generalized EM algorithm accurately estimates the parameters when values of $\lambda_{st}$ are relatively small, such that zeros are prevalent in the data $Z_{jst}$.  In this case, not too much information is lost since estimation of $\E Z_{jst}$ can be estimated well by the proportion of observed zeros.  On the other hand, if the predator consistently eats a given prey species, few to no zeros will show up in the observed data and $\E Z_{jst}$ is estimated to be nearly $1$.  The loss of information is best seen by attempting to solve for $\lambda_{st}$ in the equation $\E Z_{jst} = 1 = 1 - \exp\{-\lambda_{st}\}$.  As the proportion of ones in the observed data increase, we expect $\lambda_{st}$ to grow exponentially large.  When no zeros are present in the data, where only ones are observed, the maximum likelihood estimate can be made arbitrarily large by sending the parameter off to infinity.  
+As we show in our simulation study, this generalized EM algorithm accurately estimates the parameters when values of $\lambda_{st}$ are relatively small, such that zeros are prevalent in the data $Z_{jst}$.  In this case, not too much information is lost since estimation of $\E Z_{jst}$ can be estimated well by the proportion of observed zeros.  On the other hand, if the predator consistently eats a given prey species, few to no zeros will show up in the observed data and $\E Z_{jst}$ is estimated to be nearly $1$.  The loss of information is best seen by attempting to solve for $\lambda_{st}$ in the equation $\E Z_{jst} = 1 = 1 - \exp\{-\lambda_{st}\}$.  As the proportion of ones in the observed data increase, we expect $\lambda_{st}$ to grow exponentially large.  When no zeros are present in the data, so that where only ones are observed, the likelihood can be made arbitrarily large by sending the parameter off to infinity.  
 
 \subsection{Testing}
 

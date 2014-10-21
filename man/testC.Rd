@@ -6,7 +6,7 @@ testC(x, b, mu = 0, alternative = c("two.sided", "less", "greater"),
   conf.level = 0.95)
 }
 \arguments{
-  \item{x}{a prefPref object as fit by the eponymous
+  \item{x}{a predPref object as fit by the eponymous
   function}
 
   \item{b}{a vector to linearly transform c_st}

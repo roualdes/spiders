@@ -15,7 +15,7 @@
 ##' @param EM boolean specifying test of EM algorithm
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 ##'
-##' @seealso \code{\link{simPref}}
+##' @seealso \code{\link{simPref}} \code{\link{plotTestPref}} \code{\link{mean.testPref}}
 ##'
 ##' @examples
 ##'
@@ -30,7 +30,7 @@
 ##' \dontrun{
 ##' testPref(Predators, Traps, l, g, M=10, hyp=c('c', 'cst'), EM=F)
 ##' }
-##' 
+##'
 ##' @export
 testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, em_maxiter = 100) {
 
@@ -116,8 +116,11 @@ testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, 
 ##' @param hypothesis specify which hypothesis to plot
 ##' @param lambda a matrix of true values of the parameter lambda; TxS
 ##' @param gamma a matrix of true values of the parameter gamma; TxS
+##'
+##' @seealso \code{\link{simPref}} \code{\link{testPref}} \code{\link{mean.testPref}}
+##' 
 ##' @export
-plotTestPref <- function(x, hypothesis = c('null', 'alt', 'both'), lambda = NULL, gamma = NULL) {
+plotTestPref <- function(x, hypothesis = c('null', 'alt'), lambda = NULL, gamma = NULL) {
     
     ## some numbers
     hypothesis <- match.arg(hypothesis)
@@ -150,7 +153,6 @@ plotTestPref <- function(x, hypothesis = c('null', 'alt', 'both'), lambda = NULL
 
     ## plot data
     require(lattice)
-    require(gridExtra)
 
     if ( params ) {
         two <- densityplot(~gamma, data=nullGamma, groups=index,
@@ -174,11 +176,13 @@ plotTestPref <- function(x, hypothesis = c('null', 'alt', 'both'), lambda = NULL
         if ( params ) {
             trueC <- unique(apply(lambda/gamma, 1, unique))
             one <- densityplot(~c, data=nullC, groups=index,
+                               main='Null Hypothesis',
                                panel = function(...) {
                                    panel.densityplot(...)
                                    panel.rug(x = trueC, lwd=3)})
         } else {
-            one <- densityplot(~c, data=nullC, groups=index)            
+            one <- densityplot(~c, data=nullC, groups=index,
+                               main='Null Hypothesis')
         }
     }
         
@@ -189,11 +193,13 @@ plotTestPref <- function(x, hypothesis = c('null', 'alt', 'both'), lambda = NULL
         if ( params ) {
             trueC <- unique(apply(lambda/gamma, 1, unique))
             three <- densityplot(~c, data=altC, groups=index,
-                               panel = function(...) {
-                                   panel.densityplot(...)
-                                   panel.rug(x = trueC, lwd=3)})
+                                 main='Alternative Hypothesis',
+                                 panel = function(...) {
+                                     panel.densityplot(...)
+                                     panel.rug(x = trueC, lwd=3)})
         } else {
-            three <- densityplot(~c, data=altC, groups=index)            
+            three <- densityplot(~c, data=altC, groups=index,
+                                 main='Alternative Hypothesis')            
         }
     }
 
@@ -201,19 +207,18 @@ plotTestPref <- function(x, hypothesis = c('null', 'alt', 'both'), lambda = NULL
         three <- densityplot(~lambda, data=altLambda, groups=index)
 
     if ( hypothesis == 'null' ) {
-        grid.arrange(one, two, nrow=2, main = 'Null Hypothesis')
-    } else if ( hypothesis == 'alt' ) {
-        grid.arrange(three, four, nrow=2, main = 'Alternative Hypothesis')
+        print(one, split=c(1,1,1,2), more=TRUE)
+        print(two, split=c(1,2,1,2))
     } else {
-        grid.arrange(one, two, three, four, nrow=2,
-                     main = 'Null Hypothesis', sub='Alternative Hypothesis')
+        print(three, split=c(1,1,1,2), more=TRUE)
+        print(four, split=c(1,2,1,2))
     }
 }
 
 ##' @title means of \code{testPref}
 ##'
-##' @description summarize output of \code{testPref} by calculating means for
-##' a specified hypothesis
+##' @description summarize output of \code{testPref} by calculating means, across all
+##' simulations, for a specified hypothesis
 ##'
 ##' @details This function essentially calculates means over multiple replications and
 ##' fits of a given set of hypotheses and parameter values, as is output from the
@@ -222,32 +227,35 @@ plotTestPref <- function(x, hypothesis = c('null', 'alt', 'both'), lambda = NULL
 ##' @param x a testPref object as returned by the eponymous function
 ##' @param ... additional arguments
 ##' @param hypothesis specify which hypothesis
+##'
+##' @seealso \code{\link{simPref}} \code{\link{testPref}} \code{\link{plotTestPref}}
+##' 
 ##' @S3method 
-mean.testPref <- function(x, ..., hypothesis = c('null', 'alt', 'both')) {
+mean.testPref <- function(x, ..., hypothesis = c('null', 'alt')) {
 
-    ## FIXME: wtf meanFn?
     hypothesis <- match.arg(hypothesis)
-    meanFn <- function(y, ...) mean(y, ...)
-    
+       
     ## null
     if ( !is.null(x$null$c) ) {
-        null <- list('gamma' = apply(x$null$gamma, 2, meanFn), 'c' = apply(x$null$c, 2, meanFn))
+        null <- list(gamma = colMeans(x$null$gamma),
+                     c = colMeans(x$null$c))
     } else {
-        null <- list('gamma' = apply(x$null$gamma, 2, meanFn), 'lambda' = apply(x$null$lambda, 2, meanFn))
+        null <- list(gamma = colMeans(x$null$gamma),
+                     lambda = colMeans(x$null$lambda))
     }
 
     ## alt
     if ( !is.null(x$alt$c) ) {
-        alt <- list('gamma' = apply(x$alt$gamma, 2, meanFn), 'c' = apply(x$alt$c, 2, meanFn))
+        alt <- list(gamma = colMeans(x$alt$gamma),
+                    c = colMeans(x$alt$c))
     } else {
-        alt <- list('gamma' = apply(x$alt$gamma, 2, meanFn), 'lambda' = apply(x$alt$lambda, 2, meanFn))
+        alt <- list(gamma = colMeans(x$alt$gamma),
+                    lambda = colMeans(x$alt$lambda))
     }
 
     if ( isTRUE(hypothesis == 'null') ) {
         null
-    } else if ( isTRUE(hypothesis == 'alt') ) {
-        alt
     } else {
-        list('null' = null, 'alt' = alt)
+        alt
     }
 }

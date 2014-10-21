@@ -65,6 +65,6 @@ predPref(fdata$eaten, fdata$caught, hypotheses=c('ct', 'cst'))
 }
 }
 \seealso{
-\code{\link{simPref}}
+\code{\link{simPref}} \code{\link{summary.predPref}}
 }
 

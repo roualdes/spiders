@@ -1,7 +1,13 @@
 \section{Real Data}
 \label{sec:data}
 
-Interest in the predator genus Schizocosa and the prey orders? Diptera, Collembola, Ensifera, for time periods October $2011$ to March $2013$.  
+We use the dataset from {\color{red} our Biologist colleagues}, where interest lies in the Wolf spider, genus Schizocosa, and the prey orders Diptera, Collembola, for each month from October $2011$ to March $2013$.  Following our hierarchy of hypotheses, we find that the most parameter rich model, $\lambda_{st} = c_{st} \gamma_{st}$ where each month and each prey species is given its own parameter, fits these data best.  This estimates $72$ parameters in total, $32$ of which estimate $c_{st}$.
+
+We demonstrate our method's ability to test linear constraints on $c_{st}$, by setting up a linear contrast that evaluates whether or not the model $c_t$ appropriately fits the data.  This linear contrast approach is the same as testing the null hypothesis $H_0: \lambda_{st} = c_t \gamma_{st}, \forall t$ against the alternative hypothesis $H_1: \lambda_{st} = c_{st} \gamma_{st}$, but with a different statistical test than the likelihood ratio test.  
+
+To do this we use the thirty-six estimates of $c_{st}$ fit from our EM algorithm, together with the linear contrast, $a^t = (1, \ldots, 1, -1, \ldots, -1)^t$.  This linear contrast asks if a model with only one parameter for both prey orders within each time period fits as well as a model with two parameters for both prey orders in each time period.  Hence, the null hypothesis for this linear contrast is $H_0: a^tc_{st} = 0$ against the alternative hypothesis $H_1: a^tc_{st} \ne 0$.  The test gives $p-value < 2.2\times 10^{-16}$, indicating that the more parameter rich model is strongly favored, just as did the likelihood ratio test.
+
+
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "main"

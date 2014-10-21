@@ -31,7 +31,7 @@
 ##' @param alpha LRT level of significance
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
 ##'
-##' @seealso \code{\link{simPref}}
+##' @seealso \code{\link{simPref}} \code{\link{summary.predPref}}
 ##'
 ##' @examples
 ##' # set parameters

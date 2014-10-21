@@ -2,7 +2,7 @@
 \alias{plotTestPref}
 \title{plot testPref}
 \usage{
-plotTestPref(x, hypothesis = c("null", "alt", "both"), lambda = NULL,
+plotTestPref(x, hypothesis = c("null", "alt"), lambda = NULL,
   gamma = NULL)
 }
 \arguments{
@@ -25,5 +25,9 @@ Function relies on packages \code{lattice} and
 \code{gridExtra}.  If true values of lambda and gamma are
 given, then tick marks will be placed at those values along
 the x-axis.
+}
+\seealso{
+\code{\link{simPref}} \code{\link{testPref}}
+\code{\link{mean.testPref}}
 }
 
