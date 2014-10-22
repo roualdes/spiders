@@ -14,6 +14,7 @@
 ##' @param hyp a 2-tuple specifying the null and alternative hypotheses, respectively
 ##' @param EM boolean specifying test of EM algorithm
 ##' @param em_maxiter maximum number of iterations allowed for EM algorithm
+##' @param storeSeed boolean to store random seed(s) or not
 ##'
 ##' @seealso \code{\link{simPref}} \code{\link{plotTestPref}} \code{\link{mean.testPref}}
 ##'
@@ -32,49 +33,66 @@
 ##' }
 ##'
 ##' @export
-testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, em_maxiter = 100) {
+testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, em_maxiter = 100, storeSeed = FALSE) {
 
     ## initialize output structure
     out <- vector('list', 2)
     names(out) <- c('null', 'alt')
-    need_set_output <- TRUE             # need initialize storage within output?
+    needSetOutput <- TRUE             # need initialize storage within output?
+    if ( storeSeed ) {
+        rseed <- vector('list', M)
+        invisible(runif(1))             # ensure random seed exists
+    }
 
     ## some numbers 
     S <- ncol(lambda)
     T <- nrow(lambda)
     
     for ( m in seq_len(M) ) {
+
+        if ( storeSeed ) {
+            rseed[[m]] <- .Random.seed
+        }
         
         ## simulate data and fit model
         fdata <- simPref(S, T, J, I, lambda, gamma, EM=EM)
         prefs <- predPref(fdata$eaten, fdata$caught, hypotheses = hyp, em_maxiter = em_maxiter)
 
         ## initialize storage within output structure
-        if ( need_set_output ) {
+        if ( needSetOutput ) {
             ST <- length(unlist(prefs$null$gamma))
             out$null[['gamma']] <- out$alt[['gamma']] <- matrix(0, M, ST)
             
             ## null model storage
-            if ( !is.null(prefs$null$c) ) 
+            if ( !is.null(prefs$null$c) ) {
                 out$null[['c']] <- matrix(0, M, length(prefs$null$c))
-            if ( !is.null(prefs$null$lambda) )
+            }
+            if ( !is.null(prefs$null$lambda) ) {
                 out$null[['lambda']] <- matrix(0, M, ST)
-            if ( !is.null(prefs$null$em_iters) )
+            }
+            if ( !is.null(prefs$null$em_iters) ) {
                 out$null[['em_iters']] <- rep(0, M)
-            if ( !is.null(prefs$null$iters) )
+            }
+            if ( !is.null(prefs$null$iters) ) {
                 out$null[['iters']] <- rep(0, M)
+            }
+                
 
             ## alt model storage
-            if ( !is.null(prefs$alt$c) )
+            if ( !is.null(prefs$alt$c) ) {
                 out$alt[['c']] <- matrix(0, M, length(prefs$alt$c))
-            if ( !is.null(prefs$alt$lambda) )
+            }
+            if ( !is.null(prefs$alt$lambda) ) {
                 out$alt[['lambda']] <- matrix(0, M, ST)            
-            if ( !is.null(prefs$alt$em_iters) )
+            }
+            if ( !is.null(prefs$alt$em_iters) ) {
                 out$alt[['em_iters']] <- rep(0, M)
-            if ( !is.null(prefs$alt$iters) )
+            }
+            if ( !is.null(prefs$alt$iters) ) {
                 out$alt[['iters']] <- rep(0, M)
+            }
             
-            need_set_output <- FALSE
+            needSetOutput <- FALSE
         }
 
         ## store output
@@ -82,25 +100,37 @@ testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, 
         out$alt$gamma[m,] <- unlist(prefs$alt$gamma)
 
         ## null
-        if ( !is.null(prefs$null$c) )
+        if ( !is.null(prefs$null$c) ) {
             out$null$c[m,] <- prefs$null$c
-        if ( !is.null(prefs$null$lambda) )
+         }
+        if ( !is.null(prefs$null$lambda) ) {
             out$null$lambda[m,] <- unlist(prefs$null$lambda)
-        if ( !is.null(prefs$null$em_iters) )
-                out$null$em_iters <- prefs$null$em_iters
-        if ( !is.null(prefs$null$iters) )
+         }
+        if ( !is.null(prefs$null$em_iters) ) {
+            out$null$em_iters <- prefs$null$em_iters
+        }
+        if ( !is.null(prefs$null$iters) ) {
             out$null[['iters']] <- prefs$null$iters
+        }
         
         ## alt
-        if ( !is.null(prefs$alt$c) )
+        if ( !is.null(prefs$alt$c) ) {
             out$alt$c[m,] <- prefs$alt$c
-        if ( !is.null(prefs$alt$lambda) )
+        }
+        if ( !is.null(prefs$alt$lambda) ) {
             out$alt$lambda[m,] <- unlist(prefs$alt$lambda)
-        if ( !is.null(prefs$alt$iters) )
+        }
+        if ( !is.null(prefs$alt$iters) ) {
             out$alt$iters <- prefs$alt$iters
+        }
+            
     }
     class(out) <- 'testPref'
     attr(out, 'ST') <- S*T
+    if ( storeSeed ) {
+        attr(out, "seed") <- rseed        
+    }
+    
     out
 }
 

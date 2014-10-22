@@ -71,7 +71,9 @@ checkHypotheses <- function(hyp) {
     }
 
     ## both
-    if ( H[1] == H[2] ) stop('Null and Alternative hypotheses must be different.')
+    if ( H[1] == H[2] ) {
+        stop('Null and Alternative hypotheses must be different.')
+    }
 
     H
 }

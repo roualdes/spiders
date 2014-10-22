@@ -21,16 +21,24 @@
 simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
 
     ## checks
-    if (!isTRUE(all.equal(J, round(J)))) J <- round(J)
-    if (!isTRUE(all.equal(I, round(I)))) I <- round(I)
+    if ( !isTRUE(all.equal(J, round(J))) ) {
+        J <- round(J)
+    }
+    if ( !isTRUE(all.equal(I, round(I))) ) {
+        I <- round(I)
+    }
     
     ## some numbers
     ns <- seq_len(S)                    # index prey species
     nt <- seq_len(T)                    # index times
     lJ <- length(J)
     lI <- length(I)
-    if (lJ != 1 && lJ != T) stop('J not a scalar or vector of appropriate size.')
-    if (lI != 1 && lI != T) stop('J not a scalar or vector of appropriate size.')
+    if ( lJ != 1 && lJ != T ) {
+        stop('J not a scalar or vector of appropriate size.')
+    }
+    if ( lI != 1 && lI != T ) {
+        stop('J not a scalar or vector of appropriate size.')
+    }
     if (lJ == 1) {
         J <- rep(J[1], T)
     }

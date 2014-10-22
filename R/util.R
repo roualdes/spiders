@@ -4,7 +4,11 @@
 ##' @param vars column variables in data to sum over
 ##' @param by extra variables to sum by
 getTimeCounts <- function(data, vars, by) {
-    if (missing(by)) by <- 'time' else by <- c('time', by)
+    if ( missing(by) ) {
+        by <- 'time'
+    } else {
+        by <- c('time', by)
+    }
     ## ddply(data, by, function(dfr, idx) colSums(as.matrix(dfr[,idx])), vars)
     ddply(data, by, colwise(sum, vars))
 }

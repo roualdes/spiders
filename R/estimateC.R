@@ -44,7 +44,9 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
             ## check convergence of EM
             if ( converged(cHat, cHat_old) &&
-                converged(gammaHat, gammaHat_old) ) break
+                converged(gammaHat, gammaHat_old) ) {
+                break
+            }
             
             ## if not converged, store updated estimates
             cHat_old <- cHat
@@ -53,8 +55,10 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             em_iter <- em_iter+1
             
             ## limit iterations
-            if ( em_iter > em_maxiter )
+            if ( em_iter > em_maxiter ) {
                 stop(sprintf('estC: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+            }
+            
         }
         
         ## calc standard error with est params
@@ -110,8 +114,12 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
             ## not sure this is the right spot for these checks
             ## ensure J & I have dimension T or 1
-            if ( length(J) != T ) stop("J indexed oddly says est0.")
-            if ( length(I) != T ) stop("I indexed oddly says est0.")
+            if ( length(J) != T ) {
+                stop("J indexed oddly says est0.")
+            }
+            if ( length(I) != T ) {
+                stop("I indexed oddly says est0.")
+            }
 
             ## initialize some values
             cHat <- cHat_old <- runif(1)
@@ -126,15 +134,18 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
                 ## check convergence
                 if ( converged(gammaHat, gammaHat_old) &&
-                    converged(cHat, cHat_old) ) break
+                    converged(cHat, cHat_old) ) {
+                    break
+                }
 
                 ## if not converged, update estimates for next iteration
                 gammaHat_old <- gammaHat
                 cHat_old <- cHat
                 iter <- iter+1
                 
-                if ( iter > maxiter )
+                if ( iter > maxiter ) {
                     stop(sprintf('estC: %d not sufficient iterations for simultaneous equations.', maxiter))
+                }
             }
             
             ## calc standard error with est params

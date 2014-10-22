@@ -36,13 +36,16 @@ estGen <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             lambdaHat <- Xdst*EX/J
 
             ## check convergence
-            if ( converged(lambdaHat, lambdaHat_old) ) break
+            if ( converged(lambdaHat, lambdaHat_old) ) {
+                break
+            }
             lambdaHat_old <- lambdaHat
             em_iter <- em_iter+1
             
             ## limit iterations
-            if ( em_iter > em_maxiter )
+            if ( em_iter > em_maxiter ) {
                 stop(sprintf('estGen: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+            }
         }
         
         ## since estimated 0s don't follow from calculations above
@@ -67,8 +70,12 @@ estGen <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         ## some numbers
         ## not sure this is the right spot for these checks
         T <- nrow(Xdst)
-        if ( length(J) != T ) stop("J indexed oddly says estGen")
-        if ( length(I) != T ) stop("I indexed oddly says estGen")
+        if ( length(J) != T ) {
+            stop("J indexed oddly says estGen")
+        }
+        if ( length(I) != T ) {
+            stop("I indexed oddly says estGen")
+        }
 
         gammaHat <- Ydst / I                # row-wise division
         lambdaHat <- Xdst / J

@@ -32,15 +32,19 @@ est1 <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             gammaHat <- (ZEX + Ydst) / JI
 
             ## check convergence of EM
-            if ( converged(gammaHat, gammaHat_old) ) break
+            if ( converged(gammaHat, gammaHat_old) ) {
+                break
+            }
             
             ## if not converged, store updated estimates
             gammaHat_old <- gammaHat
 
             ## limit iterations
             em_iter <- em_iter+1
-            if ( em_iter > em_maxiter )
+            if ( em_iter > em_maxiter ) {
                 stop(sprintf('est1: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+            }
+
         }
 
         ## calc standard error with est params

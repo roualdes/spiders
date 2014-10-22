@@ -1,8 +1,8 @@
-##' @title estimate hypothesis c_st = c_t
+##' @title estimate hypothesis c_st = c_s
 ##'
-##' @description estimates parameters from hypothesis lambda_t = c_t * gamma_t
+##' @description estimates parameters from hypothesis lambda_s = c_s * gamma_s
 ##'
-##' @details There are S*T + T free parameters under this hypothesis.
+##' @details There are S*T + S free parameters under this hypothesis.
 ##' 
 ##' @param Xdst matrix of sums of number of eaten prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS
 ##' @param Ydst matrix sum of number of caught prey species s during occurrence t; rows indexed by time, and cols indexed by prey species, TxS
@@ -11,7 +11,7 @@
 ##' @param EM boolean; whether or not EM algorithm is used
 ##' @param em_maxiter integer specifying max number of EM iterations
 ##' @param BALANCED boolean; whether or not data are BALANCED
-estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
+estCs <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
     ## some numbers
     S <- ncol(Xdst); s <- seq_len(S)
@@ -21,7 +21,7 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
     if (EM) {
         ## initialize some values
         em_iter <- 1
-        cHat <- cHat_old <- runif(length(J))
+        cHat <- cHat_old <- runif(S)
         init <- est1(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
         gammaHat <- gammaHat_old <- init$gamma 
 
@@ -29,7 +29,7 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         while ( TRUE ) {
             
             ## expected value of Xjst
-            lambda <- cHat*gammaHat
+            lambda <- sapply(s, function(j) cHat[j]*gammaHat[,j]) # col-wise `*`
             elambda <- exp(-lambda)
             EX <- lambda/(1-elambda)
 
@@ -37,12 +37,15 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             ZEX <- Xdst*EX
 
             ## iterate only once simultaneous eqs
-            gammaHat <- (ZEX + Ydst) / (cHat*J + I)
-            cHat <- sumSp(ZEX) / (J*sumSp(gammaHat))
+            ZEXY <- ZEX + Ydst
+            gammaHat <- sapply(s, function(j) ZEXY[,j] / (cHat[j]*J + I)) # col-wise `/`
+            cHat <- sumT(ZEX) / sumT(J*gammaHat)
             
             ## check convergence of EM
             if ( converged(cHat, cHat_old) &&
-                converged(gammaHat, gammaHat_old) ) break
+                converged(gammaHat, gammaHat_old) ) {
+                break
+            }
             
             ## if not converged, store updated estimates
             cHat_old <- cHat
@@ -51,25 +54,28 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             em_iter <- em_iter+1
             
             ## limit iterations
-            if ( em_iter > em_maxiter )
-                stop(sprintf('estCt: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+            if ( em_iter > em_maxiter ) {
+                stop(sprintf('estCs: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+            }
+            
         }
 
         ## calc standard error with est params
         ## SE <- seEM(NULL, gammaHat, cHat, Xdst, Ydst, J, I)
-        Info <- diag(ST+T)             # initialize information matrix
+        Info <- diag(ST+S)             # initialize information matrix
         g2 <- gammaHat^2               # gamma^2
-        l <- cHat*gammaHat
-        expl <- exp(l); tmp <- J*expl/(expl-1)^2 # a common term
+        l <- sapply(s, function(j) gammaHat[,j]*cHat[j]) # col-wise `*`
+        expl <- exp(l); tmp <- J*expl/(expl-1)^2  # a common term
 
         ## fill Info with second derivatives
-        diag(Info)[-t] <- unlist(Ydst/g2 + cHat^2*tmp) # gamma
-        diag(Info)[t] <- sumSp(tmp*g2)                 # c
-        for ( i in t ) {           # fill in off diags; upper tri only
-            Info[i,-t][seq(0, (S-1)*T, by=T)+i] <- unlist(-J[i]/(expl[i,] - 1) + l[i,]*tmp[i,])
+        d2g2 <- sapply(s, function(j) tmp[,j]*cHat[j]^2 + Ydst[,j]/g2[,j]) # col-wise `*`
+        diag(Info)[-s] <- unlist(d2g2)     # gamma
+        diag(Info)[s] <- sumT(tmp*g2)      # c
+        for ( i in s ) {           # fill in off diags; upper tri only
+            Info[i,-s][t+T*(i-1)] <- unlist(-J/(expl[,i] -1) + l[,i]*tmp[,i])
         }
         lowmat <- lower.tri(Info)
-        Info[lowmat] <- t(Info)[lowmat]       # make symmetric from upper tri
+        Info[lowmat] <- t(Info)[lowmat]      # make symmetric from upper tri
         
         ## calc log-lik with est params
         loglik <- llEM(Xdst, Ydst, NA, gammaHat, J, I, cHat)
@@ -77,8 +83,7 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         list('c' = cHat, 'gamma' = as.matrix(gammaHat), 'em_iters' = em_iter,
              'll' = loglik, 'var' = solve(Info))
     } else {
-        
-        ## some numbers
+
         XYdst <- Xdst + Ydst
         stXdst <- sumST(Xdst)
         iter <- 1; maxiter <- 500
@@ -89,46 +94,50 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         if ( length(I) != T ) stop("I indexed oddly says est0.")
 
         ## initialize some values
-        cHat <- cHat_old <- runif(length(J))
-        gammaHat <- gammaHat_old <- XYdst / (J*cHat + I)
+        cHat <- cHat_old <- runif(S)
+        gammaHat <- gammaHat_old <- sapply(s, function(j) XYdst[,j] / (J*cHat[j] + I))
 
         ## iteratively update; relies on concavity of log-lik
         while ( TRUE ) {
 
             ## update parameters
-            cHat <- sumSp(Xdst) / (J*sumSp(gammaHat))
-            gammaHat <- XYdst / (J*cHat + I) # row-wise division
+            cHat <- sumT(Xdst) / (sumT(J*gammaHat))
+            gammaHat <- sapply(s, function(j) XYdst[,j] / (J*cHat[j] + I)) # col-wise `/`
 
             ## check convergence
             if ( converged(gammaHat, gammaHat_old) &&
-                converged(cHat, cHat_old) ) break
+                converged(cHat, cHat_old) ) {
+                break
+            }
 
             ## if not converged, update estimates for next iteration
             gammaHat_old <- gammaHat
             cHat_old <- cHat
             iter <- iter+1
-
-            ## limit iterations
-            if ( iter > maxiter )
+            
+            if ( iter > maxiter ) {
                 stop(sprintf('estCt: %d not sufficient iterations for simultaneous equations.', maxiter))
+            }
+            
         }
 
         ## calc standard error with est params
         ## SE <- se(NULL, gammaHat, cHat, Xdst, Ydst, J, I)
-        Info <- diag(ST+T)              # initialize information matrix
+        Info <- diag(ST+S)              # initialize information matrix
 
         ## fill Info with second derivatives
-        diag(Info)[-t] <- unlist(XYdst/gammaHat^2) # gamma
-        diag(Info)[t] <- sumSp(Xdst)/cHat^2        # c
-        for ( i in t ) {              # fill off diags; upper tri only
-            Info[i,-t][seq(0, (S-1)*T, by=T)+i] <- J[i]
+        diag(Info)[-s] <- unlist(XYdst/gammaHat^2) # gamma
+        diag(Info)[s] <- sumT(Xdst)/cHat^2         # c
+        for ( i in s ) {
+            Info[i,-s][t+T*(i-1)] <- J        # fill off diags; upper tri only
         }
         lowmat <- lower.tri(Info)
-        Info[lowmat] <- t(Info)[lowmat]       # make symmetric from upper tri
+        Info[lowmat] <- t(Info)[lowmat]      # make symmetric from upper tri
+        
 
         ## calc log-lik with est params
         loglik <- ll(Xdst, Ydst, NA, gammaHat, J, I, cHat)
-        
+            
         list('gamma' = as.matrix(gammaHat), 'c' = cHat, 'iters' = iter,
              'll' = loglik, 'var' = solve(Info))
     }

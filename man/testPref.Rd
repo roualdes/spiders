@@ -3,7 +3,7 @@
 \title{simulate and test predPref}
 \usage{
 testPref(J, I, lambda, gamma, M = 100, hyp = c("C", "Cst"), EM = FALSE,
-  em_maxiter = 100)
+  em_maxiter = 100, storeSeed = FALSE)
 }
 \arguments{
   \item{J}{number of predators caught at each time}
@@ -25,6 +25,8 @@ testPref(J, I, lambda, gamma, M = 100, hyp = c("C", "Cst"), EM = FALSE,
 
   \item{em_maxiter}{maximum number of iterations allowed
   for EM algorithm}
+
+  \item{storeSeed}{boolean to store random seed(s) or not}
 }
 \value{
 A list of two elements, one for each hypothesis. Each

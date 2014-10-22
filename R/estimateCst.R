@@ -41,7 +41,9 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
             ## check convergence
             if ( converged(cHat, cHat_old) &&
-                converged(gammaHat, gammaHat_old) ) break
+                converged(gammaHat, gammaHat_old) ) {
+                break
+            }
 
             ## if not converged, store updated estimates
             cHat_old <- cHat
@@ -50,8 +52,10 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             em_iter <- em_iter+1
             
             ## limit iterations
-            if ( em_iter > em_maxiter )
+            if ( em_iter > em_maxiter ) {
                 stop(sprintf('estCst: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+            }
+                
         }
         
         ## since estimated 0s don't follow from calculations above
@@ -101,7 +105,9 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
             ## check convergence
             if ( converged(gammaHat, gammaHat_old) &&
-                converged(cHat, cHat_old) ) break
+                converged(cHat, cHat_old) ) {
+                break
+            }
 
             ## if not converged, update estimates for next iteration
             gammaHat_old <- gammaHat
@@ -109,8 +115,10 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             iter <- iter+1
 
             ## limit iterations
-            if ( iter > maxiter )
+            if ( iter > maxiter ) {
                 stop(sprintf('estCst: %d not sufficient iterations for simultaneous equations.', maxiter))
+            }
+            
         }
         
         ## calc standard error with est params
