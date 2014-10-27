@@ -1,11 +1,19 @@
 \section{Real Data}
 \label{sec:data}
 
-We use the dataset from {\color{red} our Biologist colleagues}, where interest lies in the Wolf spider, genus Schizocosa, and the prey orders Diptera, Collembola, for each month from October $2011$ to March $2013$.  Following our hierarchy of hypotheses, we find that the most parameter rich model, $\lambda_{st} = c_{st} \gamma_{st}$ where each month and each prey species is given its own parameter, fits these data best.  This estimates $72$ parameters in total, $32$ of which estimate $c_{st}$.
+We analyze a dataset that was collected to investigate the eating preferences of the wolf spider, genus \textit{Schizocosa}, towards the prey orders \textit{Diptera}, \textit{Collembola}.  Predators, caught in traps, were DNA sequenced to determine whether or not any \textit{Diptera} or \textit{Collembola} existed in the predators' guts for each time period.The left panel of figure~\ref{fig:gutP} plots the percentage of spiders that had the prey in their guts across time.  Prey were similarly collected, in traps distributed across the field site of interest {\color{red} where?}.  These data were collected for each month from October $2011$ to March $2013$.  On average, about $34$ and $69$ spiders and prey, respectively, were caught in each time period.  The range of the sample sizes, across all $18$ months, is $11$ to $181$ for caught spiders, and is from $24$ to $76$ for caught prey.  
 
-We demonstrate our method's ability to test linear constraints on $c_{st}$, by setting up a linear contrast that evaluates whether or not the model $c_t$ appropriately fits the data.  This linear contrast approach is the same as testing the null hypothesis $H_0: \lambda_{st} = c_t \gamma_{st}, \forall t$ against the alternative hypothesis $H_1: \lambda_{st} = c_{st} \gamma_{st}$, but with a different statistical test than the likelihood ratio test.  
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{time}
+  \caption{moar words}
+  \label{fig:gutP}
+\end{figure}
 
-To do this we use the thirty-six estimates of $c_{st}$ fit from our EM algorithm, together with the linear contrast, $a^t = (1, \ldots, 1, -1, \ldots, -1)^t$.  This linear contrast asks if a model with only one parameter for both prey orders within each time period fits as well as a model with two parameters for both prey orders in each time period.  Hence, the null hypothesis for this linear contrast is $H_0: a^tc_{st} = 0$ against the alternative hypothesis $H_1: a^tc_{st} \ne 0$.  The test gives $p-value < 2.2\times 10^{-16}$, indicating that the more parameter rich model is strongly favored, just as did the likelihood ratio test.
+
+ Following our hierarchy of hypotheses, we find that the most parameter rich model, $\lambda_{st} = c_{st} \gamma_{st}$ fits these data best.  This model estimates $72$ parameters in total; since, in this case, there are two prey of interest and $18$ time periods, it takes $36$ parameters to estimate each $c_{st}$ and $\gamma_{st}$.  The right panel of figure~\ref{fig:gutP} plots the points estimates of $c_{st}$ for both prey and across all time periods.  
+
+With the model $c_{st}$ in mind, we can now test any number of linear contrasts.  Here, we test $c_{1t} = c_{2t}$, for $t \in \{1, \ldots, 18\}$.  Using a level of significance of $0.05$, and after making a Bonferroni multiple comparisons adjustment, we find that the two prey are similarly prefered in October, November, and December of $2011$ and for March and July of $2012$.  
 
 
 %%% Local Variables: 

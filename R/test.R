@@ -138,9 +138,8 @@ testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, 
 ##'
 ##' @description plot the output from \code{testPref}
 ##'
-##' @details Function relies on packages \code{lattice} and \code{gridExtra}.  If
-##' true values of lambda and gamma are given, then tick marks will be placed
-##' at those values along the x-axis.
+##' @details If true values of lambda and gamma are given, then tick
+##' (rugs) marks will be placed at those values along the x-axis.
 ##'
 ##' @param x a testPref object as returned by the eponymous function
 ##' @param hypothesis specify which hypothesis to plot
@@ -183,7 +182,6 @@ plotTestPref <- function(x, hypothesis = c('null', 'alt'), lambda = NULL, gamma 
 
     ## plot data
     require(lattice)
-
     if ( params ) {
         two <- densityplot(~gamma, data=nullGamma, groups=index,
                            panel = function(...) {

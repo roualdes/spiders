@@ -1,4 +1,0 @@
-import(plyr, reshape2)
-export(predPref, simPref, summary.predPref, testPref, plotTestPref, mean.testPref)
-S3method("summary", "predPref")
-S3method("mean", "testPref")

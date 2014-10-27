@@ -8,14 +8,21 @@
 ##' @param sig.level significance level used in hypothesis test
 ##' @export
 summary.predPref <- function(object, ..., sig.level=0.05) {
-    out <- vector('list', 7)
-    names(out) <- c('loglikH0', 'loglikH1', 'p.value',
-                    'estimates', 'df', 'Lambda', 'hypotheses')
+    out <- list()
+    ## names(out) <- c('loglikH0', 'loglikH1', 'p.value',
+    ##                 'estimates', 'df', 'Lambda', 'hypotheses')
     if ( object$LRT$p.value > sig.level ) {
         out[['estimates']] <- object$null
     } else {
         out[['estimates']] <- object$alt
     }
+
+    ## indices of parameter estimates
+    out[['S']] <- ncol(out[['estimates']][['gamma']])
+    out[['s']] <- seq_len(out[['S']])
+    out[['T']] <- nrow(out[['estimates']][['gamma']])
+    out[['t']] <- seq_len(out[['T']])
+    
     out[['p.value']] <- object$LRT$p.value
     out[['df']] <- object$LRT$df
     out[['Lambda']] <- object$LRT$Lambda
@@ -33,12 +40,11 @@ print.summary.predPref <- function(x) {
     cat("\tp-value =", x$p.value, "\n")
     cat("Parameter Estimates:\n")
 
-    ## some numbers
-    S <- ncol(x$estimates$gamma); s <- seq_len(S)
-    T <- nrow(x$estimates$gamma); t <- seq_len(T)
-    indices <- unlist(lapply(s,
-                             function(y) sapply(t,
+    ## indices of estimated parameters 
+    indices <- unlist(lapply(x[['s']],
+                             function(y) sapply(x[['t']],
                                                 function(x) paste(x, '_', y, sep=''))))
+    
     if ( !is.null(x$estimates$c) ) {
         est <- cbind(c(as.vector(x$estimates$c),
                        as.vector(x$estimates$gamma)),

@@ -3,7 +3,7 @@
 
 % use language like: data generating model and fitted model, not hypotheses
 
-Our simulations assume two prey species and five time points, throughout.  Of the hierarchy of hypotheses, we generate data under three models: $c, c_s, c_t$.  Sample sizes are randomly chosen from four overlapping levels.  Let ``small'' sample sizes be randomly sampled numbers in $[20,50]$, ``medium'' encompass $[30,75]$, ``large'' $[50,150]$, and ``huge'' $[100,200]$.  Hence, we randomly sample prey and predator gut count observations for each time period from one of the sample size levels, then cycle generate data for all models.  This is repeated for each level of sample size.  We simulate $500$ replicate datasets for each of the twelve scenarios above for both types of data, fully observed count data, $X_{jst}$, and for non-count data, when we observe only a binary response, $Z_{jst} = 1(X_{jst}>0)$.  Each scenario is then fit with the true model that generated the data.  A subset of the examples are provided here; the interested reader is referred to the supplementary materials for the complete set of simulation results.
+Our simulations assume two prey species and five time points, throughout.  Of the hierarchy of hypotheses, we generate data under three models: $c, c_s, c_t$.  Sample sizes for both prey species and predator gut count observations are randomly chosen from four overlapping levels.  Let ``small'' sample sizes be randomly sampled numbers in $[20,50]$, ``medium'' encompass $[30,75]$, ``large'' $[50,150]$, and ``huge'' $[100,200]$.  Hence, we randomly sample for each time period from one of the sample size levels, then generate data for all models.  This is repeated for each level of sample size.  We simulate $500$ replicate datasets for each of the twelve scenarios above for both types of data, fully observed count data, $X_{jst}$, and for non-count data, when we observe only a binary response, $Z_{jst} = 1(X_{jst}>0)$.  Each scenario is then fit with the true model that generated the data.  All simulations of non-count data use $\tau = 10^{-5}$ as the convergence tolerance.  A subset of the examples are provided here; the interested reader is referred to the supplementary materials for the complete set of simulation results.
 
 For all simulated data, the true parameter values for the rate at which prey species are encountered in the wild are fixed to be $\gamma_{st} = \pi, \, \forall s,t$. The values of $\lambda_{st}$ are set with respect to each data generating model.  For the model $c_{st} = c$, where predator preferences don't vary by either time or species, we consider $\lambda_{st} = 2\pi, \forall s,t$.  Under the model $c_s$, the ratio of rates vary by species only, so we put $\lambda_{1t} = \sqrt{2}$ and $\lambda_{2t} = \pi$.  Hence, $c_1 = \sqrt{2}/\pi \approx 0.45$ and $c_2 = 1$.  For the last model, $c_t$, the ratio of rates vary by time $t$.  Here, we put $\lambda_{st} = t$ for $t \in \{1, \ldots, 5 \}$.  
 
@@ -18,9 +18,7 @@ For all simulated data, the true parameter values for the rate at which prey spe
 % simulations show nearly unbiased
 % drop decimal places; we don't have precision to state further. 2
 
-Figure~\ref{fig:nonem} shows density plots of the estimates of $c_s,c$ when fitting the true model to the fully observed count data generated under models $c_s$ and $c$.  The plots provide evaluations of parameter bias under each scenario.  In the first display, the parameters $c_1 \approx 0.45$ and $c_2 = 1$ are on average, across all $500$ simulations, estimated as $\hat{c}_1 = 0.45$ and $\hat{c}_2 = 1.00$, with standard errors of $\text{se}(\hat{c}_1) = 0.03$ and $\text{se}(\hat{c}_2) = 0.06$.  The second display provides a similar conclusion.  Averaging across all $500$ simulations, the parameter $c=2$ is estimated as $\hat{c} = 2.00$.  
-
-Though only a subset of the results are shown, when count data are fully observed, simulations show our model to have very little bias.  This is further seen in figure~\ref{fig:bp}, where box plots of the parameter estimates, centered at true parameter values, of the correct model fit to data generated from both $c_s$ and $c_t$ show empirically almost no bias.
+Figure~\ref{fig:nonem} shows density plots of the estimates of $c_s, c$ when fitting the true model to the fully observed count data generated under models $c_s$ and $c$.  The plots provide evaluations of parameter bias under each scenario.  In the first display, the parameters $c_1 \approx 0.45$ and $c_2 = 1$ are on average, across all $500$ simulations, estimated as $\hat{c}_1 = 0.45$ and $\hat{c}_2 = 1.00$, with standard errors of $\text{se}(\hat{c}_1) = 0.03$ and $\text{se}(\hat{c}_2) = 0.06$.  The second display provides a similar conclusion.  Averaging across all $500$ simulations, the parameter $c=2$ is estimated as $\hat{c} = 2.00$.  This is further seen in figure~\ref{fig:bp}, where box plots of the parameter estimates, centered at true parameter values, of the correct model fit to data generated from both $c_s$ and $c_t$ show empirically almost no bias.
 
 \begin{figure}
   \centering
@@ -29,9 +27,11 @@ Though only a subset of the results are shown, when count data are fully observe
   \label{fig:bp}
 \end{figure}
 
-When we generate data with unobserved count data, the story is slightly different.  As noted above under certain circumstatnces our EM model accurately estimates the parameters of interest, and at different times can greatly over-estimate the parameters.  To investigate this issue further, we consider the same scenarios mentioned above, but now we reduce all of our count data down to binary observations.  For each scenario's generated data, we fit our EM algorithm as if we knew a priori the true underlying model that generated the observed data.  
+When we generate data with unobserved counts, the story is slightly different.  As noted above under certain circumstatnces our EM model accurately estimates the parameters of interest, and at different times can greatly over-estimate the parameters.  To investigate this issue further, we consider the same scenarios mentioned above, but now we reduce all of our count data down to binary observations.  For each scenario's generated data, we fit our EM algorithm as if we knew a priori the true underlying model that generated the observed data.
 
-Figure~\ref{fig:em} contains density plots of fitting the true EM model, for all $500$ replications, of the data generating models $c_s,c_t$ with small and huge sample sizes, respectively.  When data are generated under the model $c_s$ and the true model fit to the data, we find even for the small sample size that point estimates are reasonably accurate.  When parameter values are of sufficient size to make zeros in the simulated data less common, the estimates from fitting the correct model to the generated data are occassionally over-estimated.  This effect is easily seen in Figure~\ref{fig:em} for larger values of $c_t$ despite the increased sample size, but is also seen, less dramatically, in the density plot for the $c_s$ generated data.  
+Figure~\ref{fig:em} contains density plots of fitting the true model, for all $500$ replications, of the data generating models $c_s,c_t$ with small and huge sample sizes, respectively.  When data are generated under the model $c_s$ and the true model fit to the non-count data, we find even for the small sample size that point estimates are reasonable.  When parameter values are of sufficient size to make zeros in the simulated data less common, the estimates from fitting the correct model to the generated data are occassionally over-estimated.  This effect is easily seen in figure~\ref{fig:em} for larger values of $c_t$ despite the increased sample size, but is also seen, less dramatically, in the density plot for the $c_s$ generated data.  
+
+The seemingly arbitrary clustering of estimates near four seen in figure~\ref{fig:em} is due to two competing factors.  As the proportion of ones in the $Z_{jst}$ observations increases, the observed log-likelihood becomes flatter.  Thus, any finite convergence tolerance will cause the algorithm to terminate eventually.  By decreasing $\tau$, and increasing, as appropriate, the maximum iterations allowed within the EM algorithm, one can gradually increase the magnitude of a maximum likelihood estimate.
 
 % The plots of $\gamma_{st}$ under the EM algorithm are not given as we do not consider missing data in the estimation of these parameters. 
 
@@ -40,11 +40,11 @@ Figure~\ref{fig:em} contains density plots of fitting the true EM model, for all
 \begin{figure}
   \centering
   \includegraphics[scale=0.5]{em}
-  \caption{Density plots of all $500$ estimates of fitting the true model to the data generated from models $c_s,c_t$ are shown with sample sizes small and huge, repsepectively.}
+  \caption{Density plots of all $500$ estimates of fitting the true model to the data generated from models $c_s,c_t$, when counts are not observed, are shown with sample sizes small and huge, repsepectively.}
   \label{fig:em}
 \end{figure}
 
-The over-estimation of parameters, a symptom of the loss of information due to the unobserved count data, can also be seen with box plots of the $500$ point estimates, centered at their respective true parameter values.  Figure~\ref{fig:em_bp} contains box plots of the same scenarios in Figure~\ref{fig:em}, but with the small and huge sample sizes.  It is clear that as the parameters values increase and zeros in the observed data $Z_{jst}$ become less prevalent, over-estimation occurs more frequently.  Because of the tendency for the EM algorithm to over-estimate some parameter values, bias for non-count data is worse than it is for the count data.  
+The over-estimation of parameters, a symptom of the loss of information due to the unobserved counts, can also be seen with box plots of the $500$ point estimates, centered at their respective true parameter values.  Figure~\ref{fig:em_bp} contains box plots of the same scenarios in Figure~\ref{fig:em}, but with the small and huge sample sizes.  It is clear that as the parameters values increase and zeros in the observed data $Z_{jst}$ become less prevalent, over-estimation occurs more frequently.  This over-estimation, when it occurs, will generally increase the magnitude of the bias.
 
 %Table~\ref{tab:bias} displays the max absolute bias across all indices $s,t$ of $\lambda_{st}$ for each simulation scenario.
 
@@ -52,7 +52,7 @@ The over-estimation of parameters, a symptom of the loss of information due to t
 \begin{figure}
   \centering
   \includegraphics[scale=0.5]{em_bp}
-  \caption{Shown are all $500$ estimates, centered at the true parameter values, from fitting the true model to the data generated from models $c_s,c_t$ are shown with sample sizes small and huge, repsepectively.}
+  \caption{Shown are all $500$ estimates, centered at the true parameter values, from fitting the true model to the data generated from models $c_s,c_t$, when counts are not observed, with sample sizes small and huge, repsepectively.}
   \label{fig:em_bp}
 \end{figure}
 

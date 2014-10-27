@@ -9,8 +9,7 @@ Description: Fits and simulates data from our predator preferences model
 Depends:
     R (>= 3.0.2)
 Imports:
-    plyr,
-    reshape2
+    plyr
 Suggests:
     lattice,
     testthat
