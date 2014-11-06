@@ -2,7 +2,7 @@
 \alias{simPref}
 \title{simulate data}
 \usage{
-simPref(S, T, J, I, lambda, gamma, EM = F)
+simPref(S, T, J, I, lambda, gamma, EM = F, seed = NULL)
 }
 \arguments{
   \item{S}{number of prey species}
@@ -22,6 +22,8 @@ simPref(S, T, J, I, lambda, gamma, EM = F)
   seen in habitat; TxS}
 
   \item{EM}{boolean specifying test of EM algorithm}
+
+  \item{seed}{an integer seed value}
 }
 \value{
 A list consisting of two dataframes, eaten and caught, made

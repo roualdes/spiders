@@ -21,9 +21,10 @@ estCs <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
     if (EM) {
         ## initialize some values
         em_iter <- 1
-        cHat <- cHat_old <- runif(S)
         init <- est1(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
-        gammaHat <- gammaHat_old <- init$gamma 
+        gammaHat <- gammaHat_old <- init$gamma
+        cHat <- cHat_old <- sumT(Xdst) / sumT(J*gammaHat) # rep(0.5, S) # runif(S)
+
 
         ## iterate EM
         while ( TRUE ) {
@@ -94,8 +95,9 @@ estCs <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         if ( length(I) != T ) stop("I indexed oddly says est0.")
 
         ## initialize some values
-        cHat <- cHat_old <- runif(S)
-        gammaHat <- gammaHat_old <- sapply(s, function(j) XYdst[,j] / (J*cHat[j] + I))
+        ## cHat <- cHat_old <- rep(0.5, S) # runif(S)
+        ## gammaHat <- gammaHat_old <- sapply(s, function(j) XYdst[,j] / (J*cHat[j] + I))
+        gammaHat <- gammaHat_old <- sapply(s, function(j) XYdst[,j] / (J + I))
 
         ## iteratively update; relies on concavity of log-lik
         while ( TRUE ) {

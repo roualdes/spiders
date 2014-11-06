@@ -15,10 +15,11 @@
 ##' @param lambda matrix of rates at which predator eats prey species; TxS
 ##' @param gamma matrix of rates at which prey species is seen in habitat; TxS
 ##' @param EM boolean specifying test of EM algorithm
-##'
+##' @param seed an integer seed value
+##' 
 ##' @seealso \code{\link{predPref}}, \code{\link{testPref}}
 ##' @export
-simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
+simPref <- function(S, T, J, I, lambda, gamma, EM=F, seed=NULL) {
 
     ## checks
     if ( !isTRUE(all.equal(J, round(J))) ) {
@@ -45,7 +46,7 @@ simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
     if (lI == 1) {
         I <- rep(I[1], T)
     }
-    
+
     ## initialize data frame
     eaten <- as.data.frame(matrix(NA, nrow=sum(J), ncol=S+1))
     caught <- as.data.frame(matrix(NA, nrow=sum(I), ncol=S+1))
@@ -61,6 +62,9 @@ simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
         for ( j in nt ) {
             jdx <- which(eaten$time == times[j])
             idx <- which(caught$time == times[j])
+            if ( !is.null(seed) ) {
+                set.seed(seed)
+            }
             eaten[jdx,i+1] <- rpois(J[j], lambda[j,i])
             caught[idx,i+1] <- rpois(I[j], gamma[j,i])
         }
@@ -72,6 +76,10 @@ simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
         eaten[,jdx][which(eaten[,jdx]>0, arr.ind=T)] <- 1
     }
     
-    list('eaten' = eaten,
-         'caught' = caught)
+    out <- list('eaten' = eaten,
+                'caught' = caught)
+    if ( !is.null(seed) ) {
+        attr(out, 'seed') <- seed
+    }
+    out
 }

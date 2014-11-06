@@ -21,11 +21,10 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
     if (EM) {
         ## initialize some values
         em_iter <- 1
-        cHat <- cHat_old <- runif(1)        
-
         init <- est1(Xdst, Ydst, J, I, FALSE, em_maxiter, BALANCED)
         gammaHat <- gammaHat_old <- init$gamma 
         lambda <- elambda <- init$lambda
+        cHat <- cHat_old <- as.numeric(sumST(Xdst) / sumT(J*sumSp(gammaHat)))
 
         ## iterate EM
         while ( TRUE ) {
@@ -122,8 +121,9 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             }
 
             ## initialize some values
-            cHat <- cHat_old <- runif(1)
-            gammaHat <- gammaHat_old <- XYdst / (J*cHat + I)
+            ## cHat <- cHat_old <- 0.5 # runif(1)
+            ## gammaHat <- gammaHat_old <- XYdst / (J*cHat + I)
+            gammaHat <- gammaHat_old <- XYdst / (J + I)
 
             ## iteratively update; relies on concavity of log-lik
             while ( TRUE ) {

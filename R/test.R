@@ -33,29 +33,26 @@
 ##' }
 ##'
 ##' @export
-testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, em_maxiter = 100, storeSeed = FALSE) {
+testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, em_maxiter=100, storeSeed=FALSE) {
 
     ## initialize output structure
     out <- vector('list', 2)
     names(out) <- c('null', 'alt')
     needSetOutput <- TRUE             # need initialize storage within output?
-    if ( storeSeed ) {
-        rseed <- vector('list', M)
-        invisible(runif(1))             # ensure random seed exists
-    }
 
     ## some numbers 
     S <- ncol(lambda)
     T <- nrow(lambda)
+    if ( storeSeed ) {
+        rseed <- sample(.Machine$integer.max/2, M)
+    } else {
+        rseed <- NULL
+    }
     
     for ( m in seq_len(M) ) {
-
-        if ( storeSeed ) {
-            rseed[[m]] <- .Random.seed
-        }
         
         ## simulate data and fit model
-        fdata <- simPref(S, T, J, I, lambda, gamma, EM=EM)
+        fdata <- simPref(S, T, J, I, lambda, gamma, EM=EM, seed=rseed[m])
         prefs <- predPref(fdata$eaten, fdata$caught, hypotheses = hyp, em_maxiter = em_maxiter)
 
         ## initialize storage within output structure
@@ -128,9 +125,9 @@ testPref <- function(J, I, lambda, gamma, M=100, hyp=c('C', 'Cst'), EM = FALSE, 
     class(out) <- 'testPref'
     attr(out, 'ST') <- S*T
     if ( storeSeed ) {
-        attr(out, "seed") <- rseed        
+        attr(out, "seeds") <- rseed
     }
-    
+    attr(out, 'sample_size') <- list(J = J, I = I)
     out
 }
 

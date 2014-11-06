@@ -59,8 +59,12 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
     yNames <- colnames(caught)
 
     ## traps left out for different numbers of days?
-    if ( !('adj' %in% xNames) ) eaten$adj <- 1
-    if ( !('adj' %in% yNames) ) caught$adj <- 1
+    if ( !('adj' %in% xNames) ) {
+        eaten$adj <- 1
+    }
+    if ( !('adj' %in% yNames) ) {
+        caught$adj <- 1
+    }
 
     ## prey names
     extraVars <- c('time', 'adj')
@@ -70,7 +74,9 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
     X <- eaten[,preyNames]
     Y <- caught[,preyNames]
 
-    if ( any(X < 0) || any(Y < 0) ) stop("Count data can not be less than 0.")
+    if ( any(X < 0) || any(Y < 0) ) {
+        stop("Count data can not be less than 0.")
+    }
 
     ## predators (J), traps (I)
     J <- getTimeCounts(eaten, 'adj')[,2]
@@ -87,7 +93,14 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
     BAL <- length(unique(J)) == 1 && length(unique(I)) == 1
 
     ## errors with time points
-    if ( nrow(Xdst) != nrow(Ydst) ) stop("Differing number of time points in eaten/caught data.")
+    if ( nrow(Xdst) != nrow(Ydst) ) {
+        stop("Differing number of time points in eaten/caught data.")
+    }
+
+    ## check hypotheses
+    if ( is.null(hypotheses) ) {
+        stop('Need to speficy hypotheses.')
+    }
 
     calcs <- calcHypotheses(hyp = hypotheses,
                       Xdst = Xdst, Ydst = Ydst, J=J, I=I,
