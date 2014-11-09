@@ -15,11 +15,10 @@
 ##' @param lambda matrix of rates at which predator eats prey species; TxS
 ##' @param gamma matrix of rates at which prey species is seen in habitat; TxS
 ##' @param EM boolean specifying test of EM algorithm
-##' @param seed an integer seed value
 ##' 
-##' @seealso \code{\link{predPref}}, \code{\link{testPref}}
+##' @seealso \code{\link{predPref}}
 ##' @export
-simPref <- function(S, T, J, I, lambda, gamma, EM=F, seed=NULL) {
+simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
 
     ## checks
     if ( !isTRUE(all.equal(J, round(J))) ) {
@@ -62,9 +61,6 @@ simPref <- function(S, T, J, I, lambda, gamma, EM=F, seed=NULL) {
         for ( j in nt ) {
             jdx <- which(eaten$time == times[j])
             idx <- which(caught$time == times[j])
-            if ( !is.null(seed) ) {
-                set.seed(seed)
-            }
             eaten[jdx,i+1] <- rpois(J[j], lambda[j,i])
             caught[idx,i+1] <- rpois(I[j], gamma[j,i])
         }
@@ -78,8 +74,5 @@ simPref <- function(S, T, J, I, lambda, gamma, EM=F, seed=NULL) {
     
     out <- list('eaten' = eaten,
                 'caught' = caught)
-    if ( !is.null(seed) ) {
-        attr(out, 'seed') <- seed
-    }
     out
 }

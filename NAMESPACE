@@ -1,4 +1,4 @@
 import(plyr)
-export(predPref, simPref, summary.predPref, testPref, plotTestPref, mean.testPref)
+export(predPref, simPref, summary.predPref)
 S3method("summary", "predPref")
-S3method("mean", "testPref")
+

@@ -21,6 +21,7 @@ notes\.org
 Rhistory$
 .*\-Ex\.R$
 paper
+simulations
 
 ### OS Files ###
 DS_Store$
