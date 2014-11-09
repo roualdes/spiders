@@ -63,19 +63,6 @@ submitJobs(reg, chunked)
 waitForJobs(reg)
 ## showStatus(reg)
 
-## summarize results
-idx <- findExperiments(reg,
-                       prob.pars=EM==TRUE && letter=='t',  # && size=='huge',
-                       algo.pars=letter=='t')
+## summarize results ...
 
-summ <- function(job, res) {
-    sumry <- summary(res$prefs)
-    c(sumry$estimates$c)
-}
-
-reduceResultsMatrix(reg, ids=idx, fun=summ, rows=TRUE)
-
-fdata <- generateProblemInstance(reg, 7)
-pref <- predPref(fdata$eaten, fdata$caught, hypotheses=c('ct', 'cst'), em_maxiter=15000)
-summary(pref)$estimates$c
 
