@@ -21,7 +21,7 @@ vignettes/trap.csv
 vignettes/spider.csv
 vignettes/_region_.tex
 play.R
-simulations/job1
+simulations/job*
 simulations/play.R
 
 .Rhistory

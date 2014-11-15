@@ -3,8 +3,8 @@ library(BatchExperiments)
 library(plyr)
 
 ## make / load registry
-file.dir <- file.path('/Users/easy-e/spiders/simulations/job1')
-src <- file.path('/Users/easy-e/spiders/simulations/utils.R')
+file.dir <- file.path('job1')
+src <- file.path('utils.R')
 reg <- makeExperimentRegistry("spidersRegistry", file.dir=file.dir, seed=123,
                               packages='spiders',
                               src.files=src)
@@ -19,13 +19,11 @@ genPrefs <- function(size, letter, EM) {
     I <- getSampleSize(size)            # caught
     lambda <- getLambda(letter)         # eaten rate(s)
     gamma <- getGamma()                 # caught rate(s)
-
     ## some numbers
     S <- ncol(lambda)                   # number species
     T <- nrow(lambda)                   # number time points
     ## simulate data
     fdata <- simPref(S, T, J, I, lambda, gamma, EM=EM)
-
     ## return list of things we want later
     list(eaten = fdata$eaten, caught = fdata$caught, J=J, I=I)
 }
@@ -42,27 +40,27 @@ estPrefs <- function(dynamic, letter) {
 addAlgorithm(reg, 'estPrefs', fun=estPrefs)
 ### remove algorithms: sapply(getAlgorithmIds(reg), function(x) removeAlgorithm(reg, x))
 
-## design parameters
-### problems
-pr.params <- list(size=c('small', 'medium', 'large', 'huge'),
-                  letter=c('t', 's', 'c'), EM=c(TRUE, FALSE))
-pr.des <- makeDesign('genPrefs', exhaustive=pr.params)
-
-## algorithms
-alg.des <- makeDesign('estPrefs', exhaustive=list(letter=c('t', 's', 'c')))
-
-## experiments
-addExperiments(reg, pr.des, alg.des, repls=1)
+## design parameters; experiments
+hyps <- c('t', 's', 'c')
+sz <- c('small', 'medium', 'large', 'huge')
+em <- c(TRUE, FALSE)
+for (h in seq_along(hyps)) {
+    ## ensure only model hyps[h] is fit when it is the correct model to fit
+    addExperiments(reg,
+                   makeDesign('genPrefs',
+                              exhaustive=list(letter=hyps[h], size=sz, EM=em)),
+                   makeDesign('estPrefs',
+                              exhaustive=list(letter=hyps[h])),
+                   repls=500)
+}
 ### remove experiments: removeExperiments(reg, findExperiments(reg))
 
-summarizeExperiments(reg)
+summarizeExperiments(reg, show=c('prob', 'algo', 'letter', 'size', 'EM'))
 
 ## run
-chunked <- chunk(getJobIds(reg), n.chunks=4, shuffle=TRUE)
+chunked <- chunk(getJobIds(reg), chunk.size=100, shuffle=TRUE)
 submitJobs(reg, chunked)
-waitForJobs(reg)
+## waitForJobs(reg)
 ## showStatus(reg)
-
-## summarize results ...
 
 
