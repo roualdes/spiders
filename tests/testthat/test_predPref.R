@@ -7,6 +7,7 @@ PreySpecies <- 2
 Times <- 5
 TxS <- c(Times, PreySpecies)
 g <- matrix(sqrt(2), nrow=Times, ncol=PreySpecies)
+set.seed(1)
 
 
 ## noEM

@@ -11,6 +11,5 @@ Depends:
 Imports:
     plyr
 Suggests:
-    lattice,
     testthat
 License: GPL (>= 2.0)
