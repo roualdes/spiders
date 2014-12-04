@@ -2,7 +2,7 @@ Package: spiders
 Type: Package
 Title: Fits predator preferences model
 Version: 1.0
-Date: 2014-04-30
+Date: 2014-12-04
 Author: Edward A. Roualdes and Simon Bonner
 Maintainer: Edward A. Roualdes <edward.roualdes@uky.edu>
 Description: Fits and simulates data from our predator preferences model
