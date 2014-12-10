@@ -9,21 +9,6 @@ The use of Poisson distributions make the following implicit assumptions: $1)$ t
 
 We denote the number of predators and the number of prey species caught, in each time period $t$, by $J_t$ and $I_t$, respectively.  Let $X_{jst} \iid \mathcal{P}(\lambda_{st})$ represent the number of prey species $s$ that predator $j$ ate during occurrence $t$, where $j \in \{1, \ldots, J_t\}$.  Let $Y_{ist} \iid \mathcal{P}(\gamma_{st})$ represent the number of prey species $s$ found in trap $i$ during occurrence $t$, $i \in \{1, \ldots, I_t\}$.  Formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda}$ and $\boldsymbol{\gamma}$ offer insights to the relative rates at which predators eat particular prey species.  
 
-% \begin{figure}
-%   \centering
-%   \begin{tabular}{rrcc}
-%     & & \multicolumn{2}{c}{Time} \\
-%     & & constant & varies \\
-%     \cline{3-4}
-%     \multirow{2}{*}{Species} & \multicolumn{1}{r|}{constant} & \multicolumn{1}{c}{$c$} & \multicolumn{1}{|c|}{$c_t$} \\ 
-%     \cline{3-4}
-%     & \multicolumn{1}{r|}{varies} & \multicolumn{1}{c}{$c_s$} & \multicolumn{1}{|c|}{$c_{st}$} \\
-%     \cline{3-4}
-%   \end{tabular}
-%   \caption{The four hypotheses considered are shown by their symbolic representations, highlighting which indices are allowed to vary.  This is essentially the range of the mapping $\xi$.  }
-%   \label{tab:hyp}
-% \end{figure}
-
 We consider five variations on the relative magnitude of $\lambda_{st}/\gamma_{st} = c_{st}$.  These five hypotheses each allow $c_{st}$ to vary by time, prey species, both, or neither.  Because the five hypotheses are nested, a natural testing order is suggested in Figure~\ref{fig:hier}.
 
 \begin{enumerate}
@@ -84,8 +69,6 @@ In all other cases, analytic solutions are not readily available and instead we 
 \subsection{Unobserved Counts}
 \label{sec:noncount}
 
-% Working with biologists who study spider foraging, we have found that not all predators allow for easily counted prey species in their guts.  As an alternative strategy, we can rely on the DNA sequencing of a sample from the predators' guts.  If such sequencing returns a positive response, say a $1$ if a particular predator ate prey species $s$, and $0$ otherwise, we can, albeit with these incomplete data, model predators' eating preferences with the above framework using the EM algorithm.  
-
 Many times it may not be possible to count the number of individuals of each prey species that are in a predator's gut.  Instead, it may only be possible to detect whether or not a predator consumed the prey species during a given period.  In this case we can still make inference about the predators' preferences for the different prey species by using the EM algorithm to compute maximum likelihood estimates. 
 
 We denote the binary random variable indicating that the $j^{th}$ predator did in fact eat at least one individual of prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  The variables are independent Bernoulli observations with success probability $p_{st} = P(Z_{jst}=1)= 1-\exp\{-\lambda_{st}\}$.  Despite not observing $X_{jst}$, we can compute maximum likelihood estimates of the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$ through the EM algorithm using the complete data log-likelihood
@@ -112,12 +95,6 @@ and expected value
     \end{array}
   \right..
 \end{equation*}
-
-% introduce EM and its iterative steps earlier
-% just a couple of general sentences; explain the two steps and what they do
-% rubin and little (~1980); mclchalan and Krishnan book
-% split up E and M step, with \cdot ^(k) notation earlier
-% mention convergence criterion
 
 The EM algorithm works by iterating two steps, the E-step and M-step, until the optimum is reached \citep{Dempster:1977,McLachlan:2007}.  Let $k$ index the iterations in the EM algorithm so that $\boldsymbol \lambda^{(k)}$ and $\boldsymbol \gamma^{(k)}$ denote the estimates computed on the $k^{th}$ M-step. The E-step consists of computing the expectation of $l_{comp}$ with respect to the conditional distribution of $X$ given the current estimates of the parameters
 \[
