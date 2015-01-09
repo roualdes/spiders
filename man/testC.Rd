@@ -50,14 +50,19 @@ data.name: a character string giving the names of the data.
 }
 \description{
 estimates linear contrasts of the elements of c, c_s, c_t,
-c_st
+or c_st from a \code{\link{predPref}} object
 }
 \details{
 The input vector b performs the linear transformation t(b)
 \%*\% matrix(c_st), so that c_st becomes a column vector by
 indexing t first and then s.  Hence there is no requirement
-of a linear contrast, a linear transformation such that
+of a linear contrast, any linear transformation such that
 t(b) \%*\% matrix(1, nrow=length(b)) != 0 is allowed.
+
+Of the two estimated hypotheses in the underlying call to
+\code{\link{predPref}}, the linear transformation b is
+applied to the hypothesis that is determined by the choice
+of conf.level.
 }
 \examples{
 # set parameters

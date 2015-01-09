@@ -69,7 +69,7 @@ In all other cases, analytic solutions are not readily available and instead we 
 \subsection{Unobserved Counts}
 \label{sec:noncount}
 
-Many times it may not be possible to count the number of individuals of each prey species that are in a predator's gut.  Instead, it may only be possible to detect whether or not a predator consumed the prey species during a given period.  In this case we can still make inference about the predators' preferences for the different prey species by using the EM algorithm to compute maximum likelihood estimates. 
+Many times it may not be possible to count the number of individuals of each prey species that are in a predator's gut.  Instead, it may only be possible to detect whether or not a predator consumed the prey species during a given period.  In this case we can still make inference about the predators' preferences for the different prey species by using the Expectation-Maximization (EM) algorithm to compute maximum likelihood estimates. 
 
 We denote the binary random variable indicating that the $j^{th}$ predator did in fact eat at least one individual of prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  The variables are independent Bernoulli observations with success probability $p_{st} = P(Z_{jst}=1)= 1-\exp\{-\lambda_{st}\}$.  Despite not observing $X_{jst}$, we can compute maximum likelihood estimates of the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$ through the EM algorithm using the complete data log-likelihood
 \[

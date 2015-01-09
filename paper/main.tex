@@ -1,22 +1,33 @@
-\documentclass[12pt]{article}
+\documentclass[12pt,titlepage]{article}
 \input{TexOpts.tex}
 
 \begin{document}
 
-\title{Modeling Predator Preferences}
-\author{Edward A. Roualdes and Simon Bonner \\ University of Kentucky}
+\title{Modelling Predator Preferences using Expectation-Maximization Algorithm and Molecular Gut-Content Analysis}
+\author[1]{Edward A. Roualdes}
+\author[1]{Simon Bonner}
+\author[2]{Thomas D. Whitney}
+\author[3]{James D. Harwood}
+\affil[1]{Department of Statistics, University of Kentucky, Lexington, KY 40536, USA}
+\affil[2]{Warnell School of Forestry and Natural Resources, University of Georgia, Athens, GA 30602, USA}
+\affil[3]{Department of Entomology, University of Kentucky, Lexington, KY 40546, USA}
+
 \date{\today}
 \maketitle
 
 \begin{abstract}
-The literature on modeling a predator's prey selection includes many intuitive indices, few of which have both reasonable statistical justification and tractable asymptotic properties.  Here, we provide a simple model that meets both of these criteria, while extending previous work to include an array of multiple species and time points.  Further, we apply the Expectation-Maximization algorithm to cases where exact counts of the number of prey species eaten in a particular timer period is not observed.  We conduct a simulation study to demonstrate the accuracy of our method, and a real dataset, collected on the wolf spider, illustrates how to apply our methods.
+The literature on modeling a predator's prey selection includes many intuitive indices, few of which have both reasonable statistical justification and tractable asymptotic properties.  Here, we provide a simple model that meets both of these criteria, while extending previous work to include an array of multiple species and time points.  Further, we apply the Expectation-Maximization algorithm to cases where exact counts of the number of prey species eaten in a particular timer period is not observed.  We conduct a simulation study to demonstrate the accuracy of our method, and a real dataset, collected on the wolf spider, illustrates how to apply our methods. \\
+\textit{Keywords: moar words}
 \end{abstract}
+
 
 \input{introduction.tex}
 \input{methods.tex}
 \input{simulations.tex}
 \input{data.tex}
 \input{discussion.tex}
+\input{acknowledgments.tex}
+\input{accessibility.tex}
 
 \bibliographystyle{plainnat}
 \bibliography{refs}

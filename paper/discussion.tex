@@ -1,13 +1,11 @@
 \section{Discussion}
 \label{sec:discussion}
 
-The model developed here allows practitioners to determine predators' preferences by testing simultaneously across an array of multiple prey species and time points.  This is achieved via a simple, but statistically powerful, likelihood ratio test.  Further testing of the ratio of rates for which predators eat to encounter prey species allows researchers to make specific conclusions about predators' preferences.  For instance, rates across time can be estimated to make statements about seasonal effects on a predator's eating habits, or relative rates across species groups allows for statements about the relative preferences for different species.
+The model developed here allows predators' preferences by testing simultaneously across an array of multiple prey species and time points.  This is achieved via a simple, but statistically powerful, likelihood ratio test.  Further testing of the ratio of rates for which predators eat to encounter prey species allows researchers to make specific conclusions about predators' preferences.  For instance, rates across time can be estimated to make statements about seasonal effects on a predator's eating habits, or relative rates across species groups allows for statements about the relative preferences for different species.
 
 When counts of predators' gut contents are not fully observed, and instead only a binary response indicating the existence of the prey species in the gut is observed, we are able to treat the counts as missing data.  By modeling all of the observed data, both the binary responses and the number of prey species caught, and the missing count data, we are able to use the EM algorithm to extract as much information from the data as possible.  Though this is nice in theory, in practice the success of this modification to our original model is limited by the magnitude of the unknown parameters $\lambda_{st}$.  
 
-Further developments of our model could be beneficial.  Taking into account other environmental variables that might effect a predator's eating habits, such as rain or temperature, say, might be advantageous.  
-
-An \texttt{R} package, named \texttt{spiders}, is available on CRAN at \url{http://cran.r-project.org/web/packages/spiders/index.html} and fits all the methods discussed above.  
+Further developments of our model could be beneficial.  Taking into account other environmental variables that might effect a predator's eating habits, such as rain or temperature might be advantageous.  
 
 %%% Local Variables: 
 %%% mode: latex
