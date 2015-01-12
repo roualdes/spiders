@@ -5,7 +5,7 @@
 
 We assume data are collected in the following manner.  Traps are dispersed, for $T$ time periods, throughout the habitat of the predator and prey of interest.  Prey species, indexed by $s \in \{1, \ldots, S \}$, are collected in the traps and counted at each time period.  The number of prey species $s$ the predator will encounter on average during time period $t \in \{1, \ldots, T\}$ are considered random draws from a Poisson distribution with rate parameter $\gamma_{st}$.  We further assume that the number of prey species found in the gut of the similarly trapped predators follows a Poisson distribution with rate $\lambda_{st}$.  Here, the parameter $\lambda_{st}$ represents the rate at which the predator ate prey species $s$ during time period $t$.  By modeling $\lambda_{st}$ and $\gamma_{st}$ we are able to test claims about a predator's eating preferences.  
 
-The use of Poisson distributions make the following implicit assumptions: $1)$ traps independently catch the prey species of interest, $2)$ predators eat prey species independently, $3)$ predators eat independent of each other.
+The use of Poisson distributions make the following implicit assumptions: $1)$ traps independently catch the prey species of interest, $2)$ predators eat independent of each other.
 
 We denote the number of predators and the number of prey species caught, in each time period $t$, by $J_t$ and $I_t$, respectively.  Let $X_{jst} \iid \mathcal{P}(\lambda_{st})$ represent the number of prey species $s$ that predator $j$ ate during occurrence $t$, where $j \in \{1, \ldots, J_t\}$.  Let $Y_{ist} \iid \mathcal{P}(\gamma_{st})$ represent the number of prey species $s$ found in trap $i$ during occurrence $t$, $i \in \{1, \ldots, I_t\}$.  Formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda}$ and $\boldsymbol{\gamma}$ offer insights to the relative rates at which predators eat particular prey species.  
 
@@ -19,7 +19,7 @@ We consider five variations on the relative magnitude of $\lambda_{st}/\gamma_{s
 \item $c_{st} = c_{st}$
 \end{enumerate}
 
-The first hypothesis states that predators and traps sample all prey species at the same rate.  One imagines this is the case if the predator simply eats that which comes within its reach, thus suggesting a diet indifference.  The second says that predators sample prey proportionally across all time periods.  The third hypothesis says that predators sample different prey species at different rates, but each rate is steady across time.  This implies that the predator expresses preferences for one prey species over another, but is unresponsive to changes due to time.  Conversely, the forth hypothesis implies that each prey species is sampled similarly within each time period, while the rates across time are allowed to change.  The fifth assumes a predator's selection varies by both time and prey species.  This would make sense if environmental variables, say weather, or prey availability, and taste were affecting predators' selection strategies.  
+The first hypothesis states that predators and traps sample all prey species at the same rate.  One imagines this is the case if the predator simply eats prey which comes within its reach, thus suggesting no selection for a particular prey item.  The second states that predators sample prey proportionally across all time periods.  The third hypothesis states that predators sample different prey species at different rates, but each rate is steady across time.  This implies that the predator expresses preferences for one prey species over another, but is unresponsive to changes due to time.  Conversely, the forth hypothesis implies that each prey species is sampled similarly within each time period, while the rates across time are allowed to change.  The fifth hypothesis assumes a predator's selection varies by both time and prey species.  This would make sense if environmental and biological variables, such as weather, prey availability, and/or palatability were affecting predators' selection strategies.  
 
 \begin{figure}
   \centering
@@ -38,14 +38,14 @@ The first hypothesis states that predators and traps sample all prey species at 
                 (D) edge node {} (E);
   \end{tikzpicture}
   
-  \caption{Hierarchy of hypotheses.}
+  \caption{This hierarchy of hypotheses suggests the order in which the discussed models should be tested.  One begins with the models at the top and sequentially, following the arrows, tests the hypotheses using the formal test described in section~\ref{sec:test}.}
   \label{fig:hier}
 \end{figure}
 
 \subsection{Fully Observed Count Data}
 \label{sec:count}
 
-The likelihood function that allows for estimation of these parameters is as follows.  Since we assume $X_{jst}$ is independent of $Y_{ist}$ we can simply multiply the respective Poisson probability density functions, and then form products over all $s,t$ to get the likelihood.  
+The likelihood function that allows for estimation of these parameters is as follows.  Since we assume $X_{jst}$ is independent of $Y_{ist}$ we can simply multiply the respective Poisson probability density functions, and then form products over all $s,t$ to obtain the likelihood.  
 
 \begin{equation}
   \label{eq:likelihood}
@@ -69,7 +69,7 @@ In all other cases, analytic solutions are not readily available and instead we 
 \subsection{Unobserved Counts}
 \label{sec:noncount}
 
-Many times it may not be possible to count the number of individuals of each prey species that are in a predator's gut.  Instead, it may only be possible to detect whether or not a predator consumed the prey species during a given period.  In this case we can still make inference about the predators' preferences for the different prey species by using the Expectation-Maximization (EM) algorithm to compute maximum likelihood estimates. 
+In many applications, such as DNA-based gut-content anslysis, it is not possible to count the number of individuals of each prey species that are in a predator's gut.  Instead, it is only possible to detect whether or not a predator consumed the prey species during a given time period, based on the rate at which prey DNA decays in the predator gut \citep{Greenstone:2013}.  In this case we can still make inference about the predators' preferences for the different prey species by using the Expectation-Maximization (EM) algorithm to compute maximum likelihood estimates. 
 
 We denote the binary random variable indicating that the $j^{th}$ predator did in fact eat at least one individual of prey species $s$ in time period $t$ by $Z_{jst} = 1(X_{jst} > 0)$.  The variables are independent Bernoulli observations with success probability $p_{st} = P(Z_{jst}=1)= 1-\exp\{-\lambda_{st}\}$.  Despite not observing $X_{jst}$, we can compute maximum likelihood estimates of the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$ through the EM algorithm using the complete data log-likelihood
 \[
@@ -119,12 +119,12 @@ The calculation of $Q^{(k)}(\boldsymbol{\lambda}, \boldsymbol{\gamma})$ is not d
   & \propto \sum_{s,t} \left( -J_t \lambda_{st} + z_{\cdot st} \log{\lambda_{st}} \E (X_{jst}|\lambda_{st}^{(k)},\gamma_{st}^{(k)}) \right) + \sum_{s,t} \left( -I_t \gamma_{st} + Y_{\cdot st} \log{I_t \gamma_{st}} \right).
 \end{split}
 \end{align}
-\noindent No analytic solution to the M-step exists, however, so we chose to maximize $Q$ with coordinate descent \citep{Luo:1992}.  In fact, as we only need find parameters that increase the value of $Q$ on each iteration, we forgo fully iterating to find the maximum and instead perform just one step uphill within each EM iteration.  Since $Q^{(k)}$ is concave and smooth in the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$, we are able to use the convergence of parameter estimates, $||(\boldsymbol{\lambda}^{(k)}, \boldsymbol{\gamma}^{(k)}) - (\boldsymbol{\lambda}^{(k+1)}, \boldsymbol{\gamma}^{(k+1)})||_{\infty} < \tau $, for some $\tau>0$, as our stopping criterion.
+\noindent No analytic solution to the M-step exists, however, so we chose to maximize $Q$ with coordinate descent \citep{Luo:1992}.  In fact, as we only need to find parameters that increase the value of $Q$ on each iteration, we forgo fully iterating to find the maximum and instead perform just one step uphill within each EM iteration.  Since $Q^{(k)}$ is concave and smooth in the parameters $\boldsymbol{\lambda}, \boldsymbol{\gamma}$, we are able to use the convergence of parameter estimates, $||(\boldsymbol{\lambda}^{(k)}, \boldsymbol{\gamma}^{(k)}) - (\boldsymbol{\lambda}^{(k+1)}, \boldsymbol{\gamma}^{(k+1)})||_{\infty} < \tau $, for some $\tau>0$, as our stopping criterion.
 
-As we show in our simulation study, this generalized EM algorithm accurately estimates the parameters when values of $\lambda_{st}$ are relatively small, such that zeros are prevalent in the data $Z_{jst}$.  In this case, not too much information is lost since estimation of $\E Z_{jst}$ can be estimated well by the proportion of observed zeros.  On the other hand, if the predator consistently eats a given prey species, few to no zeros will show up in the observed data and $\E Z_{jst}$ is estimated to be nearly $1$.  The loss of information is best seen by attempting to solve for $\lambda_{st}$ in the equation $1 = \E Z_{jst} 1 - \exp\{-\lambda_{st}\}$.  As the proportion of ones in the observed data increases, we expect $\lambda_{st}$ to grow exponentially large.  When no zeros are present in the data, so that where only ones are observed, the likelihood can be made arbitrarily large by sending the parameter off to infinity.  
+As we show in our simulation study, this generalized EM algorithm accurately estimates the parameters when values of $\lambda_{st}$ are relatively small, such that zeros are prevalent in the data $Z_{jst}$.  In this case, not too much information is lost since estimation of $\E Z_{jst}$ can be estimated well by the proportion of observed zeros.  In contrast, if the predator consistently eats a given prey species, few to no zeros will show up in the observed data and $\E Z_{jst}$ is estimated to be nearly $1$.  The loss of information is best seen by attempting to solve for $\lambda_{st}$ in the equation $1 = \E Z_{jst} = 1 - \exp\{-\lambda_{st}\}$.  As the proportion of ones in the observed data increases, we expect $\lambda_{st}$ to grow exponentially large.  When no zeros are present in the data, so that where only ones are observed, the likelihood can be made arbitrarily large by sending the parameter off to infinity.  
 
 \subsection{Testing}
-
+\label{sec:test}
 The likelihood ratio test statistic is
 
 \begin{equation*}

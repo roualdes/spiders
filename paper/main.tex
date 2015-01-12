@@ -1,24 +1,53 @@
-\documentclass[12pt,titlepage]{article}
+\documentclass[12pt]{article}
 \input{TexOpts.tex}
 
 \begin{document}
+\subsection*{Title:}  Formal Modelling of Predator Preferences using Molecular Gut-Content Analysis
 
-\title{Modelling Predator Preferences using Expectation-Maximization Algorithm and Molecular Gut-Content Analysis}
-\author[1]{Edward A. Roualdes}
-\author[1]{Simon Bonner}
-\author[2]{Thomas D. Whitney}
-\author[3]{James D. Harwood}
-\affil[1]{Department of Statistics, University of Kentucky, Lexington, KY 40536, USA}
-\affil[2]{Warnell School of Forestry and Natural Resources, University of Georgia, Athens, GA 30602, USA}
-\affil[3]{Department of Entomology, University of Kentucky, Lexington, KY 40546, USA}
+\subsection*{Author Information:}
+Edward A. Roualdes$^{1,2}$, Simon Bonner$^1$, Thomas D. Whitney$^3$, and James D. Harwood$^4$
+ 
+\begin{tabular}{ll}
+  1 & Department of Statistics\\
+  & University of Kentucky\\
+  & Rm.~311 Multidisciplinary Science Building\\
+  & 725 Rose Street\\
+  & Lexington, KY 40536-0082\\
+  & USA\\
+  \\
+  2 & Email: edward.roualdes@uky.edu\\
+  & Phone: 530-570-2674\\
+  \\
+  3 & Warnell School of Forestry and Natural Resources \\
+  & University of Georgia \\
+  & Athens, GA 30602\\
+  & USA \\
+  \\
+  4 & Department of Entomology\\
+  & University of Kentucky \\
+  & Lexington, KY 40546\\
+  & USA \\
+\end{tabular}
 
-\date{\today}
-\maketitle
+\subsection*{Short Title:}
+Modelling Predator Preferances
 
-\begin{abstract}
-The literature on modeling a predator's prey selection includes many intuitive indices, few of which have both reasonable statistical justification and tractable asymptotic properties.  Here, we provide a simple model that meets both of these criteria, while extending previous work to include an array of multiple species and time points.  Further, we apply the Expectation-Maximization algorithm to cases where exact counts of the number of prey species eaten in a particular timer period is not observed.  We conduct a simulation study to demonstrate the accuracy of our method, and a real dataset, collected on the wolf spider, illustrates how to apply our methods. \\
-\textit{Keywords: moar words}
-\end{abstract}
+\subsection*{Word Count:}
+This manuscript contains $3253$ words including figure captions and headers, but excluding title page and equations. 
+
+\subsection*{Keywords}
+electivity; Expectation-Maximization; 
+
+\newpage
+\section*{Summary}
+\label{sec:abstract}
+
+\begin{enumerate}
+\item The literature on modelling the prey selection a predator includes many intuitive indices, few of which have both reasonable statistical justification and tractable asymptotic properties.
+\item Here, we provide a simple model that meets both of these criteria, while extending previous work to include an array of multiple species and time points.
+\item Further, we apply the Expectation-Maximisation algorithm to cases where exact counts of the number of prey species eaten in a particular timer period is not observed.
+\item We conduct a simulation study to demonstrate the accuracy of our method, and a real dataset, collected on wolf spiders using molecular gut-content analysis, illustrates how to apply our methods.
+\end{enumerate}
 
 
 \input{introduction.tex}
