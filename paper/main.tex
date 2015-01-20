@@ -115,7 +115,7 @@ The likelihood function that allows for estimation of these parameters is as fol
  L( \boldsymbol{\lambda}, \boldsymbol{\gamma} | x_{jst}, y_{ist}) = \prod_{t = 1}^{T} \prod_{s=1}^S \left\{ \prod_{j=1}^{J_t} f_X(x_{jst}|\boldsymbol{\lambda}) \prod_{i=1}^{I_t} f_Y(y_{ist} | \boldsymbol{\gamma}) \right\}.
 \end{equation}
 
-\noindent Writing all five hypotheses as $\lambda_{st} = c_{st}\gamma_{st}$, we can, in the simplest cases, find analytic solutions for the maximum likelihood estimates (MLEs) of $c_{st}$, $\gamma_{st}$, and by invariance $\lambda_{st}$.  Such solutions exist when $c_{st} = 1$ so that only $\gamma_{st}$ need be estimated, and when the data are balanced: $J_t = J$, $I_t = I$ and $c_{st} = c$.  Respectively, these solutions are
+\noindent Writing all five hypotheses as $\lambda_{st} = c_{st}\gamma_{st}$, we can, in the simplest cases, find analytic solutions for the maximum likelihood estimates (MLEs) of $c_{st}$, $\gamma_{st}$, and by invariance $\lambda_{st}$.  Such solutions exist for the simplest model, $c_{st}=1$, for which only $\gamma_{st}$ need be estimated, and for the second simplest model, $c_{st}=c$, provided that the data are balanced so that $J_t=J$ and $I_t=I$.  Respectively, these solutions are
 
 \begin{equation*}
   \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_t + I_t}, \quad \text{ and } \quad \hat{c} = \frac{I \sum_{s,t} X_{\cdot st}}{J \sum_{s,t} Y_{\cdot st}}, \quad \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{I \left( \frac{\sum_{st} X_{\cdot st}}{\sum_{st} Y_{\cdot st}} + 1 \right)},
