@@ -40,9 +40,8 @@ ll <- function(Xdst, Ydst, lambda, gamma, J, I, c=NULL) {
 ##' @param c scalar in null hypotheses
 llEM <- function(Zdst, Ydst, lambda, gamma, J, I, c=NULL) {
     if ( is.null(c) ) {
-        ## avoid log(0) when hat{lambda} = 0
-        ## these values contribute nothing, so ignore them
         ## TBD might also need to watch for any hat{gamma} = 0
+        ## avoid log(0) when hat{lambda} = 0
         w <- which(Zdst != 0, arr.ind=T)
         out <- sumST(Zdst[w]*log(1-exp(-lambda[w])) - (J[w[,1]] - Zdst[w])*lambda[w])
     } else {
