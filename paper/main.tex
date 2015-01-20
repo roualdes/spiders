@@ -108,7 +108,7 @@ By modelling $\lambda_{st}, \gamma_{st}$ we are able to test claims about a pred
 \subsection{Fully Observed Count Data}
 \label{sec:count}
 
-The likelihood function that allows for estimation of these parameters is as follows.  Since we assume $X_{jst}$ is independent of $Y_{ist}$ we can simply multiply the respective Poisson probability density functions, and then form products over all $s,t$ to obtain the likelihood, $L( \boldsymbol{\lambda}, \boldsymbol{\gamma} | x_{jst}, y_{ist})$.  
+The likelihood function that allows for estimation of these parameters is as follows.  Since we assume $X_{jst}$ is independent of $Y_{ist}$ we can simply multiply the respective Poisson probability density functions, and then form products over all $s,t$ to obtain the likelihood
 
 \begin{equation}
   \label{eq:likelihood}
@@ -118,20 +118,20 @@ The likelihood function that allows for estimation of these parameters is as fol
 \noindent Writing all five hypotheses as $\lambda_{st} = c_{st}\gamma_{st}$, we can, in the simplest cases, find analytic solutions for the maximum likelihood estimates (MLEs) of $c_{st}$, $\gamma_{st}$, and by invariance $\lambda_{st}$.  Such solutions exist when $c_{st} = 1$ so that only $\gamma_{st}$ need be estimated, and when the data are balanced: $J_t = J$, $I_t = I$ and $c_{st} = c$.  Respectively, these solutions are
 
 \begin{equation*}
-  \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_t + I_t}, \quad \text{ and } \quad \hat{c} = \frac{I \sum_{s,t} X_{\cdot st}}{J \sum_{s,t} Y_{\cdot st}}, \quad \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{I \left( \frac{\sum_{st} X_{\cdot st}}{\sum_{st} Y_{\cdot st}} + 1 \right)}
+  \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_t + I_t}, \quad \text{ and } \quad \hat{c} = \frac{I \sum_{s,t} X_{\cdot st}}{J \sum_{s,t} Y_{\cdot st}}, \quad \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{I \left( \frac{\sum_{st} X_{\cdot st}}{\sum_{st} Y_{\cdot st}} + 1 \right)},
 \end{equation*}
 
 \noindent where $X_{\cdot st} = \sum_{j=1}^{J_t}X_{jst}$ and $Y_{\cdot st} = \sum_{i=1}^{I_t} Y_{ist}$.
 
-In all other cases, analytic solutions are not readily available and instead we rely on the fact that the log-likelihood $l(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log{L}$ is concave to maximise the likelihood numerically.  To compute MLEs, we maximise the log-likelihood, using coordinate descent \citep{Luo:1992}, by iteratively solving the likelihood equation (i.e.\, the equations obtained by setting the partial derivatives of the likelihood with respect to the parameters equal to zero).  The partial derivatives of the log-likelihood with respect to the parameters of interest, in the models $c, c_t$, and $c_s$, set equal to zero and solved are as follows.
+In all other cases, analytic solutions are not readily available and instead we rely on the fact that the log-likelihood $l(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log{L}$ is concave to maximise the likelihood numerically.  To compute MLEs, we maximise the log-likelihood, using coordinate descent \citep{Luo:1992}, by iteratively solving the likelihood equations (i.e.\, the equations obtained by setting the partial derivatives of the likelihood with respect to the parameters equal to zero).  This yields the following equations for updating $c$ in the models $c$, $c_t$, and $c_s$ respectively
 
 \begin{equation*}
-  \hat{c} = \frac{\sum_{s,t} X_{\cdot st}}{\sum_t J_t \sum_s \gamma_{st}}, \quad \hat{c}_t =  \frac{\sum_s X_{\cdot st}}{J_t \sum_s \gamma_{st}}, \quad \hat{c}_s = \frac{\sum_{t}X_{\cdot st}}{\sum_t J_t \gamma_{st}}
+  \hat{c} = \frac{\sum_{s,t} X_{\cdot st}}{\sum_t J_t \sum_s \gamma_{st}}, \quad \hat{c}_t =  \frac{\sum_s X_{\cdot st}}{J_t \sum_s \gamma_{st}}, \quad \hat{c}_s = \frac{\sum_{t}X_{\cdot st}}{\sum_t J_t \gamma_{st}}, \quad \text{ and } \quad \hat{c}_{st} = \frac{X_{\cdot st}}{J_t \gamma_{st}}.
 \end{equation*}
 
 \noindent The equation for updating $\hat \gamma_{st}$ is
 
-\[ \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_t c_{st} + I_t} \]
+\[ \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_t c_{st} + I_t}, \]
 
 \noindent where $c_{st}$ would be replaced by $c, c_t$, or $c_s$ depending on the chosen model.
 
