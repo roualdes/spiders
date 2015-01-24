@@ -23,6 +23,7 @@ vignettes/_region_.tex
 play.R
 simulations/job*
 simulations/play.R
+paper
 
 .Rhistory
 *-Ex.R
