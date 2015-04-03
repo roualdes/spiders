@@ -1,4 +1,5 @@
 import(plyr)
 export(predPref, simPref, summary.predPref)
 S3method("summary", "predPref")
+S3method("print", "summary.predPref")
 

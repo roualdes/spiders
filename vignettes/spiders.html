@@ -84,12 +84,12 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>Our package assumes two data sets, one for the predators (and what they ate) and one for the caught prey species. Each data set will include a new observation per row. The columns names of both data sets should match. One column, named <code>time</code>, should include the time/date for which each observation was recorded. The other columns should be named for the prey species of interest, e.g.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(Traps)</code></pre>
 <pre><code>##    time preySpecies1 preySpecies2 preySpecies3
-## 1 time1            4            0            0
-## 2 time1            2            5            3
-## 3 time1            3            0            1
-## 4 time1            0            3            0
-## 5 time1            0            1            1
-## 6 time1            0            1            1</code></pre>
+## 1 time1            1            1            3
+## 2 time1            1            2            0
+## 3 time1            4            1            2
+## 4 time1            0            2            2
+## 5 time1            1            2            1
+## 6 time1            0            1            2</code></pre>
 <p>The column <code>adj</code> is there to account for unequal trap schedules. Consider the situtation where the traps (catching prey species) were left out for a differing length of time within occurrence <span class="math">\(t\)</span>, e.g. trap <span class="math">\(i\)</span> in month <span class="math">\(t\)</span> was left out for <span class="math">\(6\)</span> days, but trap <span class="math">\(i'\)</span> in month <span class="math">\(t\)</span> was left out for <span class="math">\(3\)</span> days. We expect to catch an unequal number of prey in each trap simply because one trap was left out for a longer time within month <span class="math">\(t\)</span>. The user can specify this by creating a column, which has to be named <code>adj</code>, that contains the number of units of time for which each trap was left out.</p>
 <p>The variable <code>time</code> must be sorted so that summation over occurrences <span class="math">\(t\)</span> for both the predators data set and the caught prey species data set will contain an equal number of time periods <span class="math">\(T\)</span>, and the <code>time</code>s of such a summed dataframe will match. That is, at least, you should get</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">all.equal</span>(<span class="kw">unique</span>(Traps[,<span class="st">'time'</span>]), <span class="kw">unique</span>(Spiders[,<span class="st">'time'</span>]))</code></pre>
@@ -98,6 +98,34 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>Given two dataframes formatted as described above, one representing the predators’ eatings and one representing the availability of the prey species of interest in the habitat, fit our methods by calling</p>
 <pre class="sourceCode r"><code class="sourceCode r">prefs &lt;-<span class="st"> </span><span class="kw">predPref</span>(Spiders, Traps, <span class="dt">hypotheses=</span><span class="kw">c</span>(<span class="dt">null=</span><span class="st">&quot;C&quot;</span>, <span class="dt">alt=</span><span class="st">&quot;Cst&quot;</span>))</code></pre>
 <p>An <code>S3</code> summary method is available to summarize, with a user defined significance level, the results of the previous call.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(prefs)</code></pre>
+<pre><code>## 
+## Predator Preferences Model:
+## 
+## Hypotheses:
+##  H0 = c 
+##  H1 = Cst 
+## Likelihood Ratio Test:
+##  -2*(llH0-llH1) = 8.01092 on 14 degrees of freedom
+##  p-value = 0.8887563 
+## Parameter Estimates:
+##           estimate Std. Err.
+## c_1        0.48686    0.0135
+## gamma_1_1  1.30843    0.1270
+## gamma_2_1  1.33900    0.0913
+## gamma_3_1  1.38995    0.0763
+## gamma_4_1  1.35429    0.0655
+## gamma_5_1  1.36957    0.0505
+## gamma_1_2  1.61414    0.1413
+## gamma_2_2  1.47351    0.0959
+## gamma_3_2  1.47963    0.0788
+## gamma_4_2  1.40626    0.0668
+## gamma_5_2  1.50758    0.0531
+## gamma_1_3  1.34511    0.1288
+## gamma_2_3  1.46740    0.0957
+## gamma_3_3  1.39810    0.0766
+## gamma_4_3  1.38486    0.0663
+## gamma_5_3  1.37306    0.0505</code></pre>
 <div class="references">
 <h2 id="references" class="unnumbered">References</h2>
 <p>Dempster, Arthur P, Nan M Laird, and Donald B Rubin. 1977. “Maximum Likelihood from Incomplete Data via the EM Algorithm.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 39 (1). JSTOR: 1–38.</p>

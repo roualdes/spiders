@@ -9,8 +9,6 @@
 ##' @export
 summary.predPref <- function(object, ..., sig.level=0.05) {
     out <- list()
-    ## names(out) <- c('loglikH0', 'loglikH1', 'p.value',
-    ##                 'estimates', 'df', 'Lambda', 'hypotheses')
     if ( object$LRT$p.value > sig.level ) {
         out[['estimates']] <- object$null
     } else {
@@ -33,7 +31,13 @@ summary.predPref <- function(object, ..., sig.level=0.05) {
     out
 }
 
-print.summary.predPref <- function(x) {
+##' @title predPref summary print
+##'
+##' @description printing method for the summary function for class predPref
+##'
+##' @param x object of class predPref
+##' @param ... additional arguments
+print.summary.predPref <- function(x, ...) {
     cat("\nPredator Preferences Model:\n\n")
     cat("Hypotheses:\n\tH0 =", x$hypotheses[1], "\n\tH1 =", x$hypotheses[2], "\n")
     cat("Likelihood Ratio Test:\n\t-2*(llH0-llH1) =", x$Lambda, "on", x$df, "degrees of freedom\n")
@@ -67,6 +71,6 @@ print.summary.predPref <- function(x) {
 
     colnames(est) <- c('estimate', 'Std. Err.')
     rownames(est) <- rn
-    printCoefmat(est)
+    printCoefmat(est, ...)
     invisible(x)
 }
