@@ -68,4 +68,5 @@ print.summary.predPref <- function(x) {
     colnames(est) <- c('estimate', 'Std. Err.')
     rownames(est) <- rn
     printCoefmat(est)
+    invisible(x)
 }

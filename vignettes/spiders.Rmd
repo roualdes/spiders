@@ -76,4 +76,8 @@ prefs <- predPref(Spiders, Traps, hypotheses=c(null="C", alt="Cst"))
 
 An `S3` summary method is available to summarize, with a user defined significance level, the results of the previous call.
 
+```{r}
+summary(prefs)
+```
+
 ## References
