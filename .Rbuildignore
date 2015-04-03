@@ -17,11 +17,11 @@ figure$
 xlsx$
 csv$
 play\.R
-notes\.org
 Rhistory$
 .*\-Ex\.R$
 paper
 simulations
+analysis
 
 ### OS Files ###
 DS_Store$

@@ -16,18 +16,15 @@ vignettes/*.snm
 vignettes/*.toc
 vignettes/*.vrb
 vignettes/figure
-vignettes/spider.xlsx
-vignettes/trap.csv
-vignettes/spider.csv
 vignettes/_region_.tex
+vignettes/auto
 play.R
 simulations/job*
 simulations/play.R
-paper
+analysis
 
 .Rhistory
 *-Ex.R
-
 ### OS Files ###
 .DS_Store
 .DS_Store?
@@ -36,3 +33,4 @@ paper
 .Trashes
 ehthumbs.db
 Thumbs.db
+inst/doc

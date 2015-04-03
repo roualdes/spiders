@@ -1,0 +1,79 @@
+---
+title: "Predator Preferences Model"
+author: "Edward A. Roualdes"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: refs.bib
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Model
+
+Strauss's statistic $L_{st}$ [@Strauss:1979] is the difference between $r_{st}$ the proportion of prey species $s$ found in the gut of a predator during occurrence $t$ and $p_{st}$ the proportion of prey species $s$ found in the habitat of said predator during occurrence $t$.  When the statistic $L_{st} := r_{st} - p_{st}$ is equal to zero we say the predator ate prey species $s$ randomly during time $t$.  A positive difference, $L_{st} > 0$, indicates preferential eating of prey species $s$, and negative values indicate aversion to prey species $s$ at time $t$.  We build upon Strauss's $L$ with the following framework.
+
+Let $X_{jst} \sim \mathcal{P}(\lambda_{st})$ denote the number of prey species $s$ found in the gut of predator $j$ during occurrence $t$; $j \in \{1, \ldots, J\}, s \in \{1, \ldots, S\}, t \in \{1, \ldots, T\}$.  Let $Y_{ist} \sim \mathcal{P}(\gamma_{st})$ will denote the number of prey species $s$ found in trap $i$, $i \in \{1, \ldots, I \}$, hypothesized to represent the habitat of predator $j$, during time occurrence $t$.  From the observations $x_{jst}$ and $y_{ist}$ we are able to derive similar conclusions to that of Strauss's $L$, but now more efficiently taking into account multiple prey species across an array of time points.  
+
+The relative rate with which a predator ate species $s$ during time $t$ to the rate at which prey species $s$ was available in the habitat during time $t$ is represented as the fraction of the respecitve parameters, $c_{st} = \lambda_{st} / \gamma_{st}$.  The quantity $c_{st}$ is then our analogue to Strauss's statistic $L$.  In this new framework, random feeding is now represented by $c_{st} = 1$, implying that the prey species $s$ during time $t$ was eaten at the same rate that it is inherently available in the habitat.  Values of $c_{st} > 1$ indicate preferential eating of that prey species during that time, and values less than $1$ indicate avoidance.  
+
+One hypotheses $c_{st}$ to naturally vary by prey species, time, neither, or both.  We depict these five hypotheses in the following list.  Please see our paper {CITEUS} for further details about the interpretations.
+
+1. $c_{st} = 1$
+2. $c_{st} = c$
+3. $c_{st} = c_s$
+4. $c_{st} = c_t$
+5. $c_{st} = c_{st}$
+
+These five cases are built into the null hypothesis $H_0: \boldsymbol{\lambda} = \boldsymbol{c} \boldsymbol{\gamma}$, where $\boldsymbol{c}$ takes on any of the $1. - 4.$ values of $c_{st}$.  Since the $5$ potential hypotheses are nested, $H_0$ can be contrasted against an alternative that contains the null as a special case.  For instance, one could test $$H_0: \lambda_t = c_t \gamma_t, \forall t \quad \text{ verse } \quad H_1: \lambda_{st} = c_{st} \gamma_{st}.$$
+
+A likelihood ratio test statistic [@Wilks:1938] evaluates a given null and alternative hypothesis $$\Lambda := -2 \log{ \frac{ \sup L(\theta_0|X,Y)}{ \sup L(\theta_1|X,Y)}},$$ where $\theta_0, \theta_1$ represent the parameters under the null and alternative hypotheses, respectively.  The test statistic $\Lambda \dot{\sim} \chi^2_{\rho}$, where $\rho$ represent the number of free parameters, and the null hypothesis is rejected when $P(\chi^2_{\rho} > \Lambda) < \alpha$.
+
+## Non-Count Gut Data
+
+With smaller animals it is not always possible to observe a count of prey species eaten by a predator species.  Instead, a binary response of whether or not DNA of said prey species exists in the gut of the predator is observed, for instance via a molecular gut content analysis.  In this case, we can treat the count of eaten prey species as missing and maximize the likelihood via the expectation-maximization (EM) algorithm [@Dempster:1977].  
+
+We model what information we do observe.  Denote this binary response by $Z_{jst} = 1(X_{jst} > 0)$, which takes on the value $1$ if the $j^{th}$ predator ate prey species $s$ in time $t$ and $0$ otherwise.  Under this new set up $\Lambda$ is calculated with the observed data likelihood, $L(\theta|Z,Y)$.  
+
+## spiders Package
+
+Our package assumes two data sets, one for the predators (and what they ate) and one for the caught prey species.  Each data set will include a new observation per row.  The columns names of both data sets should match.  One column, named `time`, should include the time/date for which each observation was recorded.  The other columns should be named for the prey species of interest, e.g.
+
+```{r, echo=FALSE, eval=TRUE}
+suppressMessages(library(spiders))
+Predators <- 5*c(11,22,33,44,77)
+Traps <- Predators
+PreySpecies <- 3
+Times <- 5
+ST <- Times*PreySpecies
+g <- matrix(sqrt(2), nrow=Times, ncol=PreySpecies)     # gamma
+l <- matrix(0.5*sqrt(2), nrow=Times, ncol=PreySpecies) # c
+fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g, EM=F)
+Traps <- fdata$caught
+Spiders <- fdata$eaten
+```
+
+```{r}
+head(Traps)
+```
+
+The column `adj` is there to account for unequal trap schedules.  Consider the situtation where the traps (catching prey species) were left out for a differing length of time within occurrence $t$, e.g.\ trap $i$ in month $t$ was left out for $6$ days, but trap $i'$ in month $t$ was left out for $3$ days.  We expect to catch an unequal number of prey in each trap simply because one trap was left out for a longer time within month $t$.  The user can specify this by creating a column, which has to be named `adj`, that contains the number of units of time for which each trap was left out.  
+
+The variable `time` must be sorted so that summation over occurrences $t$ for both the predators data set and the caught prey species data set will contain an equal number of time periods $T$, and the `time`s of such a summed dataframe will match.  That is, at least, you should get
+
+```{r}
+all.equal(unique(Traps[,'time']), unique(Spiders[,'time']))
+```
+
+Our package does not check for matching units of time, but it does check for an equal number of units of time across data sets.
+
+Given two dataframes formatted as described above, one representing the predators' eatings and one representing the availability of the prey species of interest in the habitat, fit our methods by calling
+
+```{r}
+prefs <- predPref(Spiders, Traps, hypotheses=c(null="C", alt="Cst"))
+```
+
+An `S3` summary method is available to summarize, with a user defined significance level, the results of the previous call.
+
+## References
