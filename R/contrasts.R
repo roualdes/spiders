@@ -33,13 +33,14 @@
 ##'
 ##' Of the two estimated hypotheses in the underlying call
 ##' to \code{\link{predPref}}, the linear transformation b is applied to the
-##' hypothesis that is determined by the choice of conf.level.  
+##' hypothesis that is determined by the choice of \code{sig.level}.
 ##'
 ##' @param x a predPref object as fit by the eponymous function
 ##' @param b a vector to linearly transform c_st
 ##' @param mu a number to test the linear contrast against in the null
 ##' @param alternative string to specify alternative hypothesis
 ##' @param conf.level confidence level of the interval
+##' @param sig.level determines null/alternative hypothesis value of c_st from predPref
 ##' 
 ##' @examples
 ##' # set parameters
@@ -49,15 +50,16 @@
 ##' g <- matrix(sqrt(2), nrow=Times, ncol=PreySpecies)     # gamma
 ##' l <- matrix(seq(0.4,1.8,length.out=5)*sqrt(2), nrow=Times, ncol=PreySpecies) # ct
 ##'
-##' # fit model
+##' # fit model and contrast
 ##' \dontrun{
-##' fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g, EM=FALSE)
+##' set.seed(0)
+##' fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g, EM=FALSE) # p-value=0.305
 ##' pref <- predPref(fdata$eaten, fdata$caught, hypotheses=c('ct', 'cst'))
-##' testC(pref, b = c(0,1, -1, 0, 0))
+##' testC(pref, b = c(0,1, -1, 0, 0)) # p-value > sig.level => ct is used, not cst
 ##' }
 ##' 
 ##' @export
-testC <- function(x, b, mu = 0, alternative = c("two.sided", "less", "greater"), conf.level = 0.95) {
+testC <- function(x, b, mu = 0, alternative = c("two.sided", "less", "greater"), conf.level = 0.95, sig.level=0.05) {
     
     ## some check on input; stolen from t.test
     if (!missing(mu) && (length(mu) != 1 || is.na(mu))) 
@@ -67,8 +69,7 @@ testC <- function(x, b, mu = 0, alternative = c("two.sided", "less", "greater"),
         stop("'conf.level' must be a single number between 0 and 1")
 
     ## get appropriate estimates
-    alpha <- 1-conf.level
-    if ( x$LRT$p.value < alpha ) {
+    if ( x$LRT$p.value < sig.level ) {
             C <- matrix(x$alt$c)
             lenC <- nrow(C); lc <- seq_len(lenC)
             varC <- x$alt$var[lc,lc]
@@ -94,6 +95,7 @@ testC <- function(x, b, mu = 0, alternative = c("two.sided", "less", "greater"),
     stdev <- sqrt(scale)
 
     ## test and confidence interval
+    alpha <- 1-conf.level
     a2 <- alpha/2
     alternative <- match.arg(alternative)
     if ( alternative == 'two.sided' ) {
