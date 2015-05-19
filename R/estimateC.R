@@ -73,12 +73,17 @@ estC <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         Info[1,-1] <- unlist(-J/(expl-1) + l*tmp) # fill in off diags; upper tri only
         lowmat <- lower.tri(Info)
         Info[lowmat] <- t(Info)[lowmat]      # make symmetric from upper tri
+        tryCatch(var <- solve(Info),
+                 error=function(e) {
+                     print("Variances not calculated; system is singular.")
+                     var <- NULL
+                 })
 
         ## calc log-lik with est params
         loglik <- llEM(Xdst, Ydst, NA, gammaHat, J, I, as.numeric(cHat))
         
         list('c' = cHat, 'gamma' = as.matrix(gammaHat), 'em_iters' = em_iter,
-             'll' = loglik, 'var' = solve(Info))
+             'll' = loglik, 'var' = var)
     } else {
         if (BALANCED) {
 

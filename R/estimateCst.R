@@ -19,12 +19,21 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
     ST <- S*T; st <- seq_len(ST)
 
     if (EM) {
+        ## avoiding estimated zeros
+        pen <- matrix(0, T, S)
+        zos <- which(Xdst==0, arr.ind=TRUE)
+        if (length(zos)>0) {
+            pen[zos] <- 1
+            pen[zos] <- pen[zos]/(J[zos[,1]]+1) # add imaginary observation
+            pen <- 0.001*pen                    # weight it
+        }
+        
         ## initialize some values
         em_iter <- 1
         ## cHat <- cHat_old <- matrix(0.5, ncol=S, nrow=T) # matrix(runif(ST), nrow=T)
         init <- est1(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED)
         gammaHat <- gammaHat_old <- init$gamma
-        cHat <- cHat_old <- Xdst/(J*gammaHat)
+        cHat <- cHat_old <- Xdst/(J*gammaHat) + pen
         
         ## iterate EM
         while ( TRUE ) {
@@ -34,7 +43,7 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             EX <- lambda/(1-elambda)
 
             ## convenience
-            ZEX <- Xdst*EX
+            ZEX <- Xdst*EX + pen      # pull ZEX away from zero
 
             ## iterate only once simultaneous eqs
             gammaHat <-  (ZEX + Ydst)/(J*cHat + I)                 
@@ -67,7 +76,8 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         Info <- diag(2*ST)             # initialize information matrix
         g2 <- gammaHat^2               # gamma^2
         l <- cHat*gammaHat
-        expl <- exp(l); tmp <- J*expl/(expl-1)^2 # a common term
+        expl <- exp(l)
+        tmp <- J*expl/(expl-1)^2 # a common term
         
         ## fill in second derivatives
         diag(Info)[-st] <- unlist(Ydst/g2 + cHat^2*tmp) # gamma
@@ -75,13 +85,18 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         Info[st,-st] <- unlist(-J/(expl-1) + l*tmp)     # fill off diags; upper tri
         lowmat <- lower.tri(Info)
         Info[lowmat] <- t(Info)[lowmat] # make symmetric from upper tri
+        tryCatch(var <- solve(Info),
+                 error=function(e) {
+                     print("Variances not calculated; system is singular.")
+                     var <- NULL
+                 })
 
         ## calc loglik wit est params
         cv <- unlist(cHat)
         loglik <- llEM(Xdst, Ydst, NA, gammaHat, J, I, cv)
         
         list('gamma' = as.matrix(gammaHat), 'c' = cv,
-             'em_iters' = em_iter, 'll' = loglik, 'var' = solve(Info))
+             'em_iters' = em_iter, 'll' = loglik, 'var' = var)
 
     } else {
         ## some numbers

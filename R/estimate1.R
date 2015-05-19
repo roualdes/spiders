@@ -50,12 +50,17 @@ est1 <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         ## calc standard error with est params
         egamma <- exp(gammaHat)
         Info <- diag(unlist(Ydst/gammaHat^2 + J*egamma/(egamma - 1)^2))
+        tryCatch(var <- solve(Info),
+                 error=function(e) {
+                     print("Variances not calculated; system is singular.")
+                     var <- NULL
+                 })
         
         ## calc loglik with est params
         loglik <- llEM(Xdst, Ydst, gammaHat, gammaHat, J, I)
         
         list('lambda' = as.matrix(gammaHat), 'gamma' = as.matrix(gammaHat),
-             'll' = loglik, 'var' = solve(Info))
+             'll' = loglik, 'var' = var)
         
     } else {
         

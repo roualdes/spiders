@@ -23,7 +23,9 @@ calcHypotheses <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
     alt <- fns[[hyp[2]]](Xdst, Ydst, J, I, EM, em_maxiter, balanced)        
 
     ## calculate degrees of freedom
-    S <- ncol(Xdst); T <- nrow(Xdst); ST <- S*T
+    S <- ncol(Xdst)
+    T <- nrow(Xdst)
+    ST <- S*T
     nullDF <- length(null[['c']])
     altDF <- ifelse(is.null(alt[['c']]), ST, length(alt[['c']]))
     df <- altDF - nullDF
