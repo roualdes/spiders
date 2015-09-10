@@ -22,6 +22,7 @@ play.R
 simulations/job*
 simulations/play.R
 analysis
+presentation
 
 .Rhistory
 *-Ex.R
