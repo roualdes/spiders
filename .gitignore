@@ -23,7 +23,11 @@ play.R
 simulations/job*
 simulations/play.R
 analysis
+<<<<<<< HEAD
 main_submit.pdf
+=======
+presentation
+>>>>>>> 5dde732694818be9b445d6b83cd7e04da6a5da5d
 
 .Rhistory
 *-Ex.R
