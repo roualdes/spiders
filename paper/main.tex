@@ -3,7 +3,7 @@
 \begin{document}
 \title{Formal Modelling of Predator Preferences using Molecular Gut-Content Analysis}
 \author{Edward A. Roualdes \and Simon J. Bonner \and Thomas D. Whitney \and James D. Harwood}
-\institute{E.A. Roualdes \and S. J. Bonner
+\institute{E. A. Roualdes \and S. J. Bonner
         \at Department of Statistics, University of Kentucky, Rm.~311 Multidisciplinary Science Building, 725 Rose Street, Lexington, KY 40536-0082, \\\email{edward.roualdes@uky.edu} \and
         T.D. Whitney 
         \at Department of Entomology, University of Kentucky, Lexington, KY 40546, USA \emph{Present address: Warnell School of Forestry and Natural Resources, University of Georgia, Athens, GA 30602, USA}
@@ -18,6 +18,10 @@
   The literature on modelling a predator's prey selection describes many intuitive indices, few of which have both reasonable statistical justification and tractable asymptotic properties.  Here, we provide a simple model that meets both of these criteria, while extending previous work to include an array of data from multiple species and time points.  Further, we apply the expectation-maximisation algorithm to compute estimates if exact counts of the number of prey species eaten in a particular time period are not observed.  We conduct a simulation study to demonstrate the accuracy of our method, and illustrate the utility of the approach for field analysis of predation using a real data set, collected on wolf spiders using molecular gut-content analysis.
   \keywords{electivity \and expectation-maximization \and predator-prey interactions \and generalist predators \and food web analysis}
 \end{abstract}
+
+\begin{acknowledgements}
+The information reported in this paper (No.\ $15-08-008$) is part of a project of the Kentucky Agricultural Experiment Station and is published with the approval of the Director.  Support for this research was provided by the University of Kentucky Agricultural Experiment Station State Project KY008055 and the National Science Foundation Graduate Research Fellowship Program.  
+\end{acknowledgements}
 
 % tweet: Formal modelling of a predator's prey selection across multiple species and time points using molecular gut-content analysis.
 
@@ -210,7 +214,7 @@ We consider results when the correct model is fit to the simulated data.  Figure
 \begin{figure}
   \centering
   \includegraphics[scale=0.5]{bp}
-  \caption{Shown are all $500$ estimates, cent-red at the true parameter values, from fitting the true model to the data generated from models $c_s,c_t$ with sample sizes small and medium, respectively.}
+  \caption{Shown are all $500$ estimates, centred at the true parameter values, from fitting the true model to the data generated from models $c_s,c_t$ with sample sizes small and medium, respectively.}
   \label{fig:bp}
 \end{figure}
 
@@ -312,11 +316,6 @@ Throughout this paper we assume the complete data were generated from underlying
 The methods we have presented offer ecologists a formal statistical framework to model and test predator feeding preferences across an array of time points and prey species. Building from intuitive assumptions, we have developed methodologies for analyzing counts of prey items consumed and have extended these methods for analyzing simple presence/absence data. We have provided computationally efficient methods for fitting these models using the EM algorithm and developed powerful tests for a hierarchy of hypotheses based on the likelihood ratio. We are not aware of previous methods that have offered such abilities. These methods are available to researchers via the R package spiders which is available at \url{http://cran.r-project.org/web/packages/spiders/index.html}.
 
 \nocite{Wickham:2011a,Wickham:2011,Bischl:2014,Roualdes:2014}
-
-\begin{acknowledgements}
-The information reported in this paper (No.\ $15-08-008$) is part of a project of the Kentucky Agricultural Experiment Station and is published with the approval of the Director.  Support for this research was provided by the University of Kentucky Agricultural Experiment Station State Project KY008055 and the National Science Foundation Graduate Research Fellowship Program.  
-\end{acknowledgements}
-
 \bibliographystyle{spbasic}
 \bibliography{refs}
 \end{document}

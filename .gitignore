@@ -10,6 +10,7 @@
 *.ttt
 *.aaa
 *.csv
+*.txt
 vignettes/cache
 vignettes/*.nav
 vignettes/*.snm
@@ -22,6 +23,7 @@ play.R
 simulations/job*
 simulations/play.R
 analysis
+main_submit.pdf
 
 .Rhistory
 *-Ex.R
