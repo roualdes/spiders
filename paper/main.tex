@@ -45,9 +45,9 @@ This paper is organised as follows.  Section~\ref{sec:methods} describes our sta
 
 We assume that samples of both the predators and prey are captured from the study area on $T$ occasions.  Depending on the species involved and the design of the study the predators and prey may be sampled in the same way or using different methods.  In the spider experiment described in Section~\ref{sec:data}, for example, prey are captured using pitfall traps that are dispersed throughout the study area whereas the predators (spiders) were captured by hand.  Predators and prey species are collected and counted at each time period.  We denote the number of predators and the number of traps in each time period $t \in \{1, \ldots, T\}$ by $J_t$ and $I_t$, respectively.  Prey species will be indexed by $s \in \{1, \ldots, S \}$.  Let $X_{jst}$ represent the number of prey species $s$ that predator $j$ ate during period $t$, where $j \in \{1, \ldots, J_t\}$.  Let $Y_{ist}$ represent the number of prey species $s$ found in trap $i$ during period $t$, $i \in \{1, \ldots, I_t\}$.
 
-The number of prey species $s$ that predator $j$ ate during period $t$ is assumed to follow a Poisson distribution with rate parameter $\lambda_{st}$, $X_{jst} \iid \mathcal{P}(\lambda_{st})$.  The parameter $\lambda_{st}$ represents the rate at which the predator ate prey species $s$ during time period $t$.  The number of prey species $s$ found in trap $i$ during period $t$ is assumed to follow a Poisson distribution with rate parameter $\gamma_{st}$.  The use of Poisson distributions make the following implicit assumptions: $1)$ traps independently catch the prey species of interest, $2)$ predators eat independently of each other.  
+The number of prey species $s$ that predator $j$ ate during period $t$ is assumed to follow a Poisson distribution with rate parameter $\lambda_{st}$, $X_{jst} \iid \mathcal{P}(\lambda_{st})$.  The parameter $\lambda_{st}$ represents the rate at which the predator ate prey species $s$ during time period $t$.  The number of prey species $s$ found in trap $i$ during period $t$ is assumed to follow a Poisson distribution with rate parameter $\gamma_{st}$, $Y_{ist} \iid \mathcal{P}(\gamma_{st})$.  The use of Poisson distributions make the following implicit assumptions: $1)$ traps independently catch the prey species of interest, $2)$ predators eat independently of each other.  
 
-By modelling $\lambda_{st}, \gamma_{st}$ we are able to test claims about a predator's eating preferences.  Formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda} = (\lambda_{11}, \ldots, \lambda_{ST})^t$ and $\boldsymbol{\gamma} = (\gamma_{11}, \ldots, \gamma_{ST})^t$ offer insights to the relative rates at which predators eat particular prey species.  We consider five variations on the relative magnitude of $c_{st} = \lambda_{st}/\gamma_{st}$.  These five hypotheses each allow $c_{st}$ to vary by time, prey species, both, or neither.
+By modelling $\lambda_{st}, \gamma_{st}$ we are able to test claims about a predator's eating preferences.  Formal statistical statements about the relative magnitudes of the parameters $\boldsymbol{\lambda} = (\lambda_{11}, \ldots, \lambda_{ST})^t$ and $\boldsymbol{\gamma} = (\gamma_{11}, \ldots, \gamma_{ST})^t$ offer insights to the relative rates at which predators eat particular prey species.  We consider four variations on the relative magnitude of $c_{st} = \lambda_{st}/\gamma_{st}$.  These four hypotheses each allow $c_{st}$ to vary by time, prey species, both, or neither.
 
 \begin{enumerate}
 \item $c_{st} = c$
@@ -65,7 +65,7 @@ By modelling $\lambda_{st}, \gamma_{st}$ we are able to test claims about a pred
   \label{fig:hier}
 \end{figure}
 
-Because the five hypotheses are nested, a natural testing order is suggested in Figure~\ref{fig:hier}.  For instance, suppose interest lies in the predator's dietary preferences with respect to prey species $s_1$ and $s_2$ across three time periods.  The hypothesis that the predator has the same preference for the two prey species can be tested with
+Because the four hypotheses are nested, a natural testing order is suggested in Figure~\ref{fig:hier}.  For instance, suppose interest lies in the predator's dietary preferences with respect to prey species $s_1$ and $s_2$ across three time periods.  The hypothesis that the predator has the same preference for the two prey species can be tested with
 \begin{align*}
   H_0&: \lambda_t = c_t \gamma_t, \forall t \\  
   H_1&: \lambda_{st} = c_{st}\gamma_{st}.
@@ -88,7 +88,7 @@ The likelihood function that allows for estimation of these parameters is as fol
  L( \boldsymbol{\lambda}, \boldsymbol{\gamma} | x_{jst}, y_{ist}) = \prod_{t = 1}^{T} \prod_{s=1}^S \left\{ \prod_{j=1}^{J_t} f_X(x_{jst}|\boldsymbol{\lambda}) \prod_{i=1}^{I_t} f_Y(y_{ist} | \boldsymbol{\gamma}) \right\}.
 \end{equation}
 
-\noindent Writing all five hypotheses as $\lambda_{st} = c_{st}\gamma_{st}$, we can, in the simplest cases, find analytic solutions for the maximum likelihood estimates (MLEs) of $c_{st}$, $\gamma_{st}$, and by invariance $\lambda_{st}$.  Such solutions exist for the simplest model, $c_{st}=c$, provided that the data are balanced so that $J_t=J$ and $I_t=I$.  The solutions are
+\noindent Writing all four hypotheses as $\lambda_{st} = c_{st}\gamma_{st}$, we can, in the simplest cases, find analytic solutions for the maximum likelihood estimates (MLEs) of $c_{st}$, $\gamma_{st}$, and by invariance $\lambda_{st}$.  Such solutions exist for the simplest model, $c_{st}=c$, provided that the data are balanced so that $J_t=J$ and $I_t=I$.  The solutions are
 \begin{equation*}
   % \hat{\gamma}_{st} = \frac{X_{\cdot st} + Y_{\cdot st}}{J_t + I_t}, \quad 
   % \text{ and } \quad 
