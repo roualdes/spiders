@@ -6,13 +6,12 @@
 
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm, semithick]
 
-    \node[state] (A)                    {$1$};
-    \node[state] (B) [below of=A]       {$c$};
+    \node[state] (B)        {$c$};
     \node[state] (C) [below left of=B]  {$c_s$};
     \node[state] (D) [below right of=B] {$c_t$};
     \node[state] (E) [below left of=D]  {$c_{st}$};
 
-    \path       (B) edge node {} (A)
+    \path
     (C) edge node {} (B)
     (D) edge node {} (B)
     (E) edge node {} (C)

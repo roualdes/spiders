@@ -1,0 +1,74 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=2.0cm]{geometry}
+
+\begin{document}
+\begin{center}
+  \begin{Large}
+    \textbf{Response to Reviews of EEST-15-00056:}\\
+    \textsc{Formal Modelling of Predator Preferences using Molecular Gut-Content
+      Analysis}
+  \end{Large}
+\end{center}
+
+\section{Associate Editor:} 
+
+\begin{enumerate}
+\item \textit{ ... called the probability mass function.}
+
+Thank you for your attention to detail.  Changes throughout the manuscript have been made accordingly.
+
+
+\end{enumerate}
+\section{Reviewer \#1:}
+\begin{enumerate}
+\item  \textit{ ... commend the authors on an excellent contribution.}
+
+  Thank you.
+
+\end{enumerate}
+
+\section{Reviewer \#2:}
+
+\subsection{Major Comments}
+
+\begin{enumerate}
+\item \textit{ The method estimates the ratio between lambda and gamma, not lambda and gamma themselves. The method does not estimate true abundances of preys, and I am not sure why without estimating the true abundance, why the ratio can be estimated so accurately as shown in the Figures? Could you explain some essence (trick?) of the success?}
+
+% In fact, we estimate gamma and the ratio of lambda and gamma, denoted by $c$, directly.  Estimates of lambda are found via these two quantities and the invariance property of maximum likelihood.  In the case of fully observed data, there is no trick.  We use maximum likelihood methods to estimate parameters of interest, as stated in line 121.  In the case of unobserved count data, this EM algorithm provides us a means to estimate the parameters of interest.  When unobserved counts are present we discuss times at which the EM algorithm will fail.  Though, this discussion itself has been reduced as per Minor Point 4.
+
+This is an important point that we overlooked in our initial submission. We had considered $\gamma_{st}$ as a measure of absolute abundance of prey species $s$ on sampling occasion $t$, and you are absolutely correct that this is not the case. Instead, it represents the mean number of individuals from this prey species caught in the traps. To relate this to absolute abundance would require extra information on the efficiency of the traps that could be obtained from a mark-recapture study, for example, but this information is not available for our particular study and probably not available for many other studies either.
+
+However, we can interpret $\gamma_{st}$ as a relative measure of abundance under some assumptions so that changes in $\gamma_{s_1t}/\gamma_{s_2t}$ represent changes in the relative abundance of species $s_1$ and $s_2$. This is the case if the capture efficiency of the traps is assumed to be constant for all species over all occasions. Under weaker assumptions we can interpret $\gamma_{st}$ as a relative measure of the availability of prey in the environment, rather than abundance, and $c_{st}$ as a relative measure of preference given abundance. We might assume that trap efficiency for a prey species depends on how much of the time individuals in that species are trappable. In this case, trappability might be interpreted as availability to the prey. In our application, prey species that are actively foraging in the leaf litter for longer periods may have higher trappability and also be more available to the spiders. In this case, we can interpret $\gamma_{s_1t}/\gamma_{s_2t}$ as a relative measure of the availability of prey and $c_{st}$ as a relative measure of preference given availability. 
+
+With respect to the figures, the apparent trick is simply a result of our incorrect interpretation of $\gamma_{st}$. We generated data for the simulations by simulating the number of individuals from each prey species caught in traps given $\gamma_{st}$. Our model is able to estimate the ratio of $\lambda_{st}$ and $\gamma_{st}$ accurately, but it was incorrect of us to interpret this as estimating absolute abundance accurately. 
+
+\item \textit{ The ratio is between the preference observed in gut-content and captured preys in the traps produced by human. The denominator is not the true abundance, but expresses how much that prey species are easily captured by that trapping system. What are ecological implications of the ratio between observed gut contents and the "efficiency" of human-produced traps? Of course, this could be unavoidable for population dynamics of animal species and for food-web studies, and I think that a few sentences about this point should be added as far as a journal is not specified to animal ecology.}
+
+Following from our response to the last point, we have changed the text so it is clear that $\gamma_{st}$ is a measure of relative, not absolute, abundance. We have also added two paragraphs to the Discussion commenting on the issues of trap efficiency and the assumptions needed to interpret $\gamma_{st}$ as a relative measure of abundance.  
+
+The second paragraph we have added to the Discussion also introduces a new parameterization that helps to address these concerns. The new parametrization applies when the efficiency of traps cannot be assumed constant and explicitly separates changes in efficiency over time. Appendix A provides the mathematical details behind the new paramterization.
+
+Recognizing $\gamma_{st}$ as a measure of relative abundance also led us to remove the first of our hypotheses about the way in which $c_{st}$ might vary, namely $c_{st} = 1$. This leaves only four hypotheses on the way $c_{st}$ might change. As in our previous response, the relationship between the samples collected from the predators and the traps depends on the traps' efficiency and may be affected by, among other things, how big the traps are.  Suppose that the experiment is repeated on two occasions with exactly the same properties that the traps double in size on the second occasion.  If $c_{st}=1$ on the first occasion then you would expect $c_{st}=.5$ on the second occasion, but the biological process has not changed.  This means that the hypothesis $c_{st} = 1$ does not have the interpretation in terms of absolute abundance that we previously thought. 
+
+\end{enumerate}
+
+\subsection{Minor Points:}
+
+\begin{enumerate}
+\item  \textit{$Y_{jst} => Y_{ist}$}
+  Change made.
+
+\item  \textit{Fig. 8 shows the total numbers of the preys in the 32 traps. I think the mean (divided by 32) is better because the ratio "c" uses gamma that are close to this mean.} 
+  
+  Means are now presented instead of total counts.  This was not as simple as divide by the number of traps, since traps were left out for different numbers of days in different months.  Nonetheless, this was a good point.
+
+\item  \textit{In Nov 2011, the MS says there is no significant difference between Collembola and Diptera, but the former looks 1.8-9 (Fig. 10) while the latter looks 3.9-4.0 (Fig. 11). There seems to be a big difference. Isn't it really significant? If not significant, could you explain why?}
+
+  We doubled checked the calculations and stand by our results.  The correct intervals for November 2011 are (2.7, 7.1) for Diptera and (2.0, 3.9) for Collembola.  The overlap of the intervals is due to large variation in the point estimates, and hence we fail to see the difference between the two point estimates.
+
+\item  \textit{... such long descriptions are not needed.}
+
+A paragraph was removed, namely that which was the last paragraph in Section 3 Simulation Study.
+\end{enumerate}
+\end{document}

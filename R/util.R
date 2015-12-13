@@ -13,13 +13,6 @@ getTimeCounts <- function(data, vars, by) {
     ddply(data, by, colwise(sum, vars))
 }
 
-##' count number of spiders or traps in each unit of time
-##'
-##' @param data a dataframe
-getUnitCounts <- function(data) {
-    ddply(data, .(time), summarize, total=length(time))$total
-}
-
 ##' checks convergence of the parameters for the estimation functions
 ##'
 ##' @param theta an object, convertible to a matrix, of current parameter values
