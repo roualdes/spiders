@@ -10,7 +10,7 @@
 %%BoundingBox: 0 0 720 720
 %%EndComments
 %%BeginProlog
-/bp  { gs gs } def
+/bp  { gs sRGB gs } def
 % begin .ps.prolog
 /gs  { gsave } bind def
 /gr  { grestore } bind def
@@ -39,6 +39,21 @@
 /rgb { setrgbcolor } bind def
 /s   { scalefont setfont } bind def
 % end   .ps.prolog
+/sRGB { [ /CIEBasedABC
+          << /DecodeLMN
+               [ { dup 0.03928 le
+                        {12.92321 div}
+                        {0.055 add 1.055 div 2.4 exp }
+                     ifelse
+                 } bind dup dup
+               ]
+             /MatrixLMN [0.412457 0.212673 0.019334
+                         0.357576 0.715152 0.119192
+                         0.180437 0.072175 0.950301]
+             /WhitePoint [0.9505 1.0 1.0890]
+           >>
+         ] setcolorspace } bind def
+/srgb { setcolor } bind def
 %%IncludeResource: font Helvetica
 /Helvetica findfont
 dup length dict begin
@@ -84,11 +99,11 @@ bp
 0.00 0.00 720.00 720.00 cl
 0.00 0.00 720.00 720.00 cl
 /Font1 findfont 24 s
-0 setgray
+0 0 0 srgb
 388.07 12.00 (Time \(2011 - 2013\)) .5 0 t
 0.00 0.00 720.00 720.00 cl
 /Font1 findfont 24 s
-0 setgray
+0 0 0 srgb
 30.81 364.62 (c) 0 90 t
 22.51 364.99 (^) 0 90 t
 /Font1 findfont 17 s
@@ -100,7 +115,7 @@ bp
 85.16 69.47 690.99 684.99 cl
 0.00 0.00 720.00 720.00 cl
 0.00 0.00 720.00 720.00 cl
-0 setgray
+0 0 0 srgb
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -136,7 +151,7 @@ np
 o
 0.00 0.00 720.00 720.00 cl
 0.00 0.00 720.00 720.00 cl
-0 setgray
+0 0 0 srgb
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -170,7 +185,7 @@ o
 73.82 647.15 (20) 1 0 t
 0.00 0.00 720.00 720.00 cl
 0.00 0.00 720.00 720.00 cl
-0 setgray
+0 0 0 srgb
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -236,7 +251,7 @@ np
 o
 0.00 0.00 720.00 720.00 cl
 85.16 69.47 690.99 684.99 cl
-0 0.5020 1 rgb
+0 0 0 srgb
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -262,7 +277,6 @@ np
 31.87 -181.82 l
 28.78 -73.68 l
 o
-1 0 1 rgb
 0.75 setlinewidth
 [ 2.25 3.75] 0 setdash
 np
@@ -307,7 +321,7 @@ np
 o
 0.00 0.00 720.00 720.00 cl
 0.00 0.00 720.00 720.00 cl
-0 setgray
+0 0 0 srgb
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap

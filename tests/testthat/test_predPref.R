@@ -9,22 +9,7 @@ TxS <- c(Times, PreySpecies)
 g <- matrix(sqrt(2), nrow=Times, ncol=PreySpecies)
 set.seed(1)
 
-
 ## noEM
-test_that('noEM, 1 vs c, null', {
-    l <- matrix(sqrt(2), nrow=Times, ncol=PreySpecies)
-    fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g, EM=F)
-    pref <- predPref(fdata$eaten, fdata$caught, hypotheses=c('1', 'c'), em_maxiter = 50000)
-    expect_is(pref, 'predPref')             # inherits class
-    expect_equal(length(pref$null$c), 0)    # hypotheses correctly chosen
-    expect_equal(length(pref$alt$c), 1)
-    expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
-    expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$LRT$p.value, 0.001)     # correct conclusion
-    expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
-    expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
-})                                      
-
 test_that('noEM, c vs c^t, null', {
     l <- matrix(2*sqrt(2), nrow=Times, ncol=PreySpecies)
     fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g, EM=F)
@@ -84,20 +69,6 @@ test_that('noEM, c vs c^t, alt', {
 
 
 ## EM
-test_that('EM, 1 vs c, null', {
-    l <- matrix(sqrt(2), nrow=Times, ncol=PreySpecies)
-    fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g, EM=T)
-    pref <- predPref(fdata$eaten, fdata$caught, hypotheses=c('1', 'c'), em_maxiter = 50000)
-    expect_is(pref, 'predPref')             # inherits class
-    expect_equal(length(pref$null$c), 0)    # hypotheses correctly chosen
-    expect_equal(length(pref$alt$c), 1)
-    expect_equal(dim(pref$null$gamma), TxS) # dimensions of estimates
-    expect_equal(dim(pref$alt$gamma), TxS)
-    expect_more_than(pref$LRT$p.value, 0.001)     # correct conclusion
-    expect_that(all(diag(pref$null$var)>0), is_true()) # variances (null) are positive
-    expect_that(all(diag(pref$alt$var)>0), is_true()) # variances (alt) are positive
-})
-
 test_that('EM, c vs c^t, null', {
     l <- matrix(0.5*sqrt(2), nrow=Times, ncol=PreySpecies)
     fdata <- simPref(PreySpecies, Times, Predators, Traps, l, g, EM=T)

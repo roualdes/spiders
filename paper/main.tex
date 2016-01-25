@@ -122,7 +122,7 @@ We denote the binary random variable indicating whether the $j^{th}$ predator di
 l_{comp}(\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \log f_{X,Y,Z}(\boldsymbol x, \boldsymbol y, \boldsymbol z|\boldsymbol{\lambda}, \boldsymbol{\gamma}) = \sum_{s,t}^{S,T} \left[ \sum_{j=1}^{J_t} \log f_{X,Z}(x_{jst},z_{jst}|\boldsymbol{\lambda}) + \sum_{i=1}^{I_t}\log f_Y(y_{ist}|\boldsymbol{\gamma}) \right].
 \]
 % !143, 146
-The mass function of $Y_{jst}$ is exactly as in Section~\ref{sec:count} and so we focus on deriving the joint probability mass function of $X_{jst}$ and $Z_{jst}$.  With the distribution of $Z_{jst}$ given above, we can compute $f_{X,Z}(x_{jst},z_{jst}|\boldsymbol{\lambda})$ by noting that $X_{jst}=0$ with probability 1 if $Z_{jst}=0$, and that $[X_{jst}|Z_{jst}=0]$ has a truncated Poisson distribution with mass function
+The mass function of $Y_{ist}$ is exactly as in Section~\ref{sec:count} and so we focus on deriving the joint probability mass function of $X_{jst}$ and $Z_{jst}$.  With the distribution of $Z_{jst}$ given above, we can compute $f_{X,Z}(x_{jst},z_{jst}|\boldsymbol{\lambda})$ by noting that $X_{jst}=0$ with probability 1 if $Z_{jst}=0$, and that $[X_{jst}|Z_{jst}=0]$ has a truncated Poisson distribution with mass function
 \[
   f_{X|Y,Z,\boldsymbol{\lambda},\boldsymbol{\gamma}}(x_{jst}|z_{jst}) =
   \frac{\exp{\{-\lambda_{st}\}} \lambda_{st}^{x_{jst}}}{(1 - \exp{\{-\lambda_{st}\}}) x_{jst}!}1(x_{jst} > 0)

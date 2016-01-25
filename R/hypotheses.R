@@ -51,8 +51,6 @@ checkHypotheses <- function(hyp) {
         H[1] <- 'Cs'
     } else if ( grepl('c', hyp[1]) ) {
         H[1] <- 'c'
-    } else if ( grepl('1', hyp[1]) ) {
-        H[1] <- '1'
     } else {
         stop('Null hypothesis specified incorrectly; please check documentation.')
     }
