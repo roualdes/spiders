@@ -1,0 +1,9 @@
+bibentry(bibtype = "Article",
+         title = "Formal modelling of predator preferences using molecular gut-content analysis",
+         author = c(person("Edward A.", "Roualdes"),
+                    person("Simon J.", "Bonner"),
+                    person("Thomas D.", "Whitney"),
+                    person("James D.", "Harwood")),
+         journal = "Environmental and Ecological Statistics",
+         year = "2016",
+         url = "http://link.springer.com/article/10.1007/s10651-016-0341-3")
