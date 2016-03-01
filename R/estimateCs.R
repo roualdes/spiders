@@ -65,7 +65,7 @@ estCs <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             
             ## limit iterations
             if ( em_iter > em_maxiter ) {
-                stop(sprintf('estCs: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+                stop(sprintf("estCs: max EM iterations, %d, reached. Please adjust accordingly.", em_maxiter))
             }
             
         }
@@ -95,8 +95,8 @@ estCs <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         ## calc log-lik with est params
         loglik <- llEM(Xdst, Ydst, NA, gammaHat, J, I, cHat)
         
-        list('c' = cHat, 'gamma' = as.matrix(gammaHat), 'em_iters' = em_iter,
-             'll' = loglik, 'var' = var)
+        list(c=cHat, gamma=as.matrix(gammaHat), em_iters=em_iter,
+             ll=loglik, var=var)
     } else {
 
         XYdst <- Xdst + Ydst
@@ -132,7 +132,7 @@ estCs <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             iter <- iter+1
             
             if ( iter > maxiter ) {
-                stop(sprintf('estCt: %d not sufficient iterations for simultaneous equations.', maxiter))
+                stop(sprintf("estCt: %d not sufficient iterations for simultaneous equations.", maxiter))
             }
             
         }
@@ -154,7 +154,7 @@ estCs <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         ## calc log-lik with est params
         loglik <- ll(Xdst, Ydst, NA, gammaHat, J, I, cHat)
             
-        list('gamma' = as.matrix(gammaHat), 'c' = cHat, 'iters' = iter,
-             'll' = loglik, 'var' = solve(Info))
+        list(gamma=as.matrix(gammaHat), c=cHat, iters=iter,
+             ll=loglik, var=solve(Info))
     }
 }

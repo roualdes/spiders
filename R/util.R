@@ -2,15 +2,13 @@
 ##'
 ##' @param data a dataframe
 ##' @param vars column variables in data to sum over
-##' @param by extra variables to sum by
-getTimeCounts <- function(data, vars, by) {
-    if ( missing(by) ) {
-        by <- 'time'
-    } else {
-        by <- c('time', by)
-    }
-    ## ddply(data, by, function(dfr, idx) colSums(as.matrix(dfr[,idx])), vars)
-    ddply(data, by, colwise(sum, vars))
+getTimeCounts <- function(data, vars) {
+    ## if ( missing(by) ) {
+    ##     by <- 'time'
+    ## } else {
+    ##     by <- c('time', by)
+    ## }
+    ddply(data, "time", colwise(sum, vars))
 }
 
 ##' checks convergence of the parameters for the estimation functions
@@ -37,9 +35,9 @@ sumST <- function(mat) {
 }
 
 ## colors stolen from http://geography.uoregon.edu/datagraphics/color_scales.htm
-cols <- c('orange1' = "#FFBF80", 'orange2' = "#FF8000",
-          'yellow1' = "#FFFF99", 'yellow2' = "#FFFF33",
-          'green1' = "#B2FF8C", 'green2' = "#33FF00",
-          'blue1' = "#A6EDFF", 'blue2' = "#1AB2FF",
-          'purple1' = "#CCBFFF", 'puple2' = "#664CFF",
-          'red1' = "#FF99BF", 'red2' = "#E61A33")
+cols <- c(orange1="#FFBF80", orange2="#FF8000",
+          yellow1 = "#FFFF99", yellow2="#FFFF33",
+          green1 = "#B2FF8C", green2="#33FF00",
+          blue1 = "#A6EDFF", blue2="#1AB2FF",
+          purple1 = "#CCBFFF", puple2="#664CFF",
+          red1 = "#FF99BF", red2="#E61A33")

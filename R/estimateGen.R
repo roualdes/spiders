@@ -44,7 +44,7 @@ estGen <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             
             ## limit iterations
             if ( em_iter > em_maxiter ) {
-                stop(sprintf('estGen: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+                stop(sprintf("estGen: max EM iterations, %d, reached. Please adjust accordingly.", em_maxiter))
             }
         }
         
@@ -63,8 +63,8 @@ estGen <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         ## calc loglik wit est params
         loglik <- llEM(Xdst, Ydst, lambdaHat, gammaHat, J, I)
 
-        list('lambda' = as.matrix(lambdaHat), 'gamma' = as.matrix(gammaHat),
-             'em_iters' = em_iter, 'll' = loglik, 'var' = solve(Info))
+        list(lambda=as.matrix(lambdaHat), gamma=as.matrix(gammaHat),
+             em_iters=em_iter, ll=loglik, var=solve(Info))
 
     } else {
         ## some numbers
@@ -91,8 +91,8 @@ estGen <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         ## calc loglik with est params
         loglik <- ll(Xdst, Ydst, lambdaHat, gammaHat, J, I)
         
-        list('lambda' = as.matrix(lambdaHat), 'gamma' = as.matrix(gammaHat),
-             'll' = loglik, 'var' = solve(Info))
+        list(lambda=as.matrix(lambdaHat), gamma=as.matrix(gammaHat),
+             ll=loglik, var=solve(Info))
     }
 
 }

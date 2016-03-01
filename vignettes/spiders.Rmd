@@ -18,7 +18,7 @@ Let $X_{jst} \sim \mathcal{P}(\lambda_{st})$ denote the number of prey species $
 
 The relative rate with which a predator ate species $s$ during time $t$ to the rate at which prey species $s$ was available in the habitat during time $t$ is represented as the fraction of the respecitve parameters, $c_{st} = \lambda_{st} / \gamma_{st}$.  The quantity $c_{st}$ is then our analogue to Strauss's statistic $L$.  
 
-We allow $c_{st}$ to naturally vary by prey species, time, neither, or both.  We depict these four hypotheses in the following list.  Please see our paper {CITEUS} for further details about the interpretations of these hypotheses.
+We allow $c_{st}$ to naturally vary by prey species, time, neither, or both.  We depict these four hypotheses in the following list.  Please see our paper [@Roualdes:2016] for further details about the interpretations of these hypotheses.
 
 1. $c_{st} = c$
 2. $c_{st} = c_s$
@@ -33,7 +33,7 @@ A likelihood ratio test statistic [@Wilks:1938] evaluates a given null and alter
 
 With smaller animals it is not always possible to observe a count of prey species eaten by a predator species.  Instead, a binary response of whether or not DNA of said prey species exists in the gut of the predator is observed, via for instance a molecular gut content analysis.  In this case, we can treat the count of eaten prey species as missing and maximize the likelihood using an expectation-maximization (EM) algorithm [@Dempster:1977].  
 
-We model what information we do observe.  Denote this binary response by $Z_{jst} = 1(X_{jst} > 0)$, which takes on the value $1$ if the $j^{th}$ predator ate prey species $s$ in time $t$ and $0$ otherwise.  Under this new set up $\Lambda$ is calculated with the observed data likelihood, $L(\theta|Z,Y)$.  
+We model what information we do observe.  Denote this binary response by $Z_{jst} = 1(X_{jst} > 0)$, which takes on the value $1$ if the $j^{th}$ predator ate prey species $s$ in time $t$ and $0$ otherwise.  Under this new set up $\Lambda$ is calculated with the observed data likelihood, $L(\theta|Z,Y)$.
 
 ## spiders Package
 
@@ -92,7 +92,7 @@ prefs$alt$c
 length(prefs$alt$c)
 ```
 
-To calculate a linear contrast we need create a new vector of length equal to the vector `prefs$alt$c` that will pick out the elements of $\mathbf{c}$ of interest, average, and then contrast the elements against each other -- more detail about the intrepretation of linear contrasts in this context is found in {CITEUS}.  For example, if we wanted to compare prey species $1$ and $2$ across the first two time periods, we would set up the contrast
+To calculate a linear contrast we need create a new vector of length equal to the vector `prefs$alt$c` that will pick out the elements of $\mathbf{c}$ of interest, average, and then contrast the elements against each other -- more detail about the intrepretation of linear contrasts in this context is found in [@Roualdes:2016].  For example, if we wanted to compare prey species $1$ and $2$ across the first two time periods, we would set up the contrast
 
 ```{r}
 b <- c(1/2, 1/2, 0, 0, 0, -1/2, -1/2, rep(0, 8))

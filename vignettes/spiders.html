@@ -10,7 +10,7 @@
 
 <meta name="author" content="Edward A. Roualdes" />
 
-<meta name="date" content="2016-01-18" />
+<meta name="date" content="2016-03-01" />
 
 <title>Predator Preferences Model</title>
 
@@ -72,7 +72,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">Predator Preferences Model</h1>
 <h4 class="author"><em>Edward A. Roualdes</em></h4>
-<h4 class="date"><em>2016-01-18</em></h4>
+<h4 class="date"><em>2016-03-01</em></h4>
 </div>
 
 
@@ -81,7 +81,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Strauss estimates prey preferences using his statistic <span class="math inline">\(L_{st}\)</span> <span class="citation">(Strauss 1979)</span>. <span class="math inline">\(L_{st}\)</span> is the difference between <span class="math inline">\(r_{st}\)</span> the proportion of prey species <span class="math inline">\(s\)</span> found in the gut of a predator during occurrence <span class="math inline">\(t\)</span> and <span class="math inline">\(p_{st}\)</span> the proportion of prey species <span class="math inline">\(s\)</span> found in the habitat of said predator during occurrence <span class="math inline">\(t\)</span>. When the statistic <span class="math inline">\(L_{st} := r_{st} - p_{st}\)</span> is equal to zero we say the predator ate prey species <span class="math inline">\(s\)</span> randomly during time <span class="math inline">\(t\)</span>. A positive difference, <span class="math inline">\(L_{st} &gt; 0\)</span>, indicates preferential eating of prey species <span class="math inline">\(s\)</span>, and negative values indicate aversion to prey species <span class="math inline">\(s\)</span> at time <span class="math inline">\(t\)</span>. We build upon Strauss’s <span class="math inline">\(L\)</span> with the following framework.</p>
 <p>Let <span class="math inline">\(X_{jst} \sim \mathcal{P}(\lambda_{st})\)</span> denote the number of prey species <span class="math inline">\(s\)</span> found in the gut of predator <span class="math inline">\(j\)</span> during occurrence <span class="math inline">\(t\)</span>; <span class="math inline">\(j \in \{1, \ldots, J_t\}, s \in \{1, \ldots, S\}, t \in \{1, \ldots, T\}\)</span>. Let <span class="math inline">\(Y_{ist} \sim \mathcal{P}(\gamma_{st})\)</span> will denote the number of prey species <span class="math inline">\(s\)</span> found in trap <span class="math inline">\(i\)</span>, <span class="math inline">\(i \in \{1, \ldots, I_t \}\)</span>, hypothesized to represent the habitat of predator <span class="math inline">\(j\)</span>, during time occurrence <span class="math inline">\(t\)</span>. From the observations <span class="math inline">\(x_{jst}\)</span> and <span class="math inline">\(y_{ist}\)</span> we are able to derive similar conclusions to that of Strauss’s <span class="math inline">\(L\)</span>, but now more efficiently taking into account multiple prey species across an array of time points.</p>
 <p>The relative rate with which a predator ate species <span class="math inline">\(s\)</span> during time <span class="math inline">\(t\)</span> to the rate at which prey species <span class="math inline">\(s\)</span> was available in the habitat during time <span class="math inline">\(t\)</span> is represented as the fraction of the respecitve parameters, <span class="math inline">\(c_{st} = \lambda_{st} / \gamma_{st}\)</span>. The quantity <span class="math inline">\(c_{st}\)</span> is then our analogue to Strauss’s statistic <span class="math inline">\(L\)</span>.</p>
-<p>We allow <span class="math inline">\(c_{st}\)</span> to naturally vary by prey species, time, neither, or both. We depict these four hypotheses in the following list. Please see our paper {CITEUS} for further details about the interpretations of these hypotheses.</p>
+<p>We allow <span class="math inline">\(c_{st}\)</span> to naturally vary by prey species, time, neither, or both. We depict these four hypotheses in the following list. Please see our paper <span class="citation">(Roualdes et al. 2016)</span> for further details about the interpretations of these hypotheses.</p>
 <ol style="list-style-type: decimal">
 <li><span class="math inline">\(c_{st} = c\)</span></li>
 <li><span class="math inline">\(c_{st} = c_s\)</span></li>
@@ -161,7 +161,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##     0.4722228     0.4838717     0.4537820     0.4488453     0.4945064</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(prefs$alt$c)</code></pre></div>
 <pre><code>## [1] 15</code></pre>
-<p>To calculate a linear contrast we need create a new vector of length equal to the vector <code>prefs$alt$c</code> that will pick out the elements of <span class="math inline">\(\mathbf{c}\)</span> of interest, average, and then contrast the elements against each other – more detail about the intrepretation of linear contrasts in this context is found in {CITEUS}. For example, if we wanted to compare prey species <span class="math inline">\(1\)</span> and <span class="math inline">\(2\)</span> across the first two time periods, we would set up the contrast</p>
+<p>To calculate a linear contrast we need create a new vector of length equal to the vector <code>prefs$alt$c</code> that will pick out the elements of <span class="math inline">\(\mathbf{c}\)</span> of interest, average, and then contrast the elements against each other – more detail about the intrepretation of linear contrasts in this context is found in <span class="citation">(Roualdes et al. 2016)</span>. For example, if we wanted to compare prey species <span class="math inline">\(1\)</span> and <span class="math inline">\(2\)</span> across the first two time periods, we would set up the contrast</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>/<span class="dv">2</span>, <span class="dv">1</span>/<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, -<span class="dv">1</span>/<span class="dv">2</span>, -<span class="dv">1</span>/<span class="dv">2</span>, <span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">8</span>))</code></pre></div>
 <p>Then use the funciton <code>testC</code> to answer the question, is prey species <span class="math inline">\(1\)</span> within the first two time periods equally preferred to prey species <span class="math inline">\(2\)</span> in those same time periods?</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">testC</span>(prefs, b, <span class="dt">sig.level=</span><span class="fl">0.8</span>)</code></pre></div>
@@ -186,6 +186,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2>References</h2>
 <div id="ref-Dempster:1977">
 <p>Dempster, Arthur P, Nan M Laird, and Donald B Rubin. 1977. “Maximum Likelihood from Incomplete Data via the EM Algorithm.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 39 (1). JSTOR: 1–38.</p>
+</div>
+<div id="ref-Roualdes:2016">
+<p>Roualdes, Edward A, Simon J Bonner, Thomas D Whitney, and James D Harwood. 2016. “Formal Modelling of Predator Preferences Using Molecular Gut-Content Analysis.” <em>Environmental and Ecological Statistics</em>.</p>
 </div>
 <div id="ref-Strauss:1979">
 <p>Strauss, Richard E. 1979. “Reliability Estimates for Ivlev’s Electivity Index, the Forage Ratio, and a Proposed Linear Index of Food Selection.” <em>Transactions of the American Fisheries Society</em> 108 (4). Taylor &amp; Francis: 344–52.</p>

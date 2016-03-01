@@ -34,10 +34,10 @@ simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
     lJ <- length(J)
     lI <- length(I)
     if ( lJ != 1 && lJ != T ) {
-        stop('J not a scalar or vector of appropriate size.')
+        stop("J not a scalar or vector of appropriate size.")
     }
     if ( lI != 1 && lI != T ) {
-        stop('J not a scalar or vector of appropriate size.')
+        stop("J not a scalar or vector of appropriate size.")
     }
     if (lJ == 1) {
         J <- rep(J[1], T)
@@ -51,9 +51,9 @@ simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
     caught <- as.data.frame(matrix(NA, nrow=sum(I), ncol=S+1))
 
     ## fill times
-    colnames(eaten) <- colnames(caught) <- c('time', paste('preySpecies', ns, sep=''))
-    eaten[,1] <- unlist(lapply(nt, function(x) rep(paste('time', x, sep=''), J[x])))
-    caught[,1] <- unlist(lapply(nt, function(x) rep(paste('time', x, sep=''), I[x])))
+    colnames(eaten) <- colnames(caught) <- c("time", paste("preySpecies", ns, sep=""))
+    eaten[,1] <- unlist(lapply(nt, function(x) rep(paste("time", x, sep=""), J[x])))
+    caught[,1] <- unlist(lapply(nt, function(x) rep(paste("time", x, sep=""), I[x])))
 
     ## fill data frame
     times <- unique(eaten$time)
@@ -72,7 +72,7 @@ simPref <- function(S, T, J, I, lambda, gamma, EM=F) {
         eaten[,jdx][which(eaten[,jdx]>0, arr.ind=T)] <- 1
     }
     
-    out <- list('eaten' = eaten,
-                'caught' = caught)
+    out <- list(eaten=eaten,
+                caught=caught)
     out
 }

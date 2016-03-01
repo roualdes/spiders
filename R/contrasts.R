@@ -98,29 +98,29 @@ testC <- function(x, b, mu = 0, alternative = c("two.sided", "less", "greater"),
     alpha <- 1-conf.level
     a2 <- alpha/2
     alternative <- match.arg(alternative)
-    if ( alternative == 'two.sided' ) {
+    if ( alternative == "two.sided" ) {
         pval <- 2*pnorm(-abs(stat), mean=mu, sd=stdev)
         interval <- qnorm(c(a2, 1-a2), mean=stat, sd=stdev)
-    } else if ( alternative == 'less' ) {
+    } else if ( alternative == "less" ) {
         pval <- pnorm(stat, mean=mu, sd=stdev)
         interval <- c(-Inf, qnorm(conf.level, mean=stat, sd=stdev))
-    } else if ( alternative == 'greater' ) {
+    } else if ( alternative == "greater" ) {
         pval <- pnorm(stat, mean=mu, sd=stdev, lower.tail=F)
         interval <- c(qnorm(alpha, mean=stat, sd=stdev), Inf)
     }
 
     ## info to fill in print method of class htest
-    names(stat) <- 'b^t * C'
-    names(mu) <- 'linear contrast'
-    method <- paste('Linear Contrast: ', paste(t(b), collapse=' '), sep='')
-    attr(interval, 'conf.level') <- conf.level
+    names(stat) <- "b^t * C"
+    names(mu) <- "linear contrast"
+    method <- paste("Linear Contrast: ", paste(t(b), collapse=" "), sep="")
+    attr(interval, "conf.level") <- conf.level
     est <- as.vector(C)
-    names(est) <- paste('mean of c_', lc, sep='')
+    names(est) <- paste("mean of c_", lc, sep="")
 
     out <- list(statistic = stat, p.value = pval,
                 conf.int = interval, null.value = mu,
                 alternative = alternative, method = method,
                 estimate = est, data.name=x$data.name)
-    class(out) <- 'htest'
+    class(out) <- "htest"
     out
 }

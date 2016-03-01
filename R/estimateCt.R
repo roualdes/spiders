@@ -64,7 +64,7 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             
             ## limit iterations
             if ( em_iter > em_maxiter ) {
-                stop(sprintf('estCt: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+                stop(sprintf("estCt: max EM iterations, %d, reached. Please adjust accordingly.", em_maxiter))
             }
             
         }
@@ -93,8 +93,8 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         ## calc log-lik with est params
         loglik <- llEM(Xdst, Ydst, NA, gammaHat, J, I, cHat)
         
-        list('c' = cHat, 'gamma' = as.matrix(gammaHat), 'em_iters' = em_iter,
-             'll' = loglik, 'var' = var)
+        list(c=cHat, gamma=as.matrix(gammaHat), em_iters=em_iter,
+             ll=loglik, var=var)
     } else {
         
         ## some numbers
@@ -104,8 +104,12 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
         ## not sure this is the right spot for these checks
         ## ensure J & I have dimension T or 1
-        if ( length(J) != T ) stop("J indexed oddly says est0.")
-        if ( length(I) != T ) stop("I indexed oddly says est0.")
+        if ( length(J) != T ) {
+            stop("J indexed oddly says est0.")
+        }
+        if ( length(I) != T ) {
+            stop("I indexed oddly says est0.")
+        }
 
         ## initialize some values
         ## cHat <- cHat_old <- rep(0.5, length(J)) # runif(length(J))
@@ -132,7 +136,7 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
             ## limit iterations
             if ( iter > maxiter ) {
-                stop(sprintf('estCt: %d not sufficient iterations for simultaneous equations.', maxiter))
+                stop(sprintf("estCt: %d not sufficient iterations for simultaneous equations.", maxiter))
             }
             
         }
@@ -153,7 +157,7 @@ estCt <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         ## calc log-lik with est params
         loglik <- ll(Xdst, Ydst, NA, gammaHat, J, I, cHat)
         
-        list('gamma' = as.matrix(gammaHat), 'c' = cHat, 'iters' = iter,
-             'll' = loglik, 'var' = solve(Info))
+        list(gamma=as.matrix(gammaHat), c=cHat, iters=iter,
+             ll=loglik, var=solve(Info))
     }
 }

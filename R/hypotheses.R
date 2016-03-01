@@ -14,9 +14,9 @@ calcHypotheses <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
 
     ## create map of estimators
     fns <- list()
-    fns[['1']] <- est1; fns[['c']] <- estC
-    fns[['Cs']] <- estCs; fns[['Ct']] <- estCt
-    fns[['Cst']] <- estCst; fns[['gen']] <- estGen
+    fns[["1"]] <- est1; fns[["c"]] <- estC
+    fns[["Cs"]] <- estCs; fns[["Ct"]] <- estCt
+    fns[["Cst"]] <- estCst; fns[["gen"]] <- estGen
 
     ## calculate null and alternative hypotheses
     null <- fns[[hyp[1]]](Xdst, Ydst, J, I, EM, em_maxiter, balanced)
@@ -26,12 +26,12 @@ calcHypotheses <- function(hyp, Xdst, Ydst, J, I, balanced, EM, em_maxiter) {
     S <- ncol(Xdst)
     T <- nrow(Xdst)
     ST <- S*T
-    nullDF <- length(null[['c']])
-    altDF <- ifelse(is.null(alt[['c']]), ST, length(alt[['c']]))
+    nullDF <- length(null[["c"]])
+    altDF <- ifelse(is.null(alt[["c"]]), ST, length(alt[["c"]]))
     df <- altDF - nullDF
     
-    list('llH0' = null[['ll']], 'llH1' = alt[['ll']],
-         'null' = null, 'alt' = alt, 'df' = df)    
+    list(llH0=null[["ll"]], llH1=alt[["ll"]],
+         null=null, alt=alt, df=df)    
 }
 
 ##' function to check user specified hypotheses
@@ -45,34 +45,36 @@ checkHypotheses <- function(hyp) {
     H <- rep(0, 2)
     
     ## H0
-    if ( grepl('t', hyp[1]) ) {
-        H[1] <- 'Ct'
-    } else if ( grepl('s', hyp[1]) ) {
-        H[1] <- 'Cs'
-    } else if ( grepl('c', hyp[1]) ) {
-        H[1] <- 'c'
+    if ( grepl("t", hyp[1]) ) {
+        H[1] <- "Ct"
+    } else if ( grepl("s", hyp[1]) ) {
+        H[1] <- "Cs"
+    } else if ( grepl("c", hyp[1]) ) {
+        H[1] <- "c"
+    } else if ( grepl("1", hyp[1]) ) {
+        H[1] <- "1"
     } else {
-        stop('Null hypothesis specified incorrectly; please check documentation.')
+        stop("Null hypothesis specified incorrectly; please check documentation.")
     }
 
     ## H1
-    if ( grepl('g', hyp[2]) ) {
-        H[2] <- 'gen'
-    } else if ( grepl('st', hyp[2]) ) {
-        H[2] <- 'Cst'
-    } else if ( grepl('t', hyp[2]) ) {
-        H[2] <- 'Ct'
-    } else if ( grepl('s', hyp[2]) ) {
-        H[2] <- 'Cs'
-    } else if ( grepl('c', hyp[2]) ) {
-        H[2] <- 'c'
+    if ( grepl("g", hyp[2]) ) {
+        H[2] <- "gen"
+    } else if ( grepl("st", hyp[2]) ) {
+        H[2] <- "Cst"
+    } else if ( grepl("t", hyp[2]) ) {
+        H[2] <- "Ct"
+    } else if ( grepl("s", hyp[2]) ) {
+        H[2] <- "Cs"
+    } else if ( grepl("c", hyp[2]) ) {
+        H[2] <- "c"
     } else {
-        stop('Alt hypothesis specified incorrectly; please check documentation.')
+        stop("Alt hypothesis specified incorrectly; please check documentation.")
     }
 
     ## both
     if ( H[1] == H[2] ) {
-        stop('Null and Alternative hypotheses must be different.')
+        stop("Null and Alternative hypotheses must be different.")
     }
 
     H

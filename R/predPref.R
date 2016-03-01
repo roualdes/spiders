@@ -48,26 +48,31 @@
 ##' }
 ##' 
 ##' @export
-predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_maxiter=1000) {
+predPref <- function(eaten, caught, hypotheses = c("c", "Ct"), alpha=0.05, em_maxiter=1000) {
 
     ## check hypotheses specification
     hypotheses <- checkHypotheses(hypotheses)
 
     ## data
-    dname <- paste(deparse(substitute(eaten)), 'and', deparse(substitute(caught)))
+    dname <- paste(deparse(substitute(eaten)), "and", deparse(substitute(caught)))
     xNames <- colnames(eaten)
     yNames <- colnames(caught)
 
+    ## ensure column named time
+    if ( !("time" %in% xNames) || !("time" %in% yNames)) {
+        stop("Need column named time.")
+    }
+
     ## traps left out for different numbers of days?
-    if ( !('adj' %in% xNames) ) {
+    if ( !("adj" %in% xNames) ) {
         eaten$adj <- 1
     }
-    if ( !('adj' %in% yNames) ) {
+    if ( !("adj" %in% yNames) ) {
         caught$adj <- 1
     }
 
     ## prey names
-    extraVars <- c('time', 'adj')
+    extraVars <- c("time", "adj")
     preyNames <- setdiff(xNames, extraVars)
 
     ## data errors
@@ -79,8 +84,8 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
     }
 
     ## predators (J), traps (I)
-    J <- getTimeCounts(eaten, 'adj')[,2]
-    I <- getTimeCounts(caught, 'adj')[,2] # total days traps were out each t
+    J <- getTimeCounts(eaten, "adj")[,2]
+    I <- getTimeCounts(caught, "adj")[,2] # total days traps were out each t
     
     ## data for calculations
     Xdst <- getTimeCounts(eaten, preyNames)[,preyNames, drop=F]
@@ -99,7 +104,7 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
 
     ## check hypotheses
     if ( is.null(hypotheses) ) {
-        stop('Need to speficy hypotheses.')
+        stop("Need to speficy hypotheses.")
     }
 
     calcs <- calcHypotheses(hyp = hypotheses,
@@ -114,10 +119,10 @@ predPref <- function(eaten, caught, hypotheses = c('c', 'Ct'), alpha=0.05, em_ma
     lrt <- list(Lambda = Lambda, df = df,
                 p.value = pchisq(Lambda, df=df, lower.tail=F))
     
-    out <- list('alt' = alt, 'null' = null,
-                'loglikH1' = llH1, 'loglikH0' = llH0,
-                'numPredators' = J, 'numTraps' = I,
+    out <- list(alt=alt, null=null,
+                loglikH1=llH1, loglikH0=llH0,
+                numPredators=J, numTraps=I,
                 LRT = lrt, hypotheses = hypotheses, data.name = dname)
-    class(out) <- 'predPref'
+    class(out) <- "predPref"
     out
 }

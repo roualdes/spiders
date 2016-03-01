@@ -63,7 +63,7 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
             
             ## limit iterations
             if ( em_iter > em_maxiter ) {
-                stop(sprintf('estCst: max EM iterations, %d, reached. Please adjust accordingly.', em_maxiter))
+                stop(sprintf("estCst: max EM iterations, %d, reached. Please adjust accordingly.", em_maxiter))
             }
                 
         }
@@ -105,8 +105,12 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         
         ## not sure this is the right spot for these checks
         T <- nrow(Xdst)
-        if ( length(J) != T ) stop("J indexed oddly says estGen")
-        if ( length(I) != T ) stop("I indexed oddly says estGen")
+        if ( length(J) != T ) {
+            stop("J indexed oddly says estGen")
+        }
+        if ( length(I) != T ) {
+            stop("I indexed oddly says estGen")
+        }
 
         ## initialize some values
         ## cHat <- cHat_old <- matrix(0.5, ncol=S, nrow=T) # matrix(runif(ST), nrow=T)
@@ -133,7 +137,7 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
 
             ## limit iterations
             if ( iter > maxiter ) {
-                stop(sprintf('estCst: %d not sufficient iterations for simultaneous equations.', maxiter))
+                stop(sprintf("estCst: %d not sufficient iterations for simultaneous equations.", maxiter))
             }
             
         }
@@ -155,8 +159,8 @@ estCst <- function(Xdst, Ydst, J, I, EM, em_maxiter, BALANCED) {
         cv <- unlist(cHat)
         loglik <- ll(Xdst, Ydst, NA, gammaHat, J, I, cv)
         
-        list('gamma' = as.matrix(gammaHat), 'c' = cv, 'iters' = iter,
-             'll' = loglik, 'var' = solve(Info))
+        list(gamma=as.matrix(gammaHat), c=cv, iters=iter,
+             ll=loglik, var=solve(Info))
     }
 
 }

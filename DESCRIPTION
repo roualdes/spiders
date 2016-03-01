@@ -2,18 +2,19 @@ Package: spiders
 Type: Package
 Title: Fits predator preferences model
 Version: 1.2
-Date: 2016-01-25
+Date: 2016-03-01
 Authors@R: c(
     person(given="Edward A.", family="Roualdes",
     email= "eroualdes@csuchico.edu", role = c("cre", "aut")),
     person(given="Simon J.", family="Bonner", role = "aut"))
-Description: Fits and simulates data from our predator preferences model.
+Description: Fits and simulates data from our predator preferences model, DOI: 10.1007/s10651-016-0341-3.
 Depends: 
     R (>= 3.0.2)
 Imports: 
     plyr
 Suggests: 
     testthat,
-    knitr
+    knitr,
+    rmarkdown
 License: GPL (>= 2.0)
 VignetteBuilder: knitr
