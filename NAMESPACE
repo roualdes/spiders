@@ -2,4 +2,4 @@ import(plyr)
 export(predPref, simPref, summary.predPref, testC)
 S3method("summary", "predPref")
 S3method("print", "summary.predPref")
-
+importFrom("stats", "pchisq", "pnorm", "printCoefmat", "qnorm", "rpois")
